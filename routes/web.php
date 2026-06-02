@@ -4,7 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return view('welcome');
+    $packages = \App\Models\Package::oldest()->get();
+    $coaches = \App\Models\User::where('role', 'coach')->oldest()->get();
+    $locations = \App\Models\Location::oldest()->get();
+
+    return view('welcome', compact('packages', 'coaches', 'locations'));
 });
 
 // Route khusus yang sudah LOGIN
