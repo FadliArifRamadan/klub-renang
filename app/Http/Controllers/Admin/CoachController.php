@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class CoachController extends Controller
 {
@@ -13,15 +14,9 @@ class CoachController extends Controller
     public function index(Request $request)
     {
         // Hanya mengambil user yang rolenya 'coach'
-        $coaches = User::where('role', 'coach')->oldest()->get();
+        $coaches = User::where('role', 'coach')->oldest()->paginate(5);
 
-        // Cek apakah admin sedang mengklik tombol edit coach tertentu
-        $coachToEdit = null;
-        if ($request->has('edit')) {
-            $coachToEdit = User::where('role', 'coach')->find($request->edit);
-        }
-
-        return view('admin.coaches.index', compact('coaches', 'coachToEdit'));
+        return view('admin.coaches.index', compact('coaches'));
     }
 
     // 2. Simpan Akun Coach Baru ke Database
@@ -32,15 +27,23 @@ class CoachController extends Controller
             'username' => 'required|string|max:255|unique:users,username',
             'phone' => 'required|string|max:15',
             'password' => 'required|string|min:8',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        User::create([
+        $data = [
             'name' => $request->name,
             'username' => $request->username,
             'phone' => $request->phone,
             'role' => 'coach', // Kunci otomatis sebagai Coach
             'password' => Hash::make($request->password),
-        ]);
+        ];
+
+        // Simpan gambar jika ada
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('coaches', 'public');
+        }
+
+        User::create($data);
 
         return redirect()->route('admin.coaches.index')->with('success', 'Akun Coach berhasil didaftarkan!');
     }
@@ -58,6 +61,7 @@ class CoachController extends Controller
             'username' => 'required|string|max:255|unique:users,username,' . $coach->id,
             'phone' => 'required|string|max:15',
             'password' => 'nullable|string|min:8', // Password opsional saat edit
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $data = [
@@ -71,6 +75,15 @@ class CoachController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
+        // Update gambar jika ada file baru
+        if ($request->hasFile('image')) {
+            // Hapus gambar lama jika ada
+            if ($coach->image) {
+                Storage::disk('public')->delete($coach->image);
+            }
+            $data['image'] = $request->file('image')->store('coaches', 'public');
+        }
+
         $coach->update($data);
 
         return redirect()->route('admin.coaches.index')->with('success', 'Data Coach berhasil diperbarui!');
@@ -81,6 +94,11 @@ class CoachController extends Controller
     {
         if ($coach->role !== 'coach') {
             abort(403);
+        }
+
+        // Hapus gambar dari storage jika ada
+        if ($coach->image) {
+            Storage::disk('public')->delete($coach->image);
         }
 
         $coach->delete();

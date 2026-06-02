@@ -11,14 +11,9 @@ class PackageController extends Controller
     // 1. Menampilkan Semua Data & Form (Tambah/Edit)
     public function index(Request $request)
     {
-        $packages = Package::oldest()->get();
+        $packages = Package::oldest()->paginate(5);
 
-        $packageToEdit = null;
-        if ($request->has('edit')) {
-            $packageToEdit = Package::find($request->edit);
-        }
-
-        return view('admin.packages.index', compact('packages', 'packageToEdit'));
+        return view('admin.packages.index', compact('packages'));
     }
 
     // 2. Menyimpan Paket Baru
