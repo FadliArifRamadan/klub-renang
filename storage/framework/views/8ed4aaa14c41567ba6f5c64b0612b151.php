@@ -18,7 +18,7 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-100">
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
         <?php echo $__env->make('layouts.sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
         <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">

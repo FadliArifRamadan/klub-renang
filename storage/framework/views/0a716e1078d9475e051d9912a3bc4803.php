@@ -21,7 +21,7 @@
             
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8 border border-gray-100">
                 <h1 class="text-gray-900 text-3xl font-bold tracking-tight">
-                    Dashboard, Admin!
+                    Dashboard, <?php echo e(Auth::user()->name); ?>!
                 </h1>
                 <p class="text-gray-600 mt-2 text-sm max-w-3xl leading-relaxed">
                     Selamat datang di panel kontrol Black Diamond. Kelola verifikasi pembayaran, data murid, pelatih,
