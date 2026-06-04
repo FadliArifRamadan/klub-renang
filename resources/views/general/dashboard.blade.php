@@ -19,6 +19,152 @@
                 </p>
             </div>
 
+            {{-- Notifikasi Sesi Habis --}}
+            @if (isset($expiredStudents) && $expiredStudents->isNotEmpty())
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-5 mb-8 shadow-sm" x-data="{ showNotif: true }" x-show="showNotif" x-transition>
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start gap-3 w-full">
+                            <div class="p-2 bg-amber-100 text-amber-600 rounded-lg mt-0.5 shrink-0">
+                                <i class="fa-solid fa-bell text-lg"></i>
+                            </div>
+                            <div class="w-full">
+                                <h4 class="font-bold text-amber-800 text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                                    Sesi Latihan Anda Telah Habis!
+                                </h4>
+                                <p class="text-xs text-amber-700 mt-1 leading-relaxed">
+                                    Seluruh kuota sesi latihan Anda telah terpakai. Silakan lakukan daftar ulang paket latihan di bawah ini.
+                                </p>
+                                <div class="mt-3 space-y-2 max-w-2xl">
+                                    @foreach ($expiredStudents as $expStudent)
+                                        <div class="flex flex-wrap items-center gap-2 bg-white/60 border border-amber-200 rounded-lg px-3 py-2">
+                                            <div class="flex items-center gap-2">
+                                                <i class="fa-solid fa-user text-amber-500"></i>
+                                                <span class="font-semibold text-sm text-gray-800">{{ $expStudent->name }}</span>
+                                                <span class="text-xs text-gray-500">—</span>
+                                                <span class="text-xs text-gray-600">{{ $expStudent->package->name ?? 'Paket' }}</span>
+                                                <span class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-200">
+                                                    Sesi Habis
+                                                </span>
+                                            </div>
+                                            <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'renew-student-{{ $expStudent->id }}')"
+                                                class="ml-auto px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold rounded-lg shadow-sm transition flex items-center gap-1">
+                                                <i class="fa-solid fa-rotate-right"></i> Daftar Ulang
+                                            </button>
+                                        </div>
+
+                                        {{-- Modal Daftar Ulang --}}
+                                        <x-modal name="renew-student-{{ $expStudent->id }}" maxWidth="lg" focusable>
+                                            <form method="POST" action="{{ route('general.students.renew', $expStudent->id) }}" enctype="multipart/form-data" class="p-6 text-left"
+                                                x-data="{ 
+                                                    packageId: '{{ $expStudent->package_id }}',
+                                                    packages: {{ $packages->toJson() }},
+                                                    getPrice() {
+                                                        const pkg = this.packages.find(p => p.id == this.packageId);
+                                                        return pkg ? pkg.price : 0;
+                                                    },
+                                                    formatPrice(price) {
+                                                        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(price);
+                                                    }
+                                                }">
+                                                @csrf
+
+                                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                                    <i class="fa-solid fa-rotate-right text-amber-500"></i>
+                                                    Daftar Ulang Paket Latihan - {{ $expStudent->name }}
+                                                </h3>
+
+                                                <!-- Tanggal Lahir -->
+                                                <div class="mb-4">
+                                                    <x-input-label for="birth_date-{{ $expStudent->id }}" value="Tanggal Lahir" />
+                                                    <x-text-input id="birth_date-{{ $expStudent->id }}" class="block mt-1 w-full text-sm" type="date" name="birth_date"
+                                                        value="{{ $expStudent->birth_date?->format('Y-m-d') }}" required />
+                                                </div>
+
+                                                <!-- Jenis Kelamin -->
+                                                <div class="mb-4">
+                                                    <x-input-label for="gender-{{ $expStudent->id }}" value="Jenis Kelamin" />
+                                                    <select id="gender-{{ $expStudent->id }}" name="gender" required
+                                                        class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                                        <option value="L" {{ $expStudent->gender == 'L' || $expStudent->gender == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                                        <option value="P" {{ $expStudent->gender == 'P' || $expStudent->gender == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Tempat Latihan -->
+                                                <div class="mb-4">
+                                                    <x-input-label for="location-{{ $expStudent->id }}" value="Kolam Latihan" />
+                                                    <select id="location-{{ $expStudent->id }}" name="location_id" required
+                                                        class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                                        @foreach ($locations as $loc)
+                                                            <option value="{{ $loc->id }}" {{ $expStudent->location_id == $loc->id ? 'selected' : '' }}>
+                                                                {{ $loc->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <!-- Paket Latihan -->
+                                                <div class="mb-4">
+                                                    <x-input-label for="package-{{ $expStudent->id }}" value="Paket Kursus" />
+                                                    <select id="package-{{ $expStudent->id }}" name="package_id" x-model="packageId" required
+                                                        class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                                        @foreach ($packages as $pkg)
+                                                            <option value="{{ $pkg->id }}">
+                                                                {{ $pkg->name }} ({{ $pkg->sessions }} Sesi - Rp {{ number_format($pkg->price, 0, ',', '.') }})
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <!-- Info Pembayaran & Rekening -->
+                                                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-4 text-xs text-blue-800">
+                                                    <p class="font-bold text-sm mb-1.5"><i class="fa-solid fa-circle-info mr-1"></i> Informasi Pembayaran</p>
+                                                    <p>Silakan transfer nominal ke rekening berikut:</p>
+                                                    <p class="font-extrabold text-gray-900 mt-1">Bank BCA: 123-4567-890 (a.n. Klub Renang)</p>
+                                                    <div class="mt-2 pt-2 border-t border-blue-200/50 flex justify-between items-center">
+                                                        <span class="font-semibold">Nominal Transfer:</span>
+                                                        <span class="text-sm font-black text-blue-700" x-text="formatPrice(getPrice())"></span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Bukti Transfer -->
+                                                <div class="mb-4">
+                                                    <x-input-label for="receipt-{{ $expStudent->id }}" value="Unggah Bukti Transfer (Screenshot/Foto)" />
+                                                    <input type="file" id="receipt-{{ $expStudent->id }}" name="receipt_image" accept="image/*" required
+                                                        class="block w-full text-sm text-gray-500 mt-1
+                                                            file:mr-4 file:py-2 file:px-4
+                                                            file:rounded-md file:border-0
+                                                            file:text-xs file:font-semibold
+                                                            file:bg-blue-50 file:text-blue-700
+                                                            hover:file:bg-blue-100
+                                                            border border-gray-300 rounded-md cursor-pointer p-1" />
+                                                    <p class="text-[10px] text-gray-400 mt-1">Format: JPG, JPEG, PNG. Maks: 2MB</p>
+                                                </div>
+
+                                                <!-- Aksi -->
+                                                <div class="mt-6 flex justify-end space-x-3">
+                                                    <x-secondary-button type="button" x-on:click="$dispatch('close')">
+                                                        Batal
+                                                    </x-secondary-button>
+                                                    <button type="submit"
+                                                        class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs uppercase tracking-widest rounded-md shadow-sm transition">
+                                                        Kirim Pendaftaran Ulang
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </x-modal>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <button @click="showNotif = false" class="text-amber-400 hover:text-amber-600 transition-colors p-1 self-start">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            @endif
+
             {{-- Metrics Grid (Non-Clickable untuk General) --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 

@@ -67,11 +67,11 @@ class PaymentController extends Controller
         $packageExpiresAt = now()->addMonths($activeMonths);
 
         // Bungkus dalam transaksi database untuk menjamin integritas data ganda
-        DB::transaction(function () use ($student, $request, $packageActivatedAt, $packageExpiresAt) {
-            // 1. Update Coach Anak ke Coach yang dipilih/disesuaikan oleh Admin dan set tanggal aktivasi & kedaluwarsa paket
+        DB::transaction(function () use ($student, $request, $package, $packageActivatedAt, $packageExpiresAt) {
             $student->update([
                 'coach_id' => $request->coach_id,
                 'status'   => 'active',
+                'quota_left' => $package ? $package->sessions : 0,
                 'package_activated_at' => $packageActivatedAt,
                 'package_expires_at' => $packageExpiresAt,
                 'suspended_at' => null,

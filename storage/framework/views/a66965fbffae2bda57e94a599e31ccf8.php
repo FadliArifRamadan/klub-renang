@@ -48,7 +48,7 @@
                     <table class="w-full text-sm text-left text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
                             <tr>
-                                <th class="px-6 py-3">#</th>
+                                <th class="px-6 py-3">No</th>
                                 <th class="px-6 py-3">Nama Murid</th>
                                 <th class="px-6 py-3">Paket Kursus</th>
                                 <th class="px-6 py-3">Kolam Latihan</th>
@@ -142,13 +142,21 @@
                                         <?php elseif($student->status === 'suspended'): ?>
                                             <span
                                                 class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-semibold">
-                                                <i class="fa-solid fa-circle-pause mr-1"></i>Dibekukan (<?php echo e($student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin'); ?>)
+                                                <i class="fa-solid fa-circle-pause mr-1"></i>Dibekukan
+                                                (<?php echo e($student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin'); ?>)
                                             </span>
                                         <?php elseif($student->status === 'inactive'): ?>
-                                            <span
-                                                class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-semibold">
-                                                <i class="fa-solid fa-circle-xmark mr-1"></i>Hangus
-                                            </span>
+                                            <?php if($student->quota_left <= 0): ?>
+                                                <span
+                                                    class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-semibold">
+                                                    <i class="fa-solid fa-circle-exclamation mr-1"></i>Sesi Habis
+                                                </span>
+                                            <?php else: ?>
+                                                <span
+                                                    class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-semibold">
+                                                    <i class="fa-solid fa-circle-xmark mr-1"></i>Masa Aktif Habis
+                                                </span>
+                                            <?php endif; ?>
                                         <?php else: ?>
                                             <span
                                                 class="bg-gray-100 text-gray-600 border border-gray-300 text-xs px-3 py-1 rounded-full font-semibold">

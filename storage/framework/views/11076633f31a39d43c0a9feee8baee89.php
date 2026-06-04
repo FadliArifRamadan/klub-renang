@@ -47,6 +47,11 @@
                             $latestPayment = $student->latestPayment;
                         ?>
 
+                        
+                        <?php if($student->status === 'inactive'): ?>
+                            <?php continue; ?>
+                        <?php endif; ?>
+
                         <div class="border rounded-xl p-5 bg-gray-50 shadow-sm relative overflow-hidden">
                             <div class="absolute top-4 right-4">
                                 <?php if($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved')): ?>

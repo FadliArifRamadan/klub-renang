@@ -38,6 +38,7 @@
                             <thead
                                 class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200 text-center">
                                 <tr>
+                                    <th class="col" class="px-4 py-3 text-center w-12">No</th>
                                     <th class="px-6 py-3 text-left">Nama Anak</th>
                                     <th class="px-6 py-3">Gender</th>
                                     <th class="px-6 py-3">Paket Kursus</th>
@@ -52,6 +53,11 @@
                             <tbody class="divide-y divide-gray-100">
                                 <?php $__empty_1 = true; $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                     <tr class="hover:bg-gray-50/70 transition duration-150">
+
+                                        <td class="px-6 py-4 text-center text-gray-600">
+                                            <?php echo e($loop->iteration + ($students->currentPage() - 1) * $students->perPage()); ?>
+
+                                        </td>
 
                                         <td class="px-6 py-4 font-bold text-gray-900 text-left">
                                             <?php echo e($student->name); ?>
@@ -120,18 +126,29 @@
 
                                                 </span>
                                                 <?php
-                                                    $diffInDays = now()->diffInDays($student->package_expires_at, false);
+                                                    $diffInDays = now()->diffInDays(
+                                                        $student->package_expires_at,
+                                                        false,
+                                                    );
                                                 ?>
                                                 <?php if($student->status == 'active'): ?>
                                                     <?php if($diffInDays < 0): ?>
-                                                        <span class="text-[10px] text-red-600 font-bold bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">Hangus</span>
+                                                        <span
+                                                            class="text-[10px] text-red-600 font-bold bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">Hangus</span>
                                                     <?php elseif($diffInDays <= 7): ?>
-                                                        <span class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded"><?php echo e(round($diffInDays)); ?> hari lagi</span>
+                                                        <span
+                                                            class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded"><?php echo e(round($diffInDays)); ?>
+
+                                                            hari lagi</span>
                                                     <?php else: ?>
-                                                        <span class="text-[10px] text-green-600 font-bold bg-green-50 border border-green-200 px-1.5 py-0.5 rounded"><?php echo e(round($diffInDays)); ?> hari aktif</span>
+                                                        <span
+                                                            class="text-[10px] text-green-600 font-bold bg-green-50 border border-green-200 px-1.5 py-0.5 rounded"><?php echo e(round($diffInDays)); ?>
+
+                                                            hari aktif</span>
                                                     <?php endif; ?>
                                                 <?php elseif($student->status == 'suspended'): ?>
-                                                    <span class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">DI-FREEZE</span>
+                                                    <span
+                                                        class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">DI-FREEZE</span>
                                                 <?php endif; ?>
                                             <?php else: ?>
                                                 <span class="text-xs text-gray-400 italic">-</span>
@@ -146,14 +163,23 @@
                                                 <span
                                                     class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
                                                     <i class="fa-solid fa-circle-pause mr-1 text-[10px]"></i>
-                                                    Membeku (<?php echo e($student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin'); ?>)
+                                                    Membeku
+                                                    (<?php echo e($student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin'); ?>)
                                                 </span>
                                             <?php elseif($student->status == 'inactive'): ?>
-                                                <span
-                                                    class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
-                                                    <i class="fa-solid fa-circle-xmark mr-1 text-[10px]"></i>
-                                                    Hangus
-                                                </span>
+                                                <?php if($student->quota_left <= 0): ?>
+                                                    <span
+                                                        class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
+                                                        <i class="fa-solid fa-circle-exclamation mr-1 text-[10px]"></i>
+                                                        Sesi Habis
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span
+                                                        class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
+                                                        <i class="fa-solid fa-circle-xmark mr-1 text-[10px]"></i>
+                                                        Masa Aktif Habis
+                                                    </span>
+                                                <?php endif; ?>
                                             <?php elseif($student->status == 'checking'): ?>
                                                 <span
                                                     class="bg-blue-100 text-blue-800 border border-blue-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm animate-pulse">Mengecek
@@ -182,7 +208,8 @@
 
                                         <td class="px-6 py-4 text-center">
                                             <?php if($student->status == 'active'): ?>
-                                                <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'suspend-student-<?php echo e($student->id); ?>')" 
+                                                <button type="button" x-data=""
+                                                    x-on:click="$dispatch('open-modal', 'suspend-student-<?php echo e($student->id); ?>')"
                                                     class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap">
                                                     <i class="fa-solid fa-pause mr-1"></i> Ijin/Sakit
                                                 </button>
@@ -198,7 +225,9 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['name' => 'suspend-student-'.e($student->id).'','focusable' => true]); ?>
-                                                    <form method="POST" action="<?php echo e(route('admin.students.suspend', $student->id)); ?>" class="p-6 text-left">
+                                                    <form method="POST"
+                                                        action="<?php echo e(route('admin.students.suspend', $student->id)); ?>"
+                                                        class="p-6 text-left">
                                                         <?php echo csrf_field(); ?>
                                                         <h3 class="text-lg font-bold text-gray-800 mb-4">
                                                             <i class="fa-solid fa-pause text-amber-500 mr-2"></i>
@@ -206,7 +235,9 @@
 
                                                         </h3>
                                                         <p class="text-sm text-gray-600 mb-4">
-                                                            Murid akan diberhentikan sementara dari latihan. Sisa kuota dan masa aktif paket akan dibekukan (frozen) sampai murid diaktifkan kembali.
+                                                            Murid akan diberhentikan sementara dari latihan. Sisa kuota
+                                                            dan masa aktif paket akan dibekukan (frozen) sampai murid
+                                                            diaktifkan kembali.
                                                         </p>
 
                                                         <div class="mt-4">
@@ -232,12 +263,17 @@
 <?php endif; ?>
                                                             <div class="flex items-center space-x-6 mt-2">
                                                                 <label class="inline-flex items-center cursor-pointer">
-                                                                    <input type="radio" name="reason" value="sakit" checked class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                                    <span class="ml-2 text-sm text-gray-700 font-medium">Sakit</span>
+                                                                    <input type="radio" name="reason" value="sakit"
+                                                                        checked
+                                                                        class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                                    <span
+                                                                        class="ml-2 text-sm text-gray-700 font-medium">Sakit</span>
                                                                 </label>
                                                                 <label class="inline-flex items-center cursor-pointer">
-                                                                    <input type="radio" name="reason" value="ijin" class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                                    <span class="ml-2 text-sm text-gray-700 font-medium">Ijin</span>
+                                                                    <input type="radio" name="reason" value="ijin"
+                                                                        class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                                    <span
+                                                                        class="ml-2 text-sm text-gray-700 font-medium">Ijin</span>
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -297,9 +333,9 @@
 <?php $component = $__componentOriginal9f64f32e90b9102968f2bc548315018c; ?>
 <?php unset($__componentOriginal9f64f32e90b9102968f2bc548315018c); ?>
 <?php endif; ?>
-
                                             <?php elseif($student->status == 'suspended'): ?>
-                                                <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'resume-student-<?php echo e($student->id); ?>')" 
+                                                <button type="button" x-data=""
+                                                    x-on:click="$dispatch('open-modal', 'resume-student-<?php echo e($student->id); ?>')"
                                                     class="px-2.5 py-1.5 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap">
                                                     <i class="fa-solid fa-play mr-1"></i> Aktifkan
                                                 </button>
@@ -315,24 +351,31 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['name' => 'resume-student-'.e($student->id).'','focusable' => true]); ?>
-                                                    <form method="POST" action="<?php echo e(route('admin.students.resume', $student->id)); ?>" class="p-6 text-left">
+                                                    <form method="POST"
+                                                        action="<?php echo e(route('admin.students.resume', $student->id)); ?>"
+                                                        class="p-6 text-left">
                                                         <?php echo csrf_field(); ?>
                                                         <h3 class="text-lg font-bold text-gray-800 mb-4">
                                                             <i class="fa-solid fa-play text-green-500 mr-2"></i>
                                                             Aktifkan Kembali Latihan: <?php echo e($student->name); ?>
 
                                                         </h3>
-                                                        
+
                                                         <p class="text-sm text-gray-600 mb-4">
-                                                            Masa aktif paket latihan murid ini akan diperpanjang secara otomatis sesuai dengan lama waktu murid tersebut ijin/sakit.
+                                                            Masa aktif paket latihan murid ini akan diperpanjang secara
+                                                            otomatis sesuai dengan lama waktu murid tersebut ijin/sakit.
                                                         </p>
 
-                                                        <div class="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg text-xs mb-4">
+                                                        <div
+                                                            class="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg text-xs mb-4">
                                                             <i class="fa-solid fa-info-circle mr-1"></i>
                                                             <strong>Detail Pembekuan:</strong><br>
-                                                            - Mulai Dibekukan: <?php echo e($student->suspended_at?->format('d M Y - H:i')); ?><br>
-                                                            - Alasan: <?php echo e($student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin'); ?><br>
-                                                            - Durasi Suspend: <?php echo e(round(now()->diffInDays($student->suspended_at))); ?> Hari
+                                                            - Mulai Dibekukan:
+                                                            <?php echo e($student->suspended_at?->format('d M Y - H:i')); ?><br>
+                                                            - Alasan:
+                                                            <?php echo e($student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin'); ?><br>
+                                                            - Durasi Suspend:
+                                                            <?php echo e(round(now()->diffInDays($student->suspended_at))); ?> Hari
                                                         </div>
 
                                                         <div class="mt-4">
@@ -356,20 +399,34 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                                                            <select id="coach_id_<?php echo e($student->id); ?>" name="coach_id" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" required>
+                                                            <select id="coach_id_<?php echo e($student->id); ?>" name="coach_id"
+                                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                                                required>
                                                                 <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                     <?php
-                                                                        $isCurrentCoach = $student->coach_id == $coach->id;
+                                                                        $isCurrentCoach =
+                                                                            $student->coach_id == $coach->id;
                                                                         $isFull = $coach->students_count >= 5;
                                                                     ?>
-                                                                    <option value="<?php echo e($coach->id); ?>" <?php echo e($isCurrentCoach ? 'selected' : ''); ?> <?php echo e($isFull && !$isCurrentCoach ? 'disabled' : ''); ?>>
-                                                                        <?php echo e($coach->name); ?> (<?php echo e($coach->students_count); ?>/5 Murid Aktif)
-                                                                        <?php if($isCurrentCoach): ?> [Pelatih Asal] <?php endif; ?>
-                                                                        <?php if($isFull && !$isCurrentCoach): ?> [PENUH] <?php endif; ?>
+                                                                    <option value="<?php echo e($coach->id); ?>"
+                                                                        <?php echo e($isCurrentCoach ? 'selected' : ''); ?>
+
+                                                                        <?php echo e($isFull && !$isCurrentCoach ? 'disabled' : ''); ?>>
+                                                                        <?php echo e($coach->name); ?>
+
+                                                                        (<?php echo e($coach->students_count); ?>/5 Murid Aktif)
+                                                                        <?php if($isCurrentCoach): ?>
+                                                                            [Pelatih Asal]
+                                                                        <?php endif; ?>
+                                                                        <?php if($isFull && !$isCurrentCoach): ?>
+                                                                            [PENUH]
+                                                                        <?php endif; ?>
                                                                     </option>
                                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                             </select>
-                                                            <p class="text-xs text-gray-400 mt-1">Hanya pelatih yang memiliki slot kosong (&lt; 5 murid aktif) yang dapat ditugaskan.</p>
+                                                            <p class="text-xs text-gray-400 mt-1">Hanya pelatih yang
+                                                                memiliki slot kosong (&lt; 5 murid aktif) yang dapat
+                                                                ditugaskan.</p>
                                                         </div>
 
                                                         <div class="mt-6 flex justify-end space-x-3">

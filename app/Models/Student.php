@@ -69,12 +69,19 @@ class Student extends Model
 
     /**
      * Otomatis menonaktifkan murid yang masa berlaku paketnya sudah lewat (kedaluwarsa/hangus)
+     * atau kuota sesi latihan sudah habis (quota_left <= 0)
      */
     public static function checkAndExpirePackages()
     {
+        // 1. Cek masa berlaku paket kedaluwarsa
         self::where('status', 'active')
             ->whereNotNull('package_expires_at')
             ->where('package_expires_at', '<', now())
+            ->update(['status' => 'inactive']);
+
+        // 2. Cek kuota sesi habis
+        self::where('status', 'active')
+            ->where('quota_left', '<=', 0)
             ->update(['status' => 'inactive']);
     }
 

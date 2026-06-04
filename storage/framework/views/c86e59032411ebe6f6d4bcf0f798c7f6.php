@@ -93,6 +93,7 @@ unset($__errorArgs, $__bag); ?>
                             <table class="w-full text-sm text-left text-gray-500">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
                                     <tr>
+                                        <th class="px-4 py-3 text-center w-12">No</th>
                                         <th class="px-6 py-3 text-center w-16">Kehadiran</th>
                                         <th class="px-6 py-3">Nama Murid</th>
                                         <th class="px-6 py-3">Paket Kursus</th>
@@ -107,6 +108,7 @@ unset($__errorArgs, $__bag); ?>
                                         ?>
                                         <tr
                                             class="bg-white border-b hover:bg-gray-50 transition-colors duration-150 <?php echo e($quotaEmpty ? 'bg-red-50/30' : ''); ?>">
+                                            <td class="px-4 py-4 text-center"><?php echo e($loop->iteration); ?></td>
                                             
                                             <td class="px-6 py-4 text-center">
                                                 <input type="checkbox" name="student_ids[]" value="<?php echo e($student->id); ?>"

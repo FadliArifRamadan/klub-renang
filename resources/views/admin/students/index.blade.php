@@ -28,6 +28,7 @@
                             <thead
                                 class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200 text-center">
                                 <tr>
+                                    <th class="px-6 py-3 text-center w-12">No</th>
                                     <th class="px-6 py-3 text-left">Nama Anak</th>
                                     <th class="px-6 py-3">Gender</th>
                                     <th class="px-6 py-3">Paket Kursus</th>
@@ -42,6 +43,10 @@
                             <tbody class="divide-y divide-gray-100">
                                 @forelse($students as $student)
                                     <tr class="hover:bg-gray-50/70 transition duration-150">
+
+                                        <td class="px-6 py-4 text-center text-gray-600">
+                                            {{ $loop->iteration + ($students->currentPage() - 1) * $students->perPage() }}
+                                        </td>
 
                                         <td class="px-6 py-4 font-bold text-gray-900 text-left">
                                             {{ $student->name }}
@@ -104,18 +109,27 @@
                                                     {{ $student->package_expires_at->format('d M Y') }}
                                                 </span>
                                                 @php
-                                                    $diffInDays = now()->diffInDays($student->package_expires_at, false);
+                                                    $diffInDays = now()->diffInDays(
+                                                        $student->package_expires_at,
+                                                        false,
+                                                    );
                                                 @endphp
                                                 @if ($student->status == 'active')
                                                     @if ($diffInDays < 0)
-                                                        <span class="text-[10px] text-red-600 font-bold bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">Hangus</span>
+                                                        <span
+                                                            class="text-[10px] text-red-600 font-bold bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">Hangus</span>
                                                     @elseif ($diffInDays <= 7)
-                                                        <span class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">{{ round($diffInDays) }} hari lagi</span>
+                                                        <span
+                                                            class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">{{ round($diffInDays) }}
+                                                            hari lagi</span>
                                                     @else
-                                                        <span class="text-[10px] text-green-600 font-bold bg-green-50 border border-green-200 px-1.5 py-0.5 rounded">{{ round($diffInDays) }} hari aktif</span>
+                                                        <span
+                                                            class="text-[10px] text-green-600 font-bold bg-green-50 border border-green-200 px-1.5 py-0.5 rounded">{{ round($diffInDays) }}
+                                                            hari aktif</span>
                                                     @endif
                                                 @elseif($student->status == 'suspended')
-                                                    <span class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">DI-FREEZE</span>
+                                                    <span
+                                                        class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">DI-FREEZE</span>
                                                 @endif
                                             @else
                                                 <span class="text-xs text-gray-400 italic">-</span>
@@ -130,14 +144,23 @@
                                                 <span
                                                     class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
                                                     <i class="fa-solid fa-circle-pause mr-1 text-[10px]"></i>
-                                                    Membeku ({{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }})
+                                                    Membeku
+                                                    ({{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }})
                                                 </span>
                                             @elseif($student->status == 'inactive')
-                                                <span
-                                                    class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
-                                                    <i class="fa-solid fa-circle-xmark mr-1 text-[10px]"></i>
-                                                    Hangus
-                                                </span>
+                                                @if ($student->quota_left <= 0)
+                                                    <span
+                                                        class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
+                                                        <i class="fa-solid fa-circle-exclamation mr-1 text-[10px]"></i>
+                                                        Sesi Habis
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
+                                                        <i class="fa-solid fa-circle-xmark mr-1 text-[10px]"></i>
+                                                        Masa Aktif Habis
+                                                    </span>
+                                                @endif
                                             @elseif($student->status == 'checking')
                                                 <span
                                                     class="bg-blue-100 text-blue-800 border border-blue-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm animate-pulse">Mengecek
@@ -165,33 +188,44 @@
 
                                         <td class="px-6 py-4 text-center">
                                             @if ($student->status == 'active')
-                                                <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'suspend-student-{{ $student->id }}')" 
+                                                <button type="button" x-data=""
+                                                    x-on:click="$dispatch('open-modal', 'suspend-student-{{ $student->id }}')"
                                                     class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap">
                                                     <i class="fa-solid fa-pause mr-1"></i> Ijin/Sakit
                                                 </button>
 
                                                 {{-- Modal Suspend --}}
                                                 <x-modal name="suspend-student-{{ $student->id }}" focusable>
-                                                    <form method="POST" action="{{ route('admin.students.suspend', $student->id) }}" class="p-6 text-left">
+                                                    <form method="POST"
+                                                        action="{{ route('admin.students.suspend', $student->id) }}"
+                                                        class="p-6 text-left">
                                                         @csrf
                                                         <h3 class="text-lg font-bold text-gray-800 mb-4">
                                                             <i class="fa-solid fa-pause text-amber-500 mr-2"></i>
                                                             Pemberhentian Sementara: {{ $student->name }}
                                                         </h3>
                                                         <p class="text-sm text-gray-600 mb-4">
-                                                            Murid akan diberhentikan sementara dari latihan. Sisa kuota dan masa aktif paket akan dibekukan (frozen) sampai murid diaktifkan kembali.
+                                                            Murid akan diberhentikan sementara dari latihan. Sisa kuota
+                                                            dan masa aktif paket akan dibekukan (frozen) sampai murid
+                                                            diaktifkan kembali.
                                                         </p>
 
                                                         <div class="mt-4">
-                                                            <x-input-label for="reason-{{ $student->id }}" value="Pilih Alasan Pemberhentian" />
+                                                            <x-input-label for="reason-{{ $student->id }}"
+                                                                value="Pilih Alasan Pemberhentian" />
                                                             <div class="flex items-center space-x-6 mt-2">
                                                                 <label class="inline-flex items-center cursor-pointer">
-                                                                    <input type="radio" name="reason" value="sakit" checked class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                                    <span class="ml-2 text-sm text-gray-700 font-medium">Sakit</span>
+                                                                    <input type="radio" name="reason" value="sakit"
+                                                                        checked
+                                                                        class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                                    <span
+                                                                        class="ml-2 text-sm text-gray-700 font-medium">Sakit</span>
                                                                 </label>
                                                                 <label class="inline-flex items-center cursor-pointer">
-                                                                    <input type="radio" name="reason" value="ijin" class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                                    <span class="ml-2 text-sm text-gray-700 font-medium">Ijin</span>
+                                                                    <input type="radio" name="reason" value="ijin"
+                                                                        class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                                    <span
+                                                                        class="ml-2 text-sm text-gray-700 font-medium">Ijin</span>
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -200,63 +234,85 @@
                                                             <x-secondary-button x-on:click="$dispatch('close')">
                                                                 Batal
                                                             </x-secondary-button>
-                                                            <x-primary-button class="bg-amber-500 hover:bg-amber-600 text-white">
+                                                            <x-primary-button
+                                                                class="bg-amber-500 hover:bg-amber-600 text-white">
                                                                 Bekukan Paket
                                                             </x-primary-button>
                                                         </div>
                                                     </form>
                                                 </x-modal>
-
                                             @elseif($student->status == 'suspended')
-                                                <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'resume-student-{{ $student->id }}')" 
+                                                <button type="button" x-data=""
+                                                    x-on:click="$dispatch('open-modal', 'resume-student-{{ $student->id }}')"
                                                     class="px-2.5 py-1.5 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap">
                                                     <i class="fa-solid fa-play mr-1"></i> Aktifkan
                                                 </button>
 
                                                 {{-- Modal Resume --}}
                                                 <x-modal name="resume-student-{{ $student->id }}" focusable>
-                                                    <form method="POST" action="{{ route('admin.students.resume', $student->id) }}" class="p-6 text-left">
+                                                    <form method="POST"
+                                                        action="{{ route('admin.students.resume', $student->id) }}"
+                                                        class="p-6 text-left">
                                                         @csrf
                                                         <h3 class="text-lg font-bold text-gray-800 mb-4">
                                                             <i class="fa-solid fa-play text-green-500 mr-2"></i>
                                                             Aktifkan Kembali Latihan: {{ $student->name }}
                                                         </h3>
-                                                        
+
                                                         <p class="text-sm text-gray-600 mb-4">
-                                                            Masa aktif paket latihan murid ini akan diperpanjang secara otomatis sesuai dengan lama waktu murid tersebut ijin/sakit.
+                                                            Masa aktif paket latihan murid ini akan diperpanjang secara
+                                                            otomatis sesuai dengan lama waktu murid tersebut ijin/sakit.
                                                         </p>
 
-                                                        <div class="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg text-xs mb-4">
+                                                        <div
+                                                            class="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg text-xs mb-4">
                                                             <i class="fa-solid fa-info-circle mr-1"></i>
                                                             <strong>Detail Pembekuan:</strong><br>
-                                                            - Mulai Dibekukan: {{ $student->suspended_at?->format('d M Y - H:i') }}<br>
-                                                            - Alasan: {{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }}<br>
-                                                            - Durasi Suspend: {{ round(now()->diffInDays($student->suspended_at)) }} Hari
+                                                            - Mulai Dibekukan:
+                                                            {{ $student->suspended_at?->format('d M Y - H:i') }}<br>
+                                                            - Alasan:
+                                                            {{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }}<br>
+                                                            - Durasi Suspend:
+                                                            {{ round(now()->diffInDays($student->suspended_at)) }} Hari
                                                         </div>
 
                                                         <div class="mt-4">
-                                                            <x-input-label for="coach_id_{{ $student->id }}" value="Pilih Coach / Pelatih Pendamping" />
-                                                            <select id="coach_id_{{ $student->id }}" name="coach_id" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" required>
-                                                                @foreach($coaches as $coach)
+                                                            <x-input-label for="coach_id_{{ $student->id }}"
+                                                                value="Pilih Coach / Pelatih Pendamping" />
+                                                            <select id="coach_id_{{ $student->id }}" name="coach_id"
+                                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                                                required>
+                                                                @foreach ($coaches as $coach)
                                                                     @php
-                                                                        $isCurrentCoach = $student->coach_id == $coach->id;
+                                                                        $isCurrentCoach =
+                                                                            $student->coach_id == $coach->id;
                                                                         $isFull = $coach->students_count >= 5;
                                                                     @endphp
-                                                                    <option value="{{ $coach->id }}" {{ $isCurrentCoach ? 'selected' : '' }} {{ $isFull && !$isCurrentCoach ? 'disabled' : '' }}>
-                                                                        {{ $coach->name }} ({{ $coach->students_count }}/5 Murid Aktif)
-                                                                        @if($isCurrentCoach) [Pelatih Asal] @endif
-                                                                        @if($isFull && !$isCurrentCoach) [PENUH] @endif
+                                                                    <option value="{{ $coach->id }}"
+                                                                        {{ $isCurrentCoach ? 'selected' : '' }}
+                                                                        {{ $isFull && !$isCurrentCoach ? 'disabled' : '' }}>
+                                                                        {{ $coach->name }}
+                                                                        ({{ $coach->students_count }}/5 Murid Aktif)
+                                                                        @if ($isCurrentCoach)
+                                                                            [Pelatih Asal]
+                                                                        @endif
+                                                                        @if ($isFull && !$isCurrentCoach)
+                                                                            [PENUH]
+                                                                        @endif
                                                                     </option>
                                                                 @endforeach
                                                             </select>
-                                                            <p class="text-xs text-gray-400 mt-1">Hanya pelatih yang memiliki slot kosong (&lt; 5 murid aktif) yang dapat ditugaskan.</p>
+                                                            <p class="text-xs text-gray-400 mt-1">Hanya pelatih yang
+                                                                memiliki slot kosong (&lt; 5 murid aktif) yang dapat
+                                                                ditugaskan.</p>
                                                         </div>
 
                                                         <div class="mt-6 flex justify-end space-x-3">
                                                             <x-secondary-button x-on:click="$dispatch('close')">
                                                                 Batal
                                                             </x-secondary-button>
-                                                            <x-primary-button class="bg-green-600 hover:bg-green-700 text-white">
+                                                            <x-primary-button
+                                                                class="bg-green-600 hover:bg-green-700 text-white">
                                                                 Aktifkan Latihan
                                                             </x-primary-button>
                                                         </div>

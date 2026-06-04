@@ -61,6 +61,12 @@ class AttendanceController extends Controller
                         // 2. Kurangi kuota murid jika masih ada
                         if ($student->quota_left > 0) {
                             $student->decrement('quota_left');
+
+                            // Jika kuota habis setelah dikurangi, otomatis nonaktifkan murid
+                            $student->refresh();
+                            if ($student->quota_left <= 0) {
+                                $student->update(['status' => 'inactive']);
+                            }
                         }
                     }
                 }

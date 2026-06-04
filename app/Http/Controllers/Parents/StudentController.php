@@ -66,4 +66,59 @@ class StudentController extends Controller
 
         return redirect()->route('parent.dashboard')->with('success', 'Pendaftaran anak berhasil disimpan! Silakan cek menu pembayaran.');
     }
+
+    /**
+     * Memproses pendaftaran ulang (perpanjangan paket) untuk anak.
+     */
+    public function renew(Request $request, Student $student)
+    {
+        // Pastikan student ini milik user yang sedang login
+        if ($student->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'birth_date' => 'required|date',
+            'gender' => 'required|in:L,P',
+            'location_id' => 'required|exists:locations,id',
+            'package_id' => 'required|exists:packages,id',
+            'receipt_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'receipt_image.required' => 'Bukti transfer wajib diunggah untuk pendaftaran ulang.',
+            'receipt_image.image' => 'Bukti transfer harus berupa gambar.',
+        ]);
+
+        $package = Package::findOrFail($request->package_id);
+
+        // Upload bukti transfer
+        $imageName = 'receipt_default.jpg';
+        if ($request->hasFile('receipt_image')) {
+            $file = $request->file('receipt_image');
+            $imageName = 'receipt_' . $student->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('receipts', $imageName, 'public');
+        }
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($student, $request, $package, $imageName) {
+            // 1. Update data murid dan ubah status ke pending
+            $student->update([
+                'birth_date' => $request->birth_date,
+                'gender' => $request->gender,
+                'location_id' => $request->location_id,
+                'package_id' => $request->package_id,
+                'status' => 'pending',
+            ]);
+
+            // 2. Simpan atau perbarui data ke tabel payments
+            \App\Models\Payment::updateOrCreate(
+                ['student_id' => $student->id],
+                [
+                    'amount'       => $package->price ?? 0,
+                    'receipt_path' => $imageName,
+                    'status'       => 'pending'
+                ]
+            );
+        });
+
+        return redirect()->route('parent.dashboard')->with('success', 'Pendaftaran ulang untuk ' . $student->name . ' berhasil diajukan! Menunggu verifikasi Admin.');
+    }
 }

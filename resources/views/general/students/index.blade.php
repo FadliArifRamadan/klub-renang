@@ -35,6 +35,7 @@
                     <table class="w-full text-sm text-left text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
                             <tr>
+                                <th class="px-6 py-3 text-center w-12">No</th>
                                 <th class="px-6 py-3">Nama Peserta</th>
                                 <th class="px-6 py-3">Gender</th>
                                 <th class="px-6 py-3">Paket Kursus</th>
@@ -48,6 +49,9 @@
                             @forelse($students as $student)
                                 <tr class="bg-white border-b hover:bg-gray-50">
                                     <td class="px-6 py-4 font-bold text-gray-900">
+                                        {{ $loop->iteration }}
+                                    </td>
+                                    <td class="px-6 py-4">
                                         {{ $student->name }}
                                         <div class="text-xs text-gray-400 font-normal">Lahir:
                                             {{ $student->birth_date?->format('d M Y') }}</div>
@@ -56,7 +60,8 @@
                                     <td class="px-6 py-4">
                                         <span
                                             class="font-medium text-gray-800">{{ $student->package->name ?? 'Tidak Ada Paket' }}</span>
-                                        <div class="text-xs text-gray-400">Total: {{ $student->package->sessions ?? 0 }} Sesi</div>
+                                        <div class="text-xs text-gray-400">Total: {{ $student->package->sessions ?? 0 }}
+                                            Sesi</div>
                                         @if ($student->package_expires_at)
                                             <div class="text-[10px] text-gray-500 mt-0.5 whitespace-nowrap">
                                                 <i class="fa-solid fa-calendar-day mr-0.5"></i>
@@ -80,25 +85,28 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         @php
-                                            $totalSesi    = $student->package->sessions ?? 0;
+                                            $totalSesi = $student->package->sessions ?? 0;
                                             $sesiTerpakai = max(0, $totalSesi - $student->quota_left);
-                                            $progressPct  = $totalSesi > 0 ? round(($sesiTerpakai / $totalSesi) * 100) : 0;
-                                            $barColor = match(true) {
+                                            $progressPct =
+                                                $totalSesi > 0 ? round(($sesiTerpakai / $totalSesi) * 100) : 0;
+                                            $barColor = match (true) {
                                                 $progressPct >= 80 => 'bg-red-500',
                                                 $progressPct >= 50 => 'bg-amber-400',
-                                                default            => 'bg-blue-500',
+                                                default => 'bg-blue-500',
                                             };
                                         @endphp
                                         <div class="flex items-center gap-2">
                                             <div class="flex-1 bg-gray-200 rounded-full h-2 min-w-[70px]">
-                                                <div class="{{ $barColor }} h-2 rounded-full transition-all duration-300" style="width: {{ $progressPct }}%"></div>
+                                                <div class="{{ $barColor }} h-2 rounded-full transition-all duration-300"
+                                                    style="width: {{ $progressPct }}%"></div>
                                             </div>
                                             <span class="text-xs font-semibold text-gray-700 whitespace-nowrap">
                                                 {{ $sesiTerpakai }}/{{ $totalSesi }}
                                             </span>
                                         </div>
                                         <div class="text-xs text-gray-400 mt-1">
-                                            Sisa: <span class="font-semibold text-blue-600">{{ $student->quota_left }} sesi</span>
+                                            Sisa: <span class="font-semibold text-blue-600">{{ $student->quota_left }}
+                                                sesi</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-center">
@@ -109,7 +117,8 @@
                                         @elseif($student->status === 'suspended')
                                             <span
                                                 class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-semibold">
-                                                <i class="fa-solid fa-circle-pause mr-1"></i>Dibekukan ({{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }})
+                                                <i class="fa-solid fa-circle-pause mr-1"></i>Dibekukan
+                                                ({{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }})
                                             </span>
                                         @elseif($student->status === 'inactive')
                                             <span
@@ -123,7 +132,8 @@
                                         @elseif($latestPayment && $latestPayment->status === 'rejected')
                                             <span
                                                 class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-semibold">Ditolak
-                                                (Konfirmasi Ulang)</span>
+                                                (Konfirmasi Ulang)
+                                            </span>
                                         @else
                                             <span
                                                 class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-semibold">Menunggu

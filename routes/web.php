@@ -112,7 +112,17 @@ Route::middleware('auth')->group(function () {
                 $q->oldest('date');
             }, 'location', 'coach', 'package'])->oldest('name')->get();
 
-            return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children'));
+            // Ambil anak yang sesinya baru saja habis (inactive & quota habis)
+            $expiredStudents = $user->children()
+                ->where('status', 'inactive')
+                ->where('quota_left', '<=', 0)
+                ->with('package')
+                ->get();
+
+            $packages = \App\Models\Package::oldest()->get();
+            $locations = \App\Models\Location::oldest()->get();
+
+            return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children', 'expiredStudents', 'packages', 'locations'));
         })->name('dashboard');
 
         // Rute untuk melihat daftar anak (RESTful URI)
@@ -121,6 +131,7 @@ Route::middleware('auth')->group(function () {
         // Rute untuk form pendaftaran anak (RESTful URI)
         Route::get('/students/create', [\App\Http\Controllers\Parents\StudentController::class, 'create'])->name('students.create');
         Route::post('/students', [\App\Http\Controllers\Parents\StudentController::class, 'store'])->name('students.store');
+        Route::post('/students/renew/{student}', [\App\Http\Controllers\Parents\StudentController::class, 'renew'])->name('students.renew');
 
         // Rute pembayaran parent (Nama Plural RESTful)
         Route::get('/payments', [\App\Http\Controllers\Parents\PaymentController::class, 'index'])->name('payments.index');
@@ -146,12 +157,23 @@ Route::middleware('auth')->group(function () {
                 }, 'location', 'coach', 'package'])
                 ->first();
 
-            return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent'));
+            // Ambil murid yang sesinya baru saja habis (inactive & quota habis)
+            $expiredStudents = \App\Models\Student::where('user_id', $user->id)
+                ->where('status', 'inactive')
+                ->where('quota_left', '<=', 0)
+                ->with('package')
+                ->get();
+
+            $packages = \App\Models\Package::oldest()->get();
+            $locations = \App\Models\Location::oldest()->get();
+
+            return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent', 'expiredStudents', 'packages', 'locations'));
         })->name('dashboard');
         Route::get('/students', [\App\Http\Controllers\General\StudentController::class, 'index'])->name('students.index');
         // Routes for General user to register a package (single registration)
         Route::get('/students/create', [\App\Http\Controllers\General\StudentController::class, 'create'])->name('students.create');
         Route::post('/students', [\App\Http\Controllers\General\StudentController::class, 'store'])->name('students.store');
+        Route::post('/students/renew/{student}', [\App\Http\Controllers\General\StudentController::class, 'renew'])->name('students.renew');
 
         // Rute pembayaran general (Nama Plural RESTful)
         Route::get('/payments', [\App\Http\Controllers\General\PaymentController::class, 'index'])->name('payments.index');

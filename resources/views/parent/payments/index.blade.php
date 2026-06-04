@@ -35,6 +35,11 @@
                             $latestPayment = $student->latestPayment;
                         @endphp
 
+                        {{-- Sembunyikan card jika murid sudah tidak aktif (sesi habis / hangus) --}}
+                        @if ($student->status === 'inactive')
+                            @continue
+                        @endif
+
                         <div class="border rounded-xl p-5 bg-gray-50 shadow-sm relative overflow-hidden">
                             <div class="absolute top-4 right-4">
                                 @if ($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved'))
