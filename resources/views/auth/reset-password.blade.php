@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Black Diamond - Reset Password">
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 

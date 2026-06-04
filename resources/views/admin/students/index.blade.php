@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout title="Admin - Kelola Murid">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Kelola Semua Data Murid') }}

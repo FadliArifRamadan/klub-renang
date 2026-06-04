@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest-layout title="Black Diamond - Register">
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
