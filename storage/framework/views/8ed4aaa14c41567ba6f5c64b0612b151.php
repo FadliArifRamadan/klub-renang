@@ -8,6 +8,7 @@
 
     <title><?php echo e($title ?? config('app.name', 'Black Diamond')); ?></title>
 
+    <link rel="icon" href="<?php echo e(asset('images/black_diamond.png')); ?>" type="image/png">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -34,21 +35,21 @@
             <?php endif; ?>
 
             <main class="p-6">
-    <!-- Flash Messages -->
-    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4">
-        <?php if(session('success')): ?>
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-2">
-                <?php echo e(session('success')); ?>
+                <!-- Flash Messages -->
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4">
+                    <?php if(session('success')): ?>
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-2">
+                            <?php echo e(session('success')); ?>
 
-            </div>
-        <?php endif; ?>
-        <?php if(session('error')): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-2">
-                <?php echo e(session('error')); ?>
+                        </div>
+                    <?php endif; ?>
+                    <?php if(session('error')): ?>
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-2">
+                            <?php echo e(session('error')); ?>
 
-            </div>
-        <?php endif; ?>
-    </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
                 <?php echo e($slot); ?>
 
             </main>

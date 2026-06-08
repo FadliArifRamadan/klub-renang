@@ -38,7 +38,7 @@
                             <thead
                                 class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200 text-center">
                                 <tr>
-                                    <th class="col" class="px-4 py-3 text-center w-12">No</th>
+                                    <th class="px-6 py-3 text-center w-12">No</th>
                                     <th class="px-6 py-3 text-left">Nama Anak</th>
                                     <th class="px-6 py-3">Gender</th>
                                     <th class="px-6 py-3">Paket Kursus</th>

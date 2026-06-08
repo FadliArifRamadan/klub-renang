@@ -1,11 +1,16 @@
 <!-- Background backdrop for mobile/tablet when sidebar is open -->
-<div x-show="sidebarOpen" class="fixed inset-0 z-30 bg-gray-650/50 lg:hidden" @click="sidebarOpen = false" x-transition:enter="transition-opacity ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="display: none;"></div>
+<div x-show="sidebarOpen" class="fixed inset-0 z-30 bg-gray-650/50 lg:hidden" @click="sidebarOpen = false"
+    x-transition:enter="transition-opacity ease-out duration-300" x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-in duration-200"
+    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="display: none;"></div>
 
 <!-- Sidebar container -->
-<div class="fixed inset-y-0 left-0 z-40 flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r transition-transform duration-300 ease-in-out transform lg:translate-x-0 lg:static lg:inset-auto" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+<div class="fixed inset-y-0 left-0 z-40 flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r transition-transform duration-300 ease-in-out transform lg:translate-x-0 lg:static lg:inset-auto"
+    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
     <div class="flex items-center justify-between px-2 mb-6">
-        <h2 class="text-3xl font-semibold text-blue-600">Klub Renang</h2>
-        <button @click="sidebarOpen = false" class="p-2 text-gray-500 rounded-md lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+        <img src="<?php echo e(asset('images/black_diamond_1.png')); ?>" alt="Black Diamond Logo">
+        <button @click="sidebarOpen = false"
+            class="p-2 text-gray-500 rounded-md lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
             <svg class="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>

@@ -3,13 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 
-Route::get('/', function () {
-    $packages = \App\Models\Package::oldest()->get();
-    $coaches = \App\Models\User::where('role', 'coach')->oldest()->get();
-    $locations = \App\Models\Location::oldest()->get();
+use App\Http\Controllers\CompanyProfileController;
 
-    return view('welcome', compact('packages', 'coaches', 'locations'));
-});
+Route::get('/', [CompanyProfileController::class, 'home'])->name('welcome');
+Route::get('/tentang-kami', [CompanyProfileController::class, 'about'])->name('about');
+Route::get('/program-paket', [CompanyProfileController::class, 'packages'])->name('packages');
+Route::get('/kolam-latihan', [CompanyProfileController::class, 'locations'])->name('locations');
+Route::get('/jadwal-latihan', [CompanyProfileController::class, 'schedule'])->name('schedule');
+Route::get('/kontak-kami', [CompanyProfileController::class, 'contact'])->name('contact');
 
 // Route khusus yang sudah LOGIN
 Route::middleware('auth')->group(function () {

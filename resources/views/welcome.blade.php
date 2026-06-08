@@ -7,6 +7,7 @@
     <title>Black Diamond Swimming Club - Company Profile</title>
 
     <!-- Fonts & Icons -->
+    <link rel="icon" href="{{ asset('images/black_diamond_1.png') }}" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
@@ -38,18 +39,8 @@
             <div class="flex items-center justify-between h-20">
                 <!-- Brand Logo -->
                 <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-                        <i class="fa-solid fa-water text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <span
-                            class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                            Black Diamond
-                        </span>
-                        <span class="block text-[10px] text-slate-400 font-bold uppercase tracking-widest">Swimming
-                            Club</span>
-                    </div>
+                    <img src="{{ asset('images/black_diamond_1.png') }}" alt="Black Diamond Logo"
+                        class="h-16 w-auto object-contain">
                 </div>
 
                 <!-- Desktop Navigation Menu -->
@@ -486,16 +477,9 @@
             <!-- Left Info Branding -->
             <div class="space-y-4 col-span-2">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                        <i class="fa-solid fa-water text-white text-lg"></i>
-                    </div>
                     <div>
-                        <span
-                            class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                            Black Diamond
-                        </span>
-                        <span class="block text-[10px] text-slate-500 font-bold uppercase tracking-widest">Swimming
-                            Club</span>
+                        <img src="{{ asset('images/black_diamond_1.png') }}" alt="Black Diamond Logo"
+                            class="w-auto h-16 object-contain">
                     </div>
                 </div>
                 <p class="text-sm text-slate-400 leading-relaxed max-w-sm">
