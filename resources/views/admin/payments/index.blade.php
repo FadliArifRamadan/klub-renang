@@ -113,17 +113,13 @@
                                                             @foreach ($coaches as $coach)
                                                                 <option value="{{ $coach->id }}"
                                                                     {{ old('coach_id', $payment->student->coach_id ?? '') == $coach->id ? 'selected' : '' }}>
-                                                                    {{ $coach->name }} — (Saat ini memegang:
-                                                                    {{ $coach->students_count }} / 5 Murid Aktif)
+                                                                    {{ $coach->name }} — (Saat ini memegang: {{ $coach->students_count }} / 15 Murid Latih)
                                                                 </option>
                                                             @endforeach
                                                         </select>
 
                                                         <p class="text-[11px] text-blue-600 mt-1.5 leading-tight">
-                                                            *Sistem menampilkan jumlah beban murid aktif dari
-                                                            masing-masing coach saat ini. Sesuai kesepakatan, batas
-                                                            maksimal per pelatih adalah 5 anak demi efektivitas
-                                                            latihan.
+                                                            *Sistem menampilkan jumlah beban murid aktif dari masing-masing coach saat ini. Sesuai kesepakatan, batas maksimal per pelatih adalah 15 anak demi efektivitas latihan.
                                                         </p>
                                                     </div>
 

@@ -41,7 +41,8 @@
                                     <th class="px-6 py-3 text-center w-12">No</th>
                                     <th class="px-6 py-3 text-left">Nama Anak</th>
                                     <th class="px-6 py-3">Gender</th>
-                                    <th class="px-6 py-3">Paket Kursus</th>
+                                    <th class="px-6 py-3 text-left">Kelas & Paket</th>
+                                    <th class="px-6 py-3 text-left">Jadwal Latihan</th>
                                     <th class="px-6 py-3">Coach / Pelatih</th>
                                     <th class="px-6 py-3 text-center">Progress Absensi</th>
                                     <th class="px-6 py-3 text-center">Batas Waktu</th>
@@ -69,11 +70,42 @@
 
                                         </td>
 
-                                        <td class="px-6 py-4 text-center">
-                                            <span
-                                                class="font-medium text-gray-800 block"><?php echo e($student->package->name ?? 'Belum Pilih Paket'); ?></span>
-                                            <span class="text-[11px] text-blue-600 font-bold">Rp
-                                                <?php echo e(number_format($student->package->price ?? 0, 0, ',', '.')); ?></span>
+                                        <td class="px-6 py-4 text-left">
+                                            <div class="font-semibold text-gray-950"><?php echo e($student->swimmingClass->name ?? 'Belum Pilih Kelas'); ?></div>
+                                            <div class="text-[11px] text-gray-500 font-medium"><?php echo e($student->swimmingClass->category->name ?? '-'); ?></div>
+                                            <div class="text-xs text-gray-600 mt-1">
+                                                Paket: <span class="font-medium text-gray-800"><?php echo e($student->package->name ?? '-'); ?></span>
+                                            </div>
+                                            <div class="text-[11px] text-blue-600 font-bold mt-0.5">
+                                                Harga: Rp 
+                                                <?php if($student->package): ?>
+                                                    <?php echo e(number_format($student->package->getPriceForLocation($student->location_id), 0, ',', '.')); ?>
+
+                                                <?php else: ?>
+                                                    0
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+
+                                        <td class="px-6 py-4 text-left">
+                                            <?php $__empty_2 = true; $__currentLoopData = $student->schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
+                                                <div class="mb-1.5 last:mb-0">
+                                                    <span class="inline-flex items-center text-xs font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
+                                                        <?php echo e($sched->day_name); ?> (<?php echo e(substr($sched->start_time, 0, 5)); ?>)
+                                                    </span>
+                                                    <div class="text-[10px] text-slate-500 font-medium ml-1 mt-0.5">
+                                                        <i class="fa-solid fa-map-pin mr-0.5 text-amber-500"></i> <?php echo e($sched->location->name); ?> 
+                                                        <span class="mx-1">•</span> 
+                                                        <?php if($sched->session_type == 'dryland'): ?>
+                                                            <span class="text-amber-600">Darat</span>
+                                                        <?php else: ?>
+                                                            <span class="text-blue-600">Renang</span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
+                                                <span class="text-xs text-gray-400 italic">Belum Pilih Jadwal</span>
+                                            <?php endif; ?>
                                         </td>
 
                                         <td class="px-6 py-4 text-center">
@@ -404,9 +436,8 @@
                                                                 required>
                                                                 <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                     <?php
-                                                                        $isCurrentCoach =
-                                                                            $student->coach_id == $coach->id;
-                                                                        $isFull = $coach->students_count >= 5;
+                                                                        $isCurrentCoach = $student->coach_id == $coach->id;
+                                                                        $isFull = $coach->students_count >= 15;
                                                                     ?>
                                                                     <option value="<?php echo e($coach->id); ?>"
                                                                         <?php echo e($isCurrentCoach ? 'selected' : ''); ?>
@@ -414,7 +445,7 @@
                                                                         <?php echo e($isFull && !$isCurrentCoach ? 'disabled' : ''); ?>>
                                                                         <?php echo e($coach->name); ?>
 
-                                                                        (<?php echo e($coach->students_count); ?>/5 Murid Aktif)
+                                                                        (<?php echo e($coach->students_count); ?>/15 Murid Aktif)
                                                                         <?php if($isCurrentCoach): ?>
                                                                             [Pelatih Asal]
                                                                         <?php endif; ?>
@@ -425,7 +456,7 @@
                                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                             </select>
                                                             <p class="text-xs text-gray-400 mt-1">Hanya pelatih yang
-                                                                memiliki slot kosong (&lt; 5 murid aktif) yang dapat
+                                                                memiliki slot kosong (&lt; 15 murid aktif) yang dapat
                                                                 ditugaskan.</p>
                                                         </div>
 

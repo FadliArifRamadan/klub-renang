@@ -31,176 +31,159 @@
                 berubah menyesuaikan kondisi kolam.</p>
         </div>
 
-        <!-- Schedule Cards - Desktop Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-            <!-- Senin & Kamis -->
-            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 flex items-center gap-3">
-                    <i class="fa-solid fa-calendar-day text-blue-200"></i>
-                    <h3 class="font-extrabold text-sm uppercase tracking-wider">Senin & Kamis</h3>
-                </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
-                                <i class="fa-solid fa-sun text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Pagi</p>
-                                <p class="text-xs text-slate-400">06:00 – 07:30 WIB</p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">Tersedia</span>
-                    </div>
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                                <i class="fa-solid fa-cloud-sun text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Siang</p>
-                                <p class="text-xs text-slate-400">10:00 – 11:30 WIB</p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">Tersedia</span>
-                    </div>
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                                <i class="fa-solid fa-moon text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Sore</p>
-                                <p class="text-xs text-slate-400">16:00 – 17:30 WIB</p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">Tersedia</span>
-                    </div>
+        <!-- Dynamic Schedules Area -->
+        <div x-data="{ activeTab: 'belajar' }">
+            <!-- Tabs Header -->
+            <div class="flex justify-center mb-16">
+                <div class="inline-flex p-1.5 bg-slate-200/60 backdrop-blur rounded-2xl border border-slate-200">
+                    <button @click="activeTab = 'belajar'"
+                        :class="activeTab === 'belajar' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 hover:text-blue-650'"
+                        class="px-6 py-2.5 rounded-xl text-sm font-extrabold transition-all duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-person-swimming"></i> Kelas Belajar Renang
+                    </button>
+                    <button @click="activeTab = 'prestasi'"
+                        :class="activeTab === 'prestasi' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 hover:text-blue-655'"
+                        class="px-6 py-2.5 rounded-xl text-sm font-extrabold transition-all duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy"></i> Kelas Renang Prestasi
+                    </button>
                 </div>
             </div>
 
-            <!-- Selasa & Jumat -->
-            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-6 py-4 flex items-center gap-3">
-                    <i class="fa-solid fa-calendar-day text-indigo-200"></i>
-                    <h3 class="font-extrabold text-sm uppercase tracking-wider">Selasa & Jumat</h3>
-                </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
-                                <i class="fa-solid fa-sun text-sm"></i>
+            <!-- Tab Belajar -->
+            <div x-show="activeTab === 'belajar'" x-transition class="space-y-12">
+                @php
+                    $belajarCat = $classCategories->firstWhere('slug', 'belajar');
+                    $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                @endphp
+                @if($belajarCat && $belajarCat->swimmingClasses->isNotEmpty())
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                        @foreach($belajarCat->swimmingClasses as $class)
+                            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden text-left flex flex-col justify-between hover:shadow-md transition-all">
+                                <div>
+                                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-5">
+                                        <h3 class="font-extrabold text-lg flex items-center justify-between">
+                                            <span>Kelas {{ $class->name }}</span>
+                                            <span class="text-xs bg-white/20 border border-white/30 text-white px-3 py-1 rounded-full font-semibold">
+                                                Usia {{ $class->age_min }}{{ $class->age_max ? '-' . $class->age_max : '+' }} thn
+                                            </span>
+                                        </h3>
+                                        <p class="text-xs text-blue-100 mt-1 font-semibold">{{ $class->description }}</p>
+                                    </div>
+                                    <div class="p-6 space-y-4">
+                                        @php
+                                            $sortedSchedules = $class->schedules->sortBy('day_of_week');
+                                        @endphp
+                                        @if($sortedSchedules->isNotEmpty())
+                                            @foreach($sortedSchedules as $sched)
+                                                <div class="flex items-center justify-between p-4 bg-slate-55/40 hover:bg-slate-50 rounded-2xl border border-slate-100 transition-colors">
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                                            <i class="fa-solid fa-clock"></i>
+                                                        </div>
+                                                        <div>
+                                                            <p class="text-sm font-bold text-slate-800">
+                                                                {{ $days[$sched->day_of_week] ?? 'Hari Lain' }}
+                                                            </p>
+                                                            <p class="text-xs text-slate-500 font-semibold">
+                                                                {{ substr($sched->start_time, 0, 5) }} – {{ substr($sched->end_time, 0, 5) }} WIB
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <span class="inline-block text-[10px] bg-cyan-50 border border-cyan-100 text-cyan-700 font-bold px-2 py-0.5 rounded-full mb-1">
+                                                            {{ $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang' }}
+                                                        </span>
+                                                        <p class="text-[10px] text-slate-450 font-bold flex items-center gap-1 justify-end">
+                                                            <i class="fa-solid fa-location-dot"></i> {{ $sched->location->name ?? 'Kolam Renang' }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="text-center py-6 text-slate-400">
+                                                <i class="fa-solid fa-calendar-xmark text-3xl mb-2 text-slate-300"></i>
+                                                <p class="text-xs font-semibold">Jadwal latihan belum diatur.</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Pagi</p>
-                                <p class="text-xs text-slate-400">06:00 – 07:30 WIB</p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">Tersedia</span>
+                        @endforeach
                     </div>
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                                <i class="fa-solid fa-cloud-sun text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Siang</p>
-                                <p class="text-xs text-slate-400">10:00 – 11:30 WIB</p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">Tersedia</span>
+                @else
+                    <div class="bg-white rounded-3xl p-16 text-center text-slate-400 border border-slate-200 shadow-sm mb-12">
+                        <i class="fa-solid fa-calendar text-5xl mb-4 text-slate-300"></i>
+                        <p class="font-bold text-slate-500 text-lg mb-2">Jadwal Belajar Renang Belum Tersedia</p>
                     </div>
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                                <i class="fa-solid fa-moon text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Sore</p>
-                                <p class="text-xs text-slate-400">16:00 – 17:30 WIB</p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">Tersedia</span>
-                    </div>
-                </div>
+                @endif
             </div>
 
-            <!-- Rabu & Sabtu -->
-            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-6 py-4 flex items-center gap-3">
-                    <i class="fa-solid fa-calendar-day text-emerald-200"></i>
-                    <h3 class="font-extrabold text-sm uppercase tracking-wider">Rabu & Sabtu</h3>
-                </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
-                                <i class="fa-solid fa-sun text-sm"></i>
+            <!-- Tab Prestasi -->
+            <div x-show="activeTab === 'prestasi'" x-transition class="space-y-12" style="display: none;">
+                @php
+                    $prestasiCat = $classCategories->firstWhere('slug', 'prestasi');
+                @endphp
+                @if($prestasiCat && $prestasiCat->swimmingClasses->isNotEmpty())
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                        @foreach($prestasiCat->swimmingClasses as $class)
+                            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden text-left flex flex-col justify-between hover:shadow-md transition-all">
+                                <div>
+                                    <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-6 py-5">
+                                        <h3 class="font-extrabold text-lg flex items-center justify-between">
+                                            <span>Kelas {{ $class->name }}</span>
+                                            <span class="text-xs bg-white/20 border border-white/30 text-white px-3 py-1 rounded-full font-semibold">
+                                                Usia {{ $class->age_min }}{{ $class->age_max ? '-' . $class->age_max : '+' }} thn
+                                            </span>
+                                        </h3>
+                                        <p class="text-xs text-indigo-100 mt-1 font-semibold">{{ $class->description }}</p>
+                                    </div>
+                                    <div class="p-6 space-y-4">
+                                        @php
+                                            $sortedSchedules = $class->schedules->sortBy('day_of_week');
+                                        @endphp
+                                        @if($sortedSchedules->isNotEmpty())
+                                            @foreach($sortedSchedules as $sched)
+                                                <div class="flex items-center justify-between p-4 bg-slate-55/40 hover:bg-slate-50 rounded-2xl border border-slate-100 transition-colors">
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-650 flex items-center justify-center font-bold text-sm">
+                                                            <i class="fa-solid fa-clock"></i>
+                                                        </div>
+                                                        <div>
+                                                            <p class="text-sm font-bold text-slate-800">
+                                                                {{ $days[$sched->day_of_week] ?? 'Hari Lain' }}
+                                                            </p>
+                                                            <p class="text-xs text-slate-500 font-semibold">
+                                                                {{ substr($sched->start_time, 0, 5) }} – {{ substr($sched->end_time, 0, 5) }} WIB
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <span class="inline-block text-[10px] {{ $sched->session_type === 'dryland' ? 'bg-orange-55 border border-orange-100 text-orange-700' : 'bg-cyan-55 border border-cyan-100 text-cyan-700' }} font-bold px-2 py-0.5 rounded-full mb-1">
+                                                            {{ $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang' }}
+                                                        </span>
+                                                        <p class="text-[10px] text-slate-450 font-bold flex items-center gap-1 justify-end">
+                                                            <i class="fa-solid fa-location-dot"></i> {{ $sched->location->name ?? 'Kolam Renang' }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="text-center py-6 text-slate-400">
+                                                <i class="fa-solid fa-calendar-xmark text-3xl mb-2 text-slate-300"></i>
+                                                <p class="text-xs font-semibold">Jadwal latihan belum diatur.</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Pagi</p>
-                                <p class="text-xs text-slate-400">06:00 – 08:00 WIB</p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">Tersedia</span>
+                        @endforeach
                     </div>
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                                <i class="fa-solid fa-moon text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Sore</p>
-                                <p class="text-xs text-slate-400">15:00 – 17:00 WIB</p>
-                            </div>
-                        </div>
-                        <span
-                            class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">Tersedia</span>
+                @else
+                    <div class="bg-white rounded-3xl p-16 text-center text-slate-400 border border-slate-200 shadow-sm mb-12">
+                        <i class="fa-solid fa-calendar text-5xl mb-4 text-slate-300"></i>
+                        <p class="font-bold text-slate-500 text-lg mb-2">Jadwal Prestasi Belum Tersedia</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Minggu -->
-            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-4 flex items-center gap-3">
-                    <i class="fa-solid fa-calendar-day text-amber-200"></i>
-                    <h3 class="font-extrabold text-sm uppercase tracking-wider">Minggu (Opsional)</h3>
-                </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
-                                <i class="fa-solid fa-sun text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Pagi</p>
-                                <p class="text-xs text-slate-400">07:00 – 09:00 WIB</p>
-                            </div>
-                        </div>
-                        <span class="text-xs bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full">Request</span>
-                    </div>
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                                <i class="fa-solid fa-moon text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-800">Sesi Sore</p>
-                                <p class="text-xs text-slate-400">15:00 – 17:00 WIB</p>
-                            </div>
-                        </div>
-                        <span class="text-xs bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full">Request</span>
-                    </div>
-                    <p class="text-xs text-slate-400 italic px-1">* Sesi Minggu tersedia berdasarkan permintaan dan
-                        konfirmasi dengan pelatih.</p>
-                </div>
+                @endif
             </div>
         </div>
 

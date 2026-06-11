@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Payment;
+use App\Notifications\PaymentApproved;
+use App\Notifications\PaymentRejected;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -49,12 +51,13 @@ class PaymentController extends Controller
             'coach_id' => 'required|exists:users,id'
         ]);
 
-        // Batasan Maksimal Murid Per Coach (Maksimal 5 murid per Coach)
-        $max_students = 5;
-
-        // Hitung jumlah murid aktif Coach yang dipilih saat ini
+        // Cek kuota maksimal pelatih (maksimal 15 murid aktif secara keseluruhan)
+        $max_students = 15;
         $chosen_coach = User::findOrFail($request->coach_id);
-        $active_students_count = Student::where('coach_id', $request->coach_id)->where('status', 'active')->count();
+
+        $active_students_count = Student::where('coach_id', $request->coach_id)
+            ->where('status', 'active')
+            ->count();
 
         if ($active_students_count >= $max_students) {
             return redirect()->back()->with('error', "Gagal memverifikasi! Coach {$chosen_coach->name} sudah mencapai batas maksimal {$max_students} murid aktif.");
@@ -72,6 +75,7 @@ class PaymentController extends Controller
                 'coach_id' => $request->coach_id,
                 'status'   => 'active',
                 'quota_left' => $package ? $package->sessions : 0,
+                'registration_fee_paid' => true, // Pembayaran awal disetujui berarti biaya registrasi lunas
                 'package_activated_at' => $packageActivatedAt,
                 'package_expires_at' => $packageExpiresAt,
                 'suspended_at' => null,
@@ -84,6 +88,14 @@ class PaymentController extends Controller
                 $payment->update(['status' => 'approved']);
             }
         });
+
+        $chosen_coach = User::find($request->coach_id);
+
+        // Kirim notifikasi ke pemilik akun (General atau Parent)
+        $owner = User::find($student->user_id);
+        if ($owner) {
+            $owner->notify(new PaymentApproved($student->name, $chosen_coach->name ?? 'Admin'));
+        }
 
         return redirect()->back()->with('success', "Pembayaran untuk {$student->name} berhasil diverifikasi dan Coach telah ditetapkan ke {$chosen_coach->name}.");
     }
@@ -105,6 +117,15 @@ class PaymentController extends Controller
                 $payment->student->update(['status' => 'pending']);
             }
         });
+
+        // Kirim notifikasi ke pemilik akun (General atau Parent)
+        $payment->load('student');
+        if ($payment->student) {
+            $owner = User::find($payment->student->user_id);
+            if ($owner) {
+                $owner->notify(new PaymentRejected($payment->student->name));
+            }
+        }
 
         return redirect()->back()->with('error', 'Pembayaran telah ditolak. Status ajuan kembali ditangguhkan.');
     }

@@ -33,6 +33,11 @@
                         @php
                             // Ambil data payment terakhir dari relasi eager loaded
                             $latestPayment = $student->latestPayment;
+                            // Hitung total tagihan menggunakan helper model
+                            $totalBilling = $student->calculateTotalBillingAmount();
+                            $packagePrice = $student->package ? $student->package->getPriceForLocation($student->location_id) : 0;
+                            $showRegFee = !$student->registration_fee_paid;
+                            $categorySlug = $student->swimmingClass->category->slug ?? 'belajar';
                         @endphp
 
                         {{-- Sembunyikan card jika murid sudah tidak aktif (sesi habis / hangus) --}}
@@ -62,8 +67,17 @@
                             </div>
 
                             <h4 class="text-xl font-bold text-gray-800 mb-1">{{ $student->name }}</h4>
-                            <p class="text-sm text-gray-500 mb-4">Paket Kursus: <span
+                            <p class="text-sm text-gray-500 mb-1">
+                                Kelas: <span class="font-semibold text-gray-700">{{ $student->swimmingClass->name ?? '-' }}</span>
+                                <span class="text-xs px-1.5 py-0.5 rounded-full font-bold {{ $categorySlug === 'prestasi' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700' }}">
+                                    {{ $categorySlug === 'prestasi' ? 'Prestasi' : 'Belajar' }}
+                                </span>
+                            </p>
+                            <p class="text-sm text-gray-500 mb-1">Paket: <span
                                     class="font-semibold text-gray-700">{{ $student->package->name ?? 'Belum Pilih Paket' }}</span>
+                            </p>
+                            <p class="text-sm text-gray-500 mb-4">Lokasi: <span
+                                    class="font-semibold text-gray-700">{{ $student->location->name ?? '-' }}</span>
                             </p>
 
                             @if ($latestPayment && $latestPayment->status == 'rejected')
@@ -74,73 +88,95 @@
                                 </div>
                             @endif
 
-                            <div class="border-t pt-3 mt-3 flex justify-between items-center">
-                                <div>
-                                    <span class="text-xs text-gray-400 block">Total Tagihan</span>
-                                    <span class="text-lg font-extrabold text-blue-600">Rp
-                                        {{ number_format($student->package->price ?? 0, 0, ',', '.') }}</span>
+                            <div class="border-t pt-3 mt-3">
+                                {{-- Rincian tagihan --}}
+                                <div class="space-y-1 text-xs text-gray-500 mb-3">
+                                    <div class="flex justify-between">
+                                        <span>Biaya Paket</span>
+                                        <span class="font-semibold text-gray-700">Rp {{ number_format($packagePrice, 0, ',', '.') }}</span>
+                                    </div>
+                                    @if ($showRegFee)
+                                    <div class="flex justify-between">
+                                        <span>Biaya Pendaftaran (sekali)</span>
+                                        <span class="font-semibold text-gray-700">Rp 30.000</span>
+                                    </div>
+                                    @endif
                                 </div>
 
-                                @if ($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved'))
-                                    <span class="text-green-600 font-bold text-sm"><i
-                                            class="fa-solid fa-circle-check mr-1"></i> Selesai / Aktif</span>
-                                @elseif($latestPayment && $latestPayment->status == 'pending')
-                                    <button disabled
-                                        class="px-4 py-2 bg-gray-300 text-gray-500 text-xs font-bold uppercase rounded-lg cursor-not-allowed">
-                                        Menunggu Admin
-                                    </button>
-                                @else
-                                    <button type="button" x-data=""
-                                        x-on:click="$dispatch('open-modal', 'upload-receipt-{{ $student->id }}')"
-                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase rounded-lg shadow transition flex items-center">
-                                        <i class="fa-solid fa-upload mr-1.5"></i> Konfirmasi Bayar
-                                    </button>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-xs text-gray-400 block">Total Tagihan</span>
+                                        <span class="text-lg font-extrabold text-blue-600">Rp
+                                            {{ number_format($totalBilling, 0, ',', '.') }}</span>
+                                    </div>
 
-                                    <x-modal name="upload-receipt-{{ $student->id }}" focusable>
-                                        <form method="POST"
-                                            action="{{ route('parent.payments.checkout', $student->id) }}"
-                                            enctype="multipart/form-data" class="p-6 text-left">
-                                            @csrf
+                                    @if ($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved'))
+                                        <span class="text-green-600 font-bold text-sm"><i
+                                                class="fa-solid fa-circle-check mr-1"></i> Selesai / Aktif</span>
+                                    @elseif($latestPayment && $latestPayment->status == 'pending')
+                                        <button disabled
+                                            class="px-4 py-2 bg-gray-300 text-gray-500 text-xs font-bold uppercase rounded-lg cursor-not-allowed">
+                                            Menunggu Admin
+                                        </button>
+                                    @else
+                                        <button type="button" x-data=""
+                                            x-on:click="$dispatch('open-modal', 'upload-receipt-{{ $student->id }}')"
+                                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase rounded-lg shadow transition flex items-center">
+                                            <i class="fa-solid fa-upload mr-1.5"></i> Konfirmasi Bayar
+                                        </button>
 
-                                            <div class="flex items-center justify-start space-x-3 text-blue-600 mb-4">
-                                                <i class="fa-solid fa-file-invoice-dollar text-2xl"></i>
-                                                <h2 class="text-lg font-medium text-gray-900">
-                                                    Unggah Bukti Transfer
-                                                </h2>
-                                            </div>
+                                        <x-modal name="upload-receipt-{{ $student->id }}" focusable>
+                                            <form method="POST"
+                                                action="{{ route('parent.payments.checkout', $student->id) }}"
+                                                enctype="multipart/form-data" class="p-6 text-left">
+                                                @csrf
 
-                                            <div
-                                                class="bg-gray-50 border border-gray-200 p-3 rounded-lg mb-4 text-xs text-gray-600">
-                                                <p class="mb-1">Silakan transfer sesuai nominal ke rekening berikut:
-                                                </p>
-                                                <p class="font-bold text-gray-800">Bank BCA: 123-4567-890 (a.n. Klub
-                                                    Renang)</p>
-                                                <p class="mt-2">Nominal Tagihan: <span
-                                                        class="font-bold text-blue-600 text-sm">Rp
-                                                        {{ number_format($student->package->price ?? 0, 0, ',', '.') }}</span>
-                                                </p>
-                                            </div>
+                                                <div class="flex items-center justify-start space-x-3 text-blue-600 mb-4">
+                                                    <i class="fa-solid fa-file-invoice-dollar text-2xl"></i>
+                                                    <h2 class="text-lg font-medium text-gray-900">
+                                                        Unggah Bukti Transfer
+                                                    </h2>
+                                                </div>
 
-                                            <div class="mb-4">
-                                                <label class="block text-sm font-medium text-gray-700 mb-2">Pilih
-                                                    Screenshot Bukti Transfer (Format: JPG/PNG):</label>
-                                                <input type="file" name="receipt_image" accept="image/*" required
-                                                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 rounded-md p-1 focus:outline-none focus:border-blue-500">
-                                            </div>
+                                                <div
+                                                    class="bg-gray-50 border border-gray-200 p-3 rounded-lg mb-4 text-xs text-gray-600">
+                                                    <p class="mb-1">Silakan transfer sesuai nominal ke rekening berikut:
+                                                    </p>
+                                                    <p class="font-bold text-gray-800">Bank BCA: 123-4567-890 (a.n. Klub
+                                                        Renang)</p>
+                                                    <div class="mt-2 space-y-0.5">
+                                                        <p>Biaya Paket: <span class="font-bold text-gray-800">Rp {{ number_format($packagePrice, 0, ',', '.') }}</span></p>
+                                                        @if ($showRegFee)
+                                                        <p>Biaya Pendaftaran: <span class="font-bold text-gray-800">Rp 30.000</span></p>
+                                                        @endif
+                                                        <p class="mt-1 pt-1 border-t">Total Bayar: <span
+                                                                class="font-bold text-blue-600 text-sm">Rp
+                                                                {{ number_format($totalBilling, 0, ',', '.') }}</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
 
-                                            <div class="mt-6 flex justify-end space-x-3">
-                                                <x-secondary-button x-on:click="$dispatch('close')">
-                                                    Batal
-                                                </x-secondary-button>
+                                                <div class="mb-4">
+                                                    <label class="block text-sm font-medium text-gray-700 mb-2">Pilih
+                                                        Screenshot Bukti Transfer (Format: JPG/PNG):</label>
+                                                    <input type="file" name="receipt_image" accept="image/*" required
+                                                        class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 rounded-md p-1 focus:outline-none focus:border-blue-500">
+                                                </div>
 
-                                                <button type="submit"
-                                                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition ease-in-out duration-150">
-                                                    Kirim Bukti Transfer
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </x-modal>
-                                @endif
+                                                <div class="mt-6 flex justify-end space-x-3">
+                                                    <x-secondary-button x-on:click="$dispatch('close')">
+                                                        Batal
+                                                    </x-secondary-button>
+
+                                                    <button type="submit"
+                                                        class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition ease-in-out duration-150">
+                                                        Kirim Bukti Transfer
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </x-modal>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @empty

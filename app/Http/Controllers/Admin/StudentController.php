@@ -17,8 +17,8 @@ class StudentController extends Controller
         // Jalankan pengecekan paket kedaluwarsa secara otomatis
         Student::checkAndExpirePackages();
 
-        // Ambil semua data murid beserta data coach (pelatih) dan paket kursusnya
-        $students = Student::with(['coach', 'package', 'latestPayment'])->oldest()->paginate(5);
+        // Ambil semua data murid beserta data coach (pelatih), paket, kelas, dan jadwalnya
+        $students = Student::with(['coach', 'package', 'swimmingClass.category', 'latestPayment', 'schedules.location'])->oldest()->paginate(10);
 
         // Ambil semua data Coach untuk modal alokasi pelatih
         $coaches = User::where('role', 'coach')
@@ -60,11 +60,10 @@ class StudentController extends Controller
             'coach_id.exists' => 'Pelatih yang dipilih tidak valid.'
         ]);
 
-        // Cek kuota maksimal pelatih (maksimal 5 murid aktif)
-        $max_students = 5;
+        // Cek kuota maksimal pelatih (maksimal 15 murid aktif secara keseluruhan)
+        $max_students = 15;
         $coach = User::findOrFail($request->coach_id);
-        
-        // Murid yang sedang bersangkutan tidak masuk hitungan murid aktif jika statusnya saat ini 'suspended'
+
         $active_students_count = Student::where('coach_id', $request->coach_id)
             ->where('status', 'active')
             ->count();
@@ -75,6 +74,7 @@ class StudentController extends Controller
 
         $student->resume($request->coach_id);
 
-        return redirect()->back()->with('success', "Paket latihan {$student->name} berhasil diaktifkan kembali dan Coach ditugaskan ke {$coach->name}.");
+        $coachName = User::find($request->coach_id)->name;
+        return redirect()->back()->with('success', "Paket latihan {$student->name} berhasil diaktifkan kembali dan Coach ditugaskan ke {$coachName}.");
     }
 }

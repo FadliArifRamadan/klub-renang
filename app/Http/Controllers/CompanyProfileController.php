@@ -38,8 +38,9 @@ class CompanyProfileController extends Controller
      */
     public function packages()
     {
-        $packages = Package::oldest()->get();
-        return view('company-profile.packages', compact('packages'));
+        $classCategories = \App\Models\ClassCategory::with(['swimmingClasses.packages.locationPrices.location'])
+            ->get();
+        return view('company-profile.packages', compact('classCategories'));
     }
 
     /**
@@ -57,7 +58,8 @@ class CompanyProfileController extends Controller
     public function schedule()
     {
         $locations = Location::oldest()->get();
-        return view('company-profile.schedule', compact('locations'));
+        $classCategories = \App\Models\ClassCategory::with(['swimmingClasses.schedules.location'])->get();
+        return view('company-profile.schedule', compact('locations', 'classCategories'));
     }
 
     /**

@@ -12,6 +12,20 @@ use Illuminate\Support\Facades\DB;
 class AttendanceController extends Controller
 {
     /**
+     * Tampilkan riwayat absensi murid
+     */
+    public function index()
+    {
+        $attendances = Attendance::where('coach_id', Auth::id())
+            ->with(['student', 'location'])
+            ->orderByDesc('date')
+            ->orderByDesc('created_at')
+            ->paginate(15);
+
+        return view('coach.attendances.index', compact('attendances'));
+    }
+
+    /**
      * Tampilkan form input absensi
      */
     public function create()
@@ -33,11 +47,13 @@ class AttendanceController extends Controller
     {
         $request->validate([
             'date' => 'required|date|before_or_equal:today',
+            'session_type' => 'required|in:swim,dryland',
             'student_ids' => 'required|array|min:1',
             'student_ids.*' => 'exists:students,id',
         ], [
             'date.required' => 'Tanggal latihan wajib diisi.',
             'date.before_or_equal' => 'Tanggal latihan tidak boleh melebihi hari ini.',
+            'session_type.required' => 'Jenis sesi latihan wajib dipilih.',
             'student_ids.required' => 'Silakan pilih minimal satu murid untuk absen.',
         ]);
 
@@ -55,6 +71,7 @@ class AttendanceController extends Controller
                             'student_id' => $student->id,
                             'coach_id' => $coachId,
                             'location_id' => $student->location_id,
+                            'session_type' => $request->session_type,
                             'date' => $request->date,
                         ]);
 

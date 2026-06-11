@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['user_id', 'name', 'birth_date', 'gender', 'package_id', 'location_id', 'coach_id', 'quota_left', 'status', 'package_activated_at', 'package_expires_at', 'suspended_at', 'suspension_reason'])]
+#[Fillable(['user_id', 'name', 'birth_date', 'gender', 'package_id', 'swimming_class_id', 'location_id', 'secondary_location_id', 'coach_id', 'quota_left', 'registration_fee_paid', 'status', 'package_activated_at', 'package_expires_at', 'suspended_at', 'suspension_reason'])]
 class Student extends Model
 {
     protected function casts(): array
@@ -25,6 +26,12 @@ class Student extends Model
         return $this->belongsTo(Package::class, 'package_id');
     }
 
+    // Relasi ke SwimmingClass (Satu murid mengikuti satu kelas renang)
+    public function swimmingClass(): BelongsTo
+    {
+        return $this->belongsTo(SwimmingClass::class, 'swimming_class_id');
+    }
+
     // Relasi ke tabel Users/Coach (Satu murid dibimbing satu Coach)
     public function coach(): BelongsTo
     {
@@ -35,6 +42,19 @@ class Student extends Model
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'location_id');
+    }
+
+    // Relasi ke tabel Locations untuk lokasi kedua (jika ada)
+    public function secondaryLocation(): BelongsTo
+    {
+        return $this->belongsTo(Location::class, 'secondary_location_id');
+    }
+
+    // Relasi ke tabel Schedules (Jadwal murid)
+    public function schedules(): BelongsToMany
+    {
+        return $this->belongsToMany(Schedule::class, 'student_schedules', 'student_id', 'schedule_id')
+                    ->withTimestamps();
     }
 
     // Relasi ke tabel Payments (Satu murid bisa memiliki beberapa pembayaran histori)
@@ -120,5 +140,23 @@ class Student extends Model
             'suspension_reason' => null,
             'package_expires_at' => $expiresAt,
         ]);
+    }
+
+    /**
+     * Menghitung total tagihan untuk pendaftaran/perpanjangan murid saat ini,
+     * termasuk harga paket (dinamis berdasarkan lokasi jika tipe belajar)
+     * dan biaya pendaftaran Rp 30.000 jika belum pernah dibayarkan seumur hidup.
+     */
+    public function calculateTotalBillingAmount(): int
+    {
+        $package = $this->package;
+        $amount = 0;
+        if ($package) {
+            $amount = $package->getPriceForLocation($this->location_id);
+        }
+        if (!$this->registration_fee_paid) {
+            $amount += 30000;
+        }
+        return $amount;
     }
 }

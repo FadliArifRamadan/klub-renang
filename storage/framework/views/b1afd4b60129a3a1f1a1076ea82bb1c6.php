@@ -77,10 +77,16 @@
                                             <form method="POST" action="<?php echo e(route('general.students.renew', $expStudent->id)); ?>" enctype="multipart/form-data" class="p-6 text-left"
                                                 x-data="{ 
                                                     packageId: '<?php echo e($expStudent->package_id); ?>',
+                                                    locationId: '<?php echo e($expStudent->location_id); ?>',
                                                     packages: <?php echo e($packages->toJson()); ?>,
                                                     getPrice() {
                                                         const pkg = this.packages.find(p => p.id == this.packageId);
-                                                        return pkg ? pkg.price : 0;
+                                                        if (!pkg) return 0;
+                                                        if (pkg.is_location_based && pkg.location_prices) {
+                                                            const lp = pkg.location_prices.find(l => l.location_id == this.locationId);
+                                                            return lp ? lp.price : 0;
+                                                        }
+                                                        return pkg.price ?? 0;
                                                     },
                                                     formatPrice(price) {
                                                         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(price);
@@ -88,11 +94,21 @@
                                                 }">
                                                 <?php echo csrf_field(); ?>
 
+                                                
+                                                <input type="hidden" name="swimming_class_id" value="<?php echo e($expStudent->swimming_class_id); ?>">
+
                                                 <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                                                     <i class="fa-solid fa-rotate-right text-amber-500"></i>
                                                     Daftar Ulang Paket Latihan - <?php echo e($expStudent->name); ?>
 
                                                 </h3>
+
+                                                <?php if($expStudent->swimmingClass): ?>
+                                                    <div class="mb-4 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 text-xs text-blue-700 flex items-center gap-2">
+                                                        <i class="fa-solid fa-layer-group"></i>
+                                                        <span>Kelas: <strong><?php echo e($expStudent->swimmingClass->name); ?></strong></span>
+                                                    </div>
+                                                <?php endif; ?>
 
                                                 <!-- Tanggal Lahir -->
                                                 <div class="mb-4">
@@ -189,7 +205,7 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                                                    <select id="location-<?php echo e($expStudent->id); ?>" name="location_id" required
+                                                    <select id="location-<?php echo e($expStudent->id); ?>" name="location_id" x-model="locationId" required
                                                         class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                                                         <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $loc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <option value="<?php echo e($loc->id); ?>" <?php echo e($expStudent->location_id == $loc->id ? 'selected' : ''); ?>>
@@ -226,7 +242,7 @@
                                                         class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                                                         <?php $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pkg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <option value="<?php echo e($pkg->id); ?>">
-                                                                <?php echo e($pkg->name); ?> (<?php echo e($pkg->sessions); ?> Sesi - Rp <?php echo e(number_format($pkg->price, 0, ',', '.')); ?>)
+                                                                <?php echo e($pkg->name); ?> (<?php echo e($pkg->sessions); ?> Sesi)
                                                             </option>
                                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </select>
@@ -417,53 +433,152 @@
                             Hubungi Coach pendamping
                             <span
                                 class="font-semibold text-gray-600">(<?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?>)</span>
-                            untuk menginput data perkembangan fisik pertama Anda.
+                            untuk menginput data perkembangan pertama Anda.
                         </p>
                     </div>
                 <?php else: ?>
                     
-                    <div class="flex flex-col">
-                        
-                        <div class="relative w-full h-[360px] mb-6">
-                            <canvas id="progressChart"></canvas>
-                        </div>
+                    <?php
+                        $latestReport = $myStudent->progressReports->last();
+                        $isFreetext = $myStudent->progressReports->first()?->report_type === 'freetext';
+                    ?>
 
+                    <?php if($isFreetext): ?>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
-                            <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
-                                <h4
-                                    class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
-                                </h4>
-                                <?php $latestReport = $myStudent->progressReports->last(); ?>
-                                <p class="text-sm text-gray-600 italic">
-                                    "<?php echo e($latestReport->notes ?? 'Tidak ada catatan pada evaluasi terakhir.'); ?>"
-                                </p>
-                                <div class="text-[10px] text-gray-400 mt-2 font-semibold">
-                                    Diinput pada: <?php echo e($latestReport->date->translatedFormat('d F Y')); ?>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full border border-green-200">Kelas Belajar Renang</span>
+                                <span class="text-xs text-gray-500">Catatan perkembangan dari pelatih</span>
+                            </div>
+                            <div class="overflow-y-auto max-h-[340px] space-y-2 pr-1">
+                                <?php $__currentLoopData = $myStudent->progressReports->sortByDesc('date'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $report): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="bg-white border border-gray-100 rounded-xl p-3 shadow-sm">
+                                        <div class="flex items-start gap-2">
+                                            <div class="p-1.5 bg-green-50 text-green-600 rounded-lg shrink-0 mt-0.5">
+                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="text-[10px] text-gray-400 font-semibold mb-0.5"><?php echo e($report->date->translatedFormat('d F Y')); ?></div>
+                                                <p class="text-sm text-gray-700 leading-relaxed"><?php echo e($report->notes ?? 'Tidak ada catatan.'); ?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
+                                <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+                                    <h4 class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
+                                    </h4>
+                                    <p class="text-sm text-gray-600 italic">"<?php echo e($latestReport->notes ?? 'Tidak ada catatan.'); ?>"</p>
+                                    <div class="text-[10px] text-gray-400 mt-2 font-semibold">Diinput pada: <?php echo e($latestReport->date->translatedFormat('d F Y')); ?></div>
+                                </div>
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
+                                    </h4>
+                                    <div class="space-y-1.5 text-xs text-gray-600">
+                                        <div>Kelas: <span class="font-bold text-gray-800"><?php echo e($myStudent->swimmingClass->name ?? 'Belum Ditentukan'); ?> <?php echo e(isset($myStudent->swimmingClass->category) ? '(' . $myStudent->swimmingClass->category->name . ')' : ''); ?></span></div>
+                                        <div>Pelatih: <span class="font-bold text-gray-800"><?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?></span></div>
+                                        <div>Lokasi: <span class="font-bold text-gray-800"><?php echo e($myStudent->location->name ?? 'Belum Dipilih'); ?><?php if($myStudent->secondaryLocation): ?> & <?php echo e($myStudent->secondaryLocation->name); ?><?php endif; ?></span></div>
+                                        <div>Sisa Kuota: <span class="font-bold text-blue-600"><?php echo e($myStudent->quota_left); ?> sesi</span></div>
+                                        <?php if($myStudent->schedules && $myStudent->schedules->isNotEmpty()): ?>
+                                            <div class="pt-1.5 mt-1.5 border-t border-gray-200">
+                                                <span class="font-bold text-gray-500 block mb-1">Jadwal Aktif:</span>
+                                                <div class="space-y-1">
+                                                    <?php $__currentLoopData = $myStudent->schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php
+                                                            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                                                            $dayName = $days[$sched->day_of_week] ?? 'Hari Tidak Valid';
+                                                            $timeRange = substr($sched->start_time, 0, 5) . ' - ' . substr($sched->end_time, 0, 5);
+                                                            $type = $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                                                        ?>
+                                                        <div class="bg-white border border-gray-100 rounded p-1.5 text-[11px] font-semibold text-gray-700 shadow-sm flex flex-col gap-0.5">
+                                                            <div class="flex justify-between items-center">
+                                                                <span class="text-blue-700 font-bold"><?php echo e($dayName); ?>, <?php echo e($timeRange); ?></span>
+                                                                <span class="px-1 py-0.2 text-[9px] bg-blue-50 text-blue-600 rounded"><?php echo e($type); ?></span>
+                                                            </div>
+                                                            <div class="text-[10px] text-gray-500 flex items-center gap-1">
+                                                                <i class="fa-solid fa-location-dot"></i> <?php echo e($sched->location->name ?? 'Lokasi tidak diketahui'); ?>
 
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    <?php else: ?>
+                        
+                        <div class="flex flex-col">
+                            
+                            <div class="relative w-full h-[360px] mb-6">
+                                <canvas id="progressChart"></canvas>
+                            </div>
 
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
-                                <h4
-                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
-                                </h4>
-                                <div class="space-y-1.5 text-xs text-gray-600">
-                                    <div>Pelatih: <span
-                                            class="font-bold text-gray-800"><?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?></span>
-                                    </div>
-                                    <div>Lokasi: <span
-                                            class="font-bold text-gray-800"><?php echo e($myStudent->location->name ?? 'Belum Dipilih'); ?></span>
-                                    </div>
-                                    <div>Sisa Kuota: <span class="font-bold text-blue-600"><?php echo e($myStudent->quota_left); ?>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
+                                <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+                                    <h4
+                                        class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
+                                    </h4>
+                                    <p class="text-sm text-gray-600 italic">
+                                        "<?php echo e($latestReport->notes ?? 'Tidak ada catatan pada evaluasi terakhir.'); ?>"
+                                    </p>
+                                    <div class="text-[10px] text-gray-400 mt-2 font-semibold">
+                                        Diinput pada: <?php echo e($latestReport->date->translatedFormat('d F Y')); ?>
 
-                                            sesi</span></div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
+                                    <h4
+                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
+                                    </h4>
+                                    <div class="space-y-1.5 text-xs text-gray-600">
+                                        <div>Kelas: <span class="font-bold text-gray-800"><?php echo e($myStudent->swimmingClass->name ?? 'Belum Ditentukan'); ?> <?php echo e(isset($myStudent->swimmingClass->category) ? '(' . $myStudent->swimmingClass->category->name . ')' : ''); ?></span></div>
+                                        <div>Pelatih: <span class="font-bold text-gray-800"><?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?></span></div>
+                                        <div>Lokasi: <span class="font-bold text-gray-800">
+                                            <?php echo e($myStudent->location->name ?? 'Belum Dipilih'); ?>
+
+                                            <?php if($myStudent->secondaryLocation): ?> & <?php echo e($myStudent->secondaryLocation->name); ?><?php endif; ?>
+                                        </span></div>
+                                        <div>Sisa Kuota: <span class="font-bold text-blue-600"><?php echo e($myStudent->quota_left); ?> sesi</span></div>
+                                        <?php if($myStudent->schedules && $myStudent->schedules->isNotEmpty()): ?>
+                                            <div class="pt-1.5 mt-1.5 border-t border-gray-200">
+                                                <span class="font-bold text-gray-500 block mb-1">Jadwal Aktif:</span>
+                                                <div class="space-y-1">
+                                                    <?php $__currentLoopData = $myStudent->schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php
+                                                            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                                                            $dayName = $days[$sched->day_of_week] ?? 'Hari Tidak Valid';
+                                                            $timeRange = substr($sched->start_time, 0, 5) . ' - ' . substr($sched->end_time, 0, 5);
+                                                            $type = $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                                                        ?>
+                                                        <div class="bg-white border border-gray-100 rounded p-1.5 text-[11px] font-semibold text-gray-700 shadow-sm flex flex-col gap-0.5">
+                                                            <div class="flex justify-between items-center">
+                                                                <span class="text-blue-700 font-bold"><?php echo e($dayName); ?>, <?php echo e($timeRange); ?></span>
+                                                                <span class="px-1 py-0.2 text-[9px] bg-blue-50 text-blue-600 rounded"><?php echo e($type); ?></span>
+                                                            </div>
+                                                            <div class="text-[10px] text-gray-500 flex items-center gap-1">
+                                                                <i class="fa-solid fa-location-dot"></i> <?php echo e($sched->location->name ?? 'Lokasi tidak diketahui'); ?>
+
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
 
@@ -473,7 +588,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <?php if($myStudent && $myStudent->progressReports->isNotEmpty()): ?>
+    <?php if($myStudent && $myStudent->progressReports->isNotEmpty() && $myStudent->progressReports->first()?->report_type === 'structured'): ?>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const reports = <?php echo json_encode($myStudent->progressReports, 15, 512) ?>;

@@ -45,9 +45,19 @@
                     <span class="font-medium">Kelola Coach</span>
                 </x-sidebar-nav-link>
 
+                <x-sidebar-nav-link :href="route('admin.swimming-classes.index')" :active="request()->routeIs('admin.swimming-classes.index')">
+                    <i class="fa-solid fa-water w-5 text-center"></i>
+                    <span class="font-medium">Kelola Kelas</span>
+                </x-sidebar-nav-link>
+
                 <x-sidebar-nav-link :href="route('admin.packages.index')" :active="request()->routeIs('admin.packages.index')">
                     <i class="fa-solid fa-box w-5 text-center"></i>
                     <span class="font-medium">Kelola Paket</span>
+                </x-sidebar-nav-link>
+
+                <x-sidebar-nav-link :href="route('admin.schedules.index')" :active="request()->routeIs('admin.schedules.index')">
+                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                    <span class="font-medium">Kelola Jadwal</span>
                 </x-sidebar-nav-link>
 
                 <x-sidebar-nav-link :href="route('admin.locations.index')" :active="request()->routeIs('admin.locations.index')">
@@ -66,6 +76,11 @@
                 <x-sidebar-nav-link :href="route('coach.attendances.create')" :active="request()->routeIs('coach.attendances.create')">
                     <i class="fa-solid fa-calendar-check w-5 text-center"></i>
                     <span class="font-medium">Input Absensi</span>
+                </x-sidebar-nav-link>
+
+                <x-sidebar-nav-link :href="route('coach.attendances.index')" :active="request()->routeIs('coach.attendances.index')">
+                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
+                    <span class="font-medium">Riwayat Absensi</span>
                 </x-sidebar-nav-link>
 
                 <x-sidebar-nav-link :href="route('coach.progress.index')" :active="request()->routeIs('coach.progress.index')">
@@ -90,6 +105,11 @@
                     <i class="fa-solid fa-credit-card w-5 text-center"></i>
                     <span class="font-medium">Menu Pembayaran</span>
                 </x-sidebar-nav-link>
+
+                <x-sidebar-nav-link :href="route('parent.attendances.index')" :active="request()->routeIs('parent.attendances.index')">
+                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
+                    <span class="font-medium">Riwayat Absensi</span>
+                </x-sidebar-nav-link>
             @endif
 
             {{-- GENERAL (UMUM) --}}
@@ -107,6 +127,11 @@
                 <x-sidebar-nav-link :href="route('general.payments.index')" :active="request()->routeIs('general.payments.index')">
                     <i class="fa-solid fa-money-bill-wave w-5 text-center"></i>
                     <span class="font-medium">Menu Pembayaran</span>
+                </x-sidebar-nav-link>
+
+                <x-sidebar-nav-link :href="route('general.attendances.index')" :active="request()->routeIs('general.attendances.index')">
+                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
+                    <span class="font-medium">Riwayat Absensi</span>
                 </x-sidebar-nav-link>
             @endif
         </nav>

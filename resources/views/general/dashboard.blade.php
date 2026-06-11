@@ -58,10 +58,16 @@
                                             <form method="POST" action="{{ route('general.students.renew', $expStudent->id) }}" enctype="multipart/form-data" class="p-6 text-left"
                                                 x-data="{ 
                                                     packageId: '{{ $expStudent->package_id }}',
+                                                    locationId: '{{ $expStudent->location_id }}',
                                                     packages: {{ $packages->toJson() }},
                                                     getPrice() {
                                                         const pkg = this.packages.find(p => p.id == this.packageId);
-                                                        return pkg ? pkg.price : 0;
+                                                        if (!pkg) return 0;
+                                                        if (pkg.is_location_based && pkg.location_prices) {
+                                                            const lp = pkg.location_prices.find(l => l.location_id == this.locationId);
+                                                            return lp ? lp.price : 0;
+                                                        }
+                                                        return pkg.price ?? 0;
                                                     },
                                                     formatPrice(price) {
                                                         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(price);
@@ -69,10 +75,20 @@
                                                 }">
                                                 @csrf
 
+                                                {{-- Field tersembunyi untuk swimming_class_id --}}
+                                                <input type="hidden" name="swimming_class_id" value="{{ $expStudent->swimming_class_id }}">
+
                                                 <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                                                     <i class="fa-solid fa-rotate-right text-amber-500"></i>
                                                     Daftar Ulang Paket Latihan - {{ $expStudent->name }}
                                                 </h3>
+
+                                                @if($expStudent->swimmingClass)
+                                                    <div class="mb-4 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 text-xs text-blue-700 flex items-center gap-2">
+                                                        <i class="fa-solid fa-layer-group"></i>
+                                                        <span>Kelas: <strong>{{ $expStudent->swimmingClass->name }}</strong></span>
+                                                    </div>
+                                                @endif
 
                                                 <!-- Tanggal Lahir -->
                                                 <div class="mb-4">
@@ -94,7 +110,7 @@
                                                 <!-- Tempat Latihan -->
                                                 <div class="mb-4">
                                                     <x-input-label for="location-{{ $expStudent->id }}" value="Kolam Latihan" />
-                                                    <select id="location-{{ $expStudent->id }}" name="location_id" required
+                                                    <select id="location-{{ $expStudent->id }}" name="location_id" x-model="locationId" required
                                                         class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                                                         @foreach ($locations as $loc)
                                                             <option value="{{ $loc->id }}" {{ $expStudent->location_id == $loc->id ? 'selected' : '' }}>
@@ -111,7 +127,7 @@
                                                         class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                                                         @foreach ($packages as $pkg)
                                                             <option value="{{ $pkg->id }}">
-                                                                {{ $pkg->name }} ({{ $pkg->sessions }} Sesi - Rp {{ number_format($pkg->price, 0, ',', '.') }})
+                                                                {{ $pkg->name }} ({{ $pkg->sessions }} Sesi)
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -256,51 +272,148 @@
                             Hubungi Coach pendamping
                             <span
                                 class="font-semibold text-gray-600">({{ $myStudent->coach->name ?? 'Belum Ditugaskan' }})</span>
-                            untuk menginput data perkembangan fisik pertama Anda.
+                            untuk menginput data perkembangan pertama Anda.
                         </p>
                     </div>
                 @else
-                    {{-- Ada data perkembangan — langsung tampilkan grafik --}}
-                    <div class="flex flex-col">
-                        {{-- Canvas Chart.js --}}
-                        <div class="relative w-full h-[360px] mb-6">
-                            <canvas id="progressChart"></canvas>
-                        </div>
+                    {{-- Ada data perkembangan — cek jenis report --}}
+                    @php
+                        $latestReport = $myStudent->progressReports->last();
+                        $isFreetext = $myStudent->progressReports->first()?->report_type === 'freetext';
+                    @endphp
 
-                        {{-- Detail / Catatan Tambahan --}}
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
-                            <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
-                                <h4
-                                    class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
-                                </h4>
-                                @php $latestReport = $myStudent->progressReports->last(); @endphp
-                                <p class="text-sm text-gray-600 italic">
-                                    "{{ $latestReport->notes ?? 'Tidak ada catatan pada evaluasi terakhir.' }}"
-                                </p>
-                                <div class="text-[10px] text-gray-400 mt-2 font-semibold">
-                                    Diinput pada: {{ $latestReport->date->translatedFormat('d F Y') }}
+                    @if($isFreetext)
+                        {{-- Kelas Belajar: Tampilkan list catatan teks --}}
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full border border-green-200">Kelas Belajar Renang</span>
+                                <span class="text-xs text-gray-500">Catatan perkembangan dari pelatih</span>
+                            </div>
+                            <div class="overflow-y-auto max-h-[340px] space-y-2 pr-1">
+                                @foreach($myStudent->progressReports->sortByDesc('date') as $report)
+                                    <div class="bg-white border border-gray-100 rounded-xl p-3 shadow-sm">
+                                        <div class="flex items-start gap-2">
+                                            <div class="p-1.5 bg-green-50 text-green-600 rounded-lg shrink-0 mt-0.5">
+                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="text-[10px] text-gray-400 font-semibold mb-0.5">{{ $report->date->translatedFormat('d F Y') }}</div>
+                                                <p class="text-sm text-gray-700 leading-relaxed">{{ $report->notes ?? 'Tidak ada catatan.' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            {{-- Catatan terakhir summary --}}
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
+                                <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+                                    <h4 class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
+                                    </h4>
+                                    <p class="text-sm text-gray-600 italic">"{{ $latestReport->notes ?? 'Tidak ada catatan.' }}"</p>
+                                    <div class="text-[10px] text-gray-400 mt-2 font-semibold">Diinput pada: {{ $latestReport->date->translatedFormat('d F Y') }}</div>
+                                </div>
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
+                                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
+                                    </h4>
+                                    <div class="space-y-1.5 text-xs text-gray-600">
+                                        <div>Kelas: <span class="font-bold text-gray-800">{{ $myStudent->swimmingClass->name ?? 'Belum Ditentukan' }} {{ isset($myStudent->swimmingClass->category) ? '(' . $myStudent->swimmingClass->category->name . ')' : '' }}</span></div>
+                                        <div>Pelatih: <span class="font-bold text-gray-800">{{ $myStudent->coach->name ?? 'Belum Ditugaskan' }}</span></div>
+                                        <div>Lokasi: <span class="font-bold text-gray-800">{{ $myStudent->location->name ?? 'Belum Dipilih' }}@if($myStudent->secondaryLocation) & {{ $myStudent->secondaryLocation->name }}@endif</span></div>
+                                        <div>Sisa Kuota: <span class="font-bold text-blue-600">{{ $myStudent->quota_left }} sesi</span></div>
+                                        @if($myStudent->schedules && $myStudent->schedules->isNotEmpty())
+                                            <div class="pt-1.5 mt-1.5 border-t border-gray-200">
+                                                <span class="font-bold text-gray-500 block mb-1">Jadwal Aktif:</span>
+                                                <div class="space-y-1">
+                                                    @foreach($myStudent->schedules as $sched)
+                                                        @php
+                                                            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                                                            $dayName = $days[$sched->day_of_week] ?? 'Hari Tidak Valid';
+                                                            $timeRange = substr($sched->start_time, 0, 5) . ' - ' . substr($sched->end_time, 0, 5);
+                                                            $type = $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                                                        @endphp
+                                                        <div class="bg-white border border-gray-100 rounded p-1.5 text-[11px] font-semibold text-gray-700 shadow-sm flex flex-col gap-0.5">
+                                                            <div class="flex justify-between items-center">
+                                                                <span class="text-blue-700 font-bold">{{ $dayName }}, {{ $timeRange }}</span>
+                                                                <span class="px-1 py-0.2 text-[9px] bg-blue-50 text-blue-600 rounded">{{ $type }}</span>
+                                                            </div>
+                                                            <div class="text-[10px] text-gray-500 flex items-center gap-1">
+                                                                <i class="fa-solid fa-location-dot"></i> {{ $sched->location->name ?? 'Lokasi tidak diketahui' }}
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    @else
+                        {{-- Kelas Prestasi: Tampilkan grafik --}}
+                        <div class="flex flex-col">
+                            {{-- Canvas Chart.js --}}
+                            <div class="relative w-full h-[360px] mb-6">
+                                <canvas id="progressChart"></canvas>
+                            </div>
 
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
-                                <h4
-                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
-                                </h4>
-                                <div class="space-y-1.5 text-xs text-gray-600">
-                                    <div>Pelatih: <span
-                                            class="font-bold text-gray-800">{{ $myStudent->coach->name ?? 'Belum Ditugaskan' }}</span>
+                            {{-- Detail / Catatan Tambahan --}}
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
+                                <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+                                    <h4
+                                        class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
+                                    </h4>
+                                    <p class="text-sm text-gray-600 italic">
+                                        "{{ $latestReport->notes ?? 'Tidak ada catatan pada evaluasi terakhir.' }}"
+                                    </p>
+                                    <div class="text-[10px] text-gray-400 mt-2 font-semibold">
+                                        Diinput pada: {{ $latestReport->date->translatedFormat('d F Y') }}
                                     </div>
-                                    <div>Lokasi: <span
-                                            class="font-bold text-gray-800">{{ $myStudent->location->name ?? 'Belum Dipilih' }}</span>
+                                </div>
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
+                                    <h4
+                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
+                                    </h4>
+                                    <div class="space-y-1.5 text-xs text-gray-600">
+                                        <div>Kelas: <span class="font-bold text-gray-800">{{ $myStudent->swimmingClass->name ?? 'Belum Ditentukan' }} {{ isset($myStudent->swimmingClass->category) ? '(' . $myStudent->swimmingClass->category->name . ')' : '' }}</span></div>
+                                        <div>Pelatih: <span class="font-bold text-gray-800">{{ $myStudent->coach->name ?? 'Belum Ditugaskan' }}</span></div>
+                                        <div>Lokasi: <span class="font-bold text-gray-800">
+                                            {{ $myStudent->location->name ?? 'Belum Dipilih' }}
+                                            @if($myStudent->secondaryLocation) & {{ $myStudent->secondaryLocation->name }}@endif
+                                        </span></div>
+                                        <div>Sisa Kuota: <span class="font-bold text-blue-600">{{ $myStudent->quota_left }} sesi</span></div>
+                                        @if($myStudent->schedules && $myStudent->schedules->isNotEmpty())
+                                            <div class="pt-1.5 mt-1.5 border-t border-gray-200">
+                                                <span class="font-bold text-gray-500 block mb-1">Jadwal Aktif:</span>
+                                                <div class="space-y-1">
+                                                    @foreach($myStudent->schedules as $sched)
+                                                        @php
+                                                            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                                                            $dayName = $days[$sched->day_of_week] ?? 'Hari Tidak Valid';
+                                                            $timeRange = substr($sched->start_time, 0, 5) . ' - ' . substr($sched->end_time, 0, 5);
+                                                            $type = $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                                                        @endphp
+                                                        <div class="bg-white border border-gray-100 rounded p-1.5 text-[11px] font-semibold text-gray-700 shadow-sm flex flex-col gap-0.5">
+                                                            <div class="flex justify-between items-center">
+                                                                <span class="text-blue-700 font-bold">{{ $dayName }}, {{ $timeRange }}</span>
+                                                                <span class="px-1 py-0.2 text-[9px] bg-blue-50 text-blue-600 rounded">{{ $type }}</span>
+                                                            </div>
+                                                            <div class="text-[10px] text-gray-500 flex items-center gap-1">
+                                                                <i class="fa-solid fa-location-dot"></i> {{ $sched->location->name ?? 'Lokasi tidak diketahui' }}
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
-                                    <div>Sisa Kuota: <span class="font-bold text-blue-600">{{ $myStudent->quota_left }}
-                                            sesi</span></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 @endif
             </div>
 
@@ -310,7 +423,7 @@
     {{-- Import Chart.js dari CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    @if ($myStudent && $myStudent->progressReports->isNotEmpty())
+    @if ($myStudent && $myStudent->progressReports->isNotEmpty() && $myStudent->progressReports->first()?->report_type === 'structured')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const reports = @json($myStudent->progressReports);

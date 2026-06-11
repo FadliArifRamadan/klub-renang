@@ -31,7 +31,8 @@
                                     <th class="px-6 py-3 text-center w-12">No</th>
                                     <th class="px-6 py-3 text-left">Nama Anak</th>
                                     <th class="px-6 py-3">Gender</th>
-                                    <th class="px-6 py-3">Paket Kursus</th>
+                                    <th class="px-6 py-3 text-left">Kelas & Paket</th>
+                                    <th class="px-6 py-3 text-left">Jadwal Latihan</th>
                                     <th class="px-6 py-3">Coach / Pelatih</th>
                                     <th class="px-6 py-3 text-center">Progress Absensi</th>
                                     <th class="px-6 py-3 text-center">Batas Waktu</th>
@@ -56,11 +57,41 @@
                                             {{ $student->gender_label }}
                                         </td>
 
-                                        <td class="px-6 py-4 text-center">
-                                            <span
-                                                class="font-medium text-gray-800 block">{{ $student->package->name ?? 'Belum Pilih Paket' }}</span>
-                                            <span class="text-[11px] text-blue-600 font-bold">Rp
-                                                {{ number_format($student->package->price ?? 0, 0, ',', '.') }}</span>
+                                        <td class="px-6 py-4 text-left">
+                                            <div class="font-semibold text-gray-950">{{ $student->swimmingClass->name ?? 'Belum Pilih Kelas' }}</div>
+                                            <div class="text-[11px] text-gray-500 font-medium">{{ $student->swimmingClass->category->name ?? '-' }}</div>
+                                            <div class="text-xs text-gray-600 mt-1">
+                                                Paket: <span class="font-medium text-gray-800">{{ $student->package->name ?? '-' }}</span>
+                                            </div>
+                                            <div class="text-[11px] text-blue-600 font-bold mt-0.5">
+                                                Harga: Rp 
+                                                @if($student->package)
+                                                    {{ number_format($student->package->getPriceForLocation($student->location_id), 0, ',', '.') }}
+                                                @else
+                                                    0
+                                                @endif
+                                            </div>
+                                        </td>
+
+                                        <td class="px-6 py-4 text-left">
+                                            @forelse($student->schedules as $sched)
+                                                <div class="mb-1.5 last:mb-0">
+                                                    <span class="inline-flex items-center text-xs font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
+                                                        {{ $sched->day_name }} ({{ substr($sched->start_time, 0, 5) }})
+                                                    </span>
+                                                    <div class="text-[10px] text-slate-500 font-medium ml-1 mt-0.5">
+                                                        <i class="fa-solid fa-map-pin mr-0.5 text-amber-500"></i> {{ $sched->location->name }} 
+                                                        <span class="mx-1">•</span> 
+                                                        @if($sched->session_type == 'dryland')
+                                                            <span class="text-amber-600">Darat</span>
+                                                        @else
+                                                            <span class="text-blue-600">Renang</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <span class="text-xs text-gray-400 italic">Belum Pilih Jadwal</span>
+                                            @endforelse
                                         </td>
 
                                         <td class="px-6 py-4 text-center">
@@ -284,15 +315,14 @@
                                                                 required>
                                                                 @foreach ($coaches as $coach)
                                                                     @php
-                                                                        $isCurrentCoach =
-                                                                            $student->coach_id == $coach->id;
-                                                                        $isFull = $coach->students_count >= 5;
+                                                                        $isCurrentCoach = $student->coach_id == $coach->id;
+                                                                        $isFull = $coach->students_count >= 15;
                                                                     @endphp
                                                                     <option value="{{ $coach->id }}"
                                                                         {{ $isCurrentCoach ? 'selected' : '' }}
                                                                         {{ $isFull && !$isCurrentCoach ? 'disabled' : '' }}>
                                                                         {{ $coach->name }}
-                                                                        ({{ $coach->students_count }}/5 Murid Aktif)
+                                                                        ({{ $coach->students_count }}/15 Murid Aktif)
                                                                         @if ($isCurrentCoach)
                                                                             [Pelatih Asal]
                                                                         @endif
@@ -303,7 +333,7 @@
                                                                 @endforeach
                                                             </select>
                                                             <p class="text-xs text-gray-400 mt-1">Hanya pelatih yang
-                                                                memiliki slot kosong (&lt; 5 murid aktif) yang dapat
+                                                                memiliki slot kosong (&lt; 15 murid aktif) yang dapat
                                                                 ditugaskan.</p>
                                                         </div>
 

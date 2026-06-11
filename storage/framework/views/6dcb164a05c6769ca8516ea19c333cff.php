@@ -119,6 +119,29 @@
 
                 <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('admin.swimming-classes.index'),'active' => request()->routeIs('admin.swimming-classes.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sidebar-nav-link'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('admin.swimming-classes.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('admin.swimming-classes.index'))]); ?>
+                    <i class="fa-solid fa-water w-5 text-center"></i>
+                    <span class="font-medium">Kelola Kelas</span>
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $attributes = $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $component = $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+
+                <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('admin.packages.index'),'active' => request()->routeIs('admin.packages.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('sidebar-nav-link'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -129,6 +152,29 @@
 <?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('admin.packages.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('admin.packages.index'))]); ?>
                     <i class="fa-solid fa-box w-5 text-center"></i>
                     <span class="font-medium">Kelola Paket</span>
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $attributes = $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $component = $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+
+                <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('admin.schedules.index'),'active' => request()->routeIs('admin.schedules.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sidebar-nav-link'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('admin.schedules.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('admin.schedules.index'))]); ?>
+                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                    <span class="font-medium">Kelola Jadwal</span>
                  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
@@ -201,6 +247,29 @@
 <?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('coach.attendances.create')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('coach.attendances.create'))]); ?>
                     <i class="fa-solid fa-calendar-check w-5 text-center"></i>
                     <span class="font-medium">Input Absensi</span>
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $attributes = $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $component = $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+
+                <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('coach.attendances.index'),'active' => request()->routeIs('coach.attendances.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sidebar-nav-link'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('coach.attendances.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('coach.attendances.index'))]); ?>
+                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
+                    <span class="font-medium">Riwayat Absensi</span>
                  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
@@ -306,6 +375,29 @@
 <?php $component = $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
 <?php unset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
 <?php endif; ?>
+
+                <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('parent.attendances.index'),'active' => request()->routeIs('parent.attendances.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sidebar-nav-link'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('parent.attendances.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('parent.attendances.index'))]); ?>
+                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
+                    <span class="font-medium">Riwayat Absensi</span>
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $attributes = $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $component = $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
             <?php endif; ?>
 
             
@@ -368,6 +460,29 @@
 <?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('general.payments.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('general.payments.index'))]); ?>
                     <i class="fa-solid fa-money-bill-wave w-5 text-center"></i>
                     <span class="font-medium">Menu Pembayaran</span>
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $attributes = $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $component = $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+
+                <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('general.attendances.index'),'active' => request()->routeIs('general.attendances.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sidebar-nav-link'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('general.attendances.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('general.attendances.index'))]); ?>
+                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
+                    <span class="font-medium">Riwayat Absensi</span>
                  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>

@@ -26,7 +26,7 @@
                     @csrf
 
                     {{-- Form Meta Informasi --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 border-b pb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-b pb-6">
                         <div>
                             <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fa-solid fa-calendar text-gray-400 mr-1.5"></i>Tanggal Latihan
@@ -36,6 +36,19 @@
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900"
                                 required>
                             @error('date')
+                                <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="session_type" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fa-solid fa-person-running text-gray-400 mr-1.5"></i>Jenis Sesi Latihan
+                            </label>
+                            <select name="session_type" id="session_type" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900" required>
+                                <option value="swim">Berenang (Swim Session)</option>
+                                <option value="dryland">Latihan Darat (Dryland Session)</option>
+                            </select>
+                            @error('session_type')
                                 <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
                             @enderror
                         </div>

@@ -23,94 +23,177 @@
     </section>
 
     <!-- Packages Section -->
-    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        @if ($packages->isNotEmpty())
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach ($packages as $index => $package)
-                    <div
-                        class="relative bg-white rounded-3xl border border-slate-200/80 shadow-sm p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-left
-                        {{ $index === 1 ? 'ring-2 ring-blue-500 shadow-blue-100' : '' }}">
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ activeTab: 'belajar' }">
+        <!-- Tabs Header -->
+        <div class="flex justify-center mb-16">
+            <div class="inline-flex p-1.5 bg-slate-200/60 backdrop-blur rounded-2xl border border-slate-200">
+                <button @click="activeTab = 'belajar'"
+                    :class="activeTab === 'belajar' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 hover:text-blue-650'"
+                    class="px-6 py-2.5 rounded-xl text-sm font-extrabold transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-person-swimming"></i> Kelas Belajar Renang
+                </button>
+                <button @click="activeTab = 'prestasi'"
+                    :class="activeTab === 'prestasi' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 hover:text-blue-655'"
+                    class="px-6 py-2.5 rounded-xl text-sm font-extrabold transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy"></i> Kelas Renang Prestasi
+                </button>
+            </div>
+        </div>
 
-                        @if ($index === 1)
-                            <div class="absolute -top-4 left-1/2 -translate-x-1/2">
-                                <span
-                                    class="bg-blue-600 text-white text-xs font-extrabold px-4 py-1.5 rounded-full shadow-md uppercase tracking-wider">
-                                    ⭐ Paling Populer
+        <!-- Tab Belajar -->
+        <div x-show="activeTab === 'belajar'" x-transition class="space-y-16">
+            @php
+                $belajarCat = $classCategories->firstWhere('slug', 'belajar');
+            @endphp
+            @if($belajarCat && $belajarCat->swimmingClasses->isNotEmpty())
+                @foreach($belajarCat->swimmingClasses as $class)
+                    <div>
+                        <div class="border-b border-slate-200 pb-4 mb-8 text-left">
+                            <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-2">
+                                <span class="w-2.5 h-6 bg-blue-600 rounded-full"></span>
+                                Tingkat {{ $class->name }} 
+                                <span class="text-sm font-normal text-slate-500">
+                                    (Usia {{ $class->age_min }}{{ $class->age_max ? '-' . $class->age_max : '+' }} tahun)
                                 </span>
-                            </div>
-                        @endif
-
-                        <div>
-                            <!-- Package Header -->
-                            <div class="flex justify-between items-start mb-6 mt-2">
-                                <span
-                                    class="bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold px-3.5 py-1 rounded-full uppercase">
-                                    {{ $package->sessions }}x Sesi
-                                </span>
-                                <span class="text-xs text-slate-400 font-semibold">Masa Aktif:
-                                    {{ $package->active_period_months }} Bln</span>
-                            </div>
-
-                            <h2 class="text-2xl font-extrabold text-slate-800 mb-3">{{ $package->name }}</h2>
-                            <p class="text-slate-450 text-sm leading-relaxed mb-6">
-                                Paket latihan renang dengan {{ $package->sessions }} sesi pertemuan selama masa aktif
-                                {{ $package->active_period_months }} bulan.
-                                Cocok untuk Anda yang ingin belajar renang secara konsisten dengan bimbingan pelatih
-                                profesional.
-                            </p>
-
-                            <!-- Features List -->
-                            <ul class="space-y-3 mb-8">
-                                <li class="flex items-center gap-3">
-                                    <i class="fa-solid fa-circle-check text-emerald-500 shrink-0"></i>
-                                    <span class="text-sm text-slate-600">{{ $package->sessions }} sesi pertemuan
-                                        termasuk</span>
-                                </li>
-                                <li class="flex items-center gap-3">
-                                    <i class="fa-solid fa-circle-check text-emerald-500 shrink-0"></i>
-                                    <span class="text-sm text-slate-600">Masa aktif {{ $package->active_period_months }}
-                                        bulan</span>
-                                </li>
-                                <li class="flex items-center gap-3">
-                                    <i class="fa-solid fa-circle-check text-emerald-500 shrink-0"></i>
-                                    <span class="text-sm text-slate-600">Pelatih bersertifikat & profesional</span>
-                                </li>
-                                <li class="flex items-center gap-3">
-                                    <i class="fa-solid fa-circle-check text-emerald-500 shrink-0"></i>
-                                    <span class="text-sm text-slate-600">Laporan perkembangan digital</span>
-                                </li>
-                                <li class="flex items-center gap-3">
-                                    <i class="fa-solid fa-circle-check text-emerald-500 shrink-0"></i>
-                                    <span class="text-sm text-slate-600">Pilihan kolam renang fleksibel</span>
-                                </li>
-                            </ul>
-
-                            <!-- Price Display -->
-                            <div class="mb-8 border-t border-slate-100 pt-6">
-                                <p class="text-xs text-slate-400 mb-1">Harga Paket</p>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-extrabold text-slate-900">Rp
-                                        {{ number_format($package->price, 0, ',', '.') }}</span>
-                                    <span class="text-slate-400 text-xs">/ Paket</span>
-                                </div>
-                            </div>
+                            </h2>
+                            <p class="text-slate-500 text-sm mt-1">{{ $class->description }}</p>
                         </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            @foreach($class->packages as $pkgIndex => $package)
+                                <div class="relative bg-white rounded-3xl border border-slate-200/80 shadow-sm p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-left">
+                                    <div>
+                                        <div class="flex justify-between items-start mb-6">
+                                            <span class="bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold px-3.5 py-1 rounded-full uppercase">
+                                                {{ $package->sessions }}x Pertemuan
+                                            </span>
+                                            <span class="text-xs text-slate-450 font-semibold">
+                                                Masa Aktif: {{ $package->active_period_months }} Bln
+                                            </span>
+                                        </div>
 
-                        <!-- Action Button -->
-                        <a href="{{ route('register') }}"
-                            class="w-full py-3 {{ $index === 1 ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20' : 'bg-slate-100 hover:bg-blue-600 text-slate-700 hover:text-white' }} font-extrabold rounded-2xl text-center text-sm transition-all duration-300">
-                            Daftar Sekarang
-                        </a>
+                                        <h3 class="text-xl font-extrabold text-slate-850 mb-2">{{ $package->name }}</h3>
+                                        <p class="text-slate-450 text-sm leading-relaxed mb-6">
+                                            Program latihan {{ $package->package_type === 'private' ? 'Private (1-on-1)' : 'Reguler (Kelompok)' }} 
+                                            dengan {{ $package->sessions }} sesi pertemuan selama {{ $package->active_period_months }} bulan.
+                                        </p>
+
+                                        <!-- Pricelist per Pool/Location -->
+                                        <div class="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100">
+                                            <h4 class="text-xs font-bold text-slate-450 uppercase mb-2.5 flex items-center gap-1.5">
+                                                <i class="fa-solid fa-location-dot text-blue-500"></i> Harga berdasarkan Kolam
+                                            </h4>
+                                            <ul class="space-y-1.5">
+                                                @foreach($package->locationPrices as $lp)
+                                                    <li class="flex justify-between items-center text-xs font-semibold">
+                                                        <span class="text-slate-500">{{ $lp->location->name }}</span>
+                                                        <span class="text-slate-700 font-bold">Rp {{ number_format($lp->price, 0, ',', '.') }}</span>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <a href="{{ route('register') }}"
+                                        class="w-full py-3 bg-slate-105 hover:bg-blue-600 text-slate-700 hover:text-white font-extrabold rounded-2xl text-center text-sm transition-all duration-300">
+                                        Daftar Sekarang
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 @endforeach
-            </div>
-        @else
-            <div class="bg-white rounded-3xl p-16 text-center text-slate-400 border border-slate-200 shadow-sm">
-                <i class="fa-solid fa-box text-5xl mb-4 text-slate-300"></i>
-                <p class="font-bold text-slate-500 text-lg mb-2">Program Paket Belum Tersedia</p>
-                <p class="text-sm text-slate-400">Kami sedang menyiapkan paket latihan terbaik untuk Anda. Pantau terus!</p>
-            </div>
-        @endif
+            @else
+                <div class="bg-white rounded-3xl p-16 text-center text-slate-400 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-box text-5xl mb-4 text-slate-300"></i>
+                    <p class="font-bold text-slate-500 text-lg mb-2">Paket Belajar Renang Belum Tersedia</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- Tab Prestasi -->
+        <div x-show="activeTab === 'prestasi'" x-transition class="space-y-16" style="display: none;">
+            @php
+                $prestasiCat = $classCategories->firstWhere('slug', 'prestasi');
+            @endphp
+            @if($prestasiCat && $prestasiCat->swimmingClasses->isNotEmpty())
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                    @foreach($prestasiCat->swimmingClasses as $class)
+                        @foreach($class->packages as $package)
+                            <div class="relative bg-white rounded-3xl border border-slate-200/80 shadow-sm p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-left">
+                                <div>
+                                    <div class="flex justify-between items-start mb-6">
+                                        <span class="bg-amber-50 border border-amber-100 text-amber-700 text-xs font-bold px-3.5 py-1 rounded-full uppercase flex items-center gap-1">
+                                            <i class="fa-solid fa-trophy"></i> Kelas Prestasi
+                                        </span>
+                                        <span class="text-xs text-slate-400 font-semibold">Penagihan: Bulanan</span>
+                                    </div>
+
+                                    <h3 class="text-2xl font-extrabold text-slate-800 mb-2">{{ $class->name }}</h3>
+                                    <p class="text-slate-500 text-sm leading-relaxed mb-6">{{ $class->description }}</p>
+
+                                    <!-- Details -->
+                                    <div class="space-y-3 mb-8 border-t border-slate-100 pt-6">
+                                        <div class="flex items-center justify-between text-xs font-semibold text-slate-650">
+                                            <span class="flex items-center gap-2">
+                                                <i class="fa-solid fa-calendar-day text-blue-500"></i> Batasan Usia
+                                            </span>
+                                            <span class="font-bold text-slate-800">
+                                                {{ $class->age_min }}{{ $class->age_max ? '-' . $class->age_max : '+' }} Tahun
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs font-semibold text-slate-650">
+                                            <span class="flex items-center gap-2">
+                                                <i class="fa-solid fa-person-swimming text-blue-500"></i> Sesi Latihan Air (Swim)
+                                            </span>
+                                            <span class="font-bold text-slate-800">
+                                                {{ $package->swim_sessions }}x per Bulan
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs font-semibold text-slate-650">
+                                            <span class="flex items-center gap-2">
+                                                <i class="fa-solid fa-dumbbell text-blue-500"></i> Sesi Fisik (Dryland)
+                                            </span>
+                                            <span class="font-bold text-slate-800">
+                                                {{ $package->dryland_sessions }}x per Bulan
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs font-semibold text-slate-650">
+                                            <span class="flex items-center gap-2">
+                                                <i class="fa-solid fa-users text-blue-500"></i> Batas Kuota Kelas
+                                            </span>
+                                            <span class="font-bold text-red-500">
+                                                Maksimal {{ $class->max_quota }} Murid
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Price Display -->
+                                    <div class="mb-8 border-t border-slate-100 pt-6">
+                                        <p class="text-xs text-slate-400 mb-1">Iuran Bulanan</p>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-3xl font-extrabold text-slate-900">Rp
+                                                {{ number_format($package->price, 0, ',', '.') }}</span>
+                                            <span class="text-slate-400 text-xs">/ Bulan</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a href="{{ route('register') }}"
+                                    class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl text-center text-sm shadow-md transition-all duration-300">
+                                    Daftar Atlet Prestasi
+                                </a>
+                            </div>
+                        @endforeach
+                    @endforeach
+                </div>
+            @else
+                <div class="bg-white rounded-3xl p-16 text-center text-slate-400 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-trophy text-5xl mb-4 text-slate-300"></i>
+                    <p class="font-bold text-slate-500 text-lg mb-2">Program Atlet Prestasi Belum Tersedia</p>
+                </div>
+            @endif
+        </div>
     </section>
 
     <!-- Mengapa Paket Kami Section -->

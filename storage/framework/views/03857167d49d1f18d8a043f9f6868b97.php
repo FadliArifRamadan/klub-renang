@@ -135,17 +135,13 @@
                                                             <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <option value="<?php echo e($coach->id); ?>"
                                                                     <?php echo e(old('coach_id', $payment->student->coach_id ?? '') == $coach->id ? 'selected' : ''); ?>>
-                                                                    <?php echo e($coach->name); ?> — (Saat ini memegang:
-                                                                    <?php echo e($coach->students_count); ?> / 5 Murid Aktif)
+                                                                    <?php echo e($coach->name); ?> — (Saat ini memegang: <?php echo e($coach->students_count); ?> / 15 Murid Latih)
                                                                 </option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
 
                                                         <p class="text-[11px] text-blue-600 mt-1.5 leading-tight">
-                                                            *Sistem menampilkan jumlah beban murid aktif dari
-                                                            masing-masing coach saat ini. Sesuai kesepakatan, batas
-                                                            maksimal per pelatih adalah 5 anak demi efektivitas
-                                                            latihan.
+                                                            *Sistem menampilkan jumlah beban murid aktif dari masing-masing coach saat ini. Sesuai kesepakatan, batas maksimal per pelatih adalah 15 anak demi efektivitas latihan.
                                                         </p>
                                                     </div>
 

@@ -20,6 +20,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Rute Notifikasi (bisa diakses semua role)
+    Route::post('/notifications/{id}/read', function (string $id) {
+        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+        $link = $notification->data['link'] ?? null;
+        return $link ? redirect($link) : redirect()->back();
+    })->name('notifications.read');
+
+    Route::post('/notifications/read-all', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return redirect()->back()->with('success', 'Semua notifikasi telah ditandai sudah dibaca.');
+    })->name('notifications.read-all');
+
     // Jembatan Rute /dashboard Sentral berdasarkan Role
     Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         $role = $request->user()->role;
@@ -49,6 +62,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('locations', \App\Http\Controllers\Admin\LocationController::class)->except(['create', 'show', 'edit']);
         Route::resource('packages', \App\Http\Controllers\Admin\PackageController::class)->except(['create', 'show', 'edit']);
         Route::resource('coaches', \App\Http\Controllers\Admin\CoachController::class)->except(['create', 'show', 'edit']);
+        Route::resource('swimming-classes', \App\Http\Controllers\Admin\SwimmingClassController::class)->except(['create', 'show', 'edit']);
+        Route::resource('schedules', \App\Http\Controllers\Admin\ScheduleController::class)->except(['create', 'show', 'edit']);
 
         // Kelola Murid (RESTful URI & Nama Plural)
         Route::get('/students', [\App\Http\Controllers\Admin\StudentController::class, 'index'])->name('students.index');
@@ -87,7 +102,8 @@ Route::middleware('auth')->group(function () {
         // Data murid yang dilatih oleh coach ini
         Route::get('/students', [\App\Http\Controllers\Coach\StudentController::class, 'index'])->name('students.index');
 
-        // Input Absensi Murid
+        // Absensi Murid
+        Route::get('/attendances', [\App\Http\Controllers\Coach\AttendanceController::class, 'index'])->name('attendances.index');
         Route::get('/attendances/create', [\App\Http\Controllers\Coach\AttendanceController::class, 'create'])->name('attendances.create');
         Route::post('/attendances', [\App\Http\Controllers\Coach\AttendanceController::class, 'store'])->name('attendances.store');
 
@@ -111,16 +127,16 @@ Route::middleware('auth')->group(function () {
             // Ambil data anak dari parent ini, beserta progress reports-nya
             $children = $user->children()->with(['progressReports' => function ($q) {
                 $q->oldest('date');
-            }, 'location', 'coach', 'package'])->oldest('name')->get();
+            }, 'location', 'secondaryLocation', 'coach', 'package', 'swimmingClass.category', 'schedules.location'])->oldest('name')->get();
 
             // Ambil anak yang sesinya baru saja habis (inactive & quota habis)
             $expiredStudents = $user->children()
                 ->where('status', 'inactive')
                 ->where('quota_left', '<=', 0)
-                ->with('package')
+                ->with(['package', 'swimmingClass'])
                 ->get();
 
-            $packages = \App\Models\Package::oldest()->get();
+            $packages = \App\Models\Package::with('locationPrices')->oldest()->get();
             $locations = \App\Models\Location::oldest()->get();
 
             return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children', 'expiredStudents', 'packages', 'locations'));
@@ -137,6 +153,9 @@ Route::middleware('auth')->group(function () {
         // Rute pembayaran parent (Nama Plural RESTful)
         Route::get('/payments', [\App\Http\Controllers\Parents\PaymentController::class, 'index'])->name('payments.index');
         Route::post('/payments/checkout/{student_id}', [\App\Http\Controllers\Parents\PaymentController::class, 'checkout'])->name('payments.checkout');
+
+        // Riwayat Absensi Anak
+        Route::get('/attendances', [\App\Http\Controllers\Parents\AttendanceController::class, 'index'])->name('attendances.index');
     });
 
     // 4. KELOMPOK ROUTE GENERAL (UMUM)
@@ -155,17 +174,17 @@ Route::middleware('auth')->group(function () {
             $myStudent = \App\Models\Student::where('user_id', $user->id)
                 ->with(['progressReports' => function ($q) {
                     $q->oldest('date');
-                }, 'location', 'coach', 'package'])
+                }, 'location', 'secondaryLocation', 'coach', 'package', 'swimmingClass.category', 'schedules.location'])
                 ->first();
 
             // Ambil murid yang sesinya baru saja habis (inactive & quota habis)
             $expiredStudents = \App\Models\Student::where('user_id', $user->id)
                 ->where('status', 'inactive')
                 ->where('quota_left', '<=', 0)
-                ->with('package')
+                ->with(['package', 'swimmingClass'])
                 ->get();
 
-            $packages = \App\Models\Package::oldest()->get();
+            $packages = \App\Models\Package::with('locationPrices')->oldest()->get();
             $locations = \App\Models\Location::oldest()->get();
 
             return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent', 'expiredStudents', 'packages', 'locations'));
@@ -179,6 +198,9 @@ Route::middleware('auth')->group(function () {
         // Rute pembayaran general (Nama Plural RESTful)
         Route::get('/payments', [\App\Http\Controllers\General\PaymentController::class, 'index'])->name('payments.index');
         Route::post('/payments/checkout/{student_id}', [\App\Http\Controllers\General\PaymentController::class, 'checkout'])->name('payments.checkout');
+
+        // Riwayat Absensi
+        Route::get('/attendances', [\App\Http\Controllers\General\AttendanceController::class, 'index'])->name('attendances.index');
     });
 });
 

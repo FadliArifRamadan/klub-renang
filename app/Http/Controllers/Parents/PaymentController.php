@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Parents;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Models\Payment;
+use App\Models\User;
+use App\Notifications\PaymentSubmitted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +22,7 @@ class PaymentController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $students = $user->children()
-            ->with(['package', 'latestPayment'])
+            ->with(['package.locationPrices', 'latestPayment', 'swimmingClass.category', 'location'])
             ->latest()
             ->get();
 
@@ -32,7 +34,7 @@ class PaymentController extends Controller
      */
     public function checkout(Request $request, int $student_id)
     {
-        $student = Student::findOrFail($student_id);
+        $student = Student::with(['package.locationPrices'])->findOrFail($student_id);
 
         // Validasi input file wajib berupa gambar dan maksimal 2MB
         $request->validate([
@@ -55,15 +57,31 @@ class PaymentController extends Controller
             $file->storeAs('receipts', $imageName, 'public');
         }
 
-        // Simpan atau perbarui data ke tabel payments
-        Payment::updateOrCreate(
-            ['student_id' => $student->id],
-            [
-                'amount'       => $student->package->price ?? 0,
-                'receipt_path' => $imageName,
-                'status'       => 'pending'
-            ]
-        );
+        // Hitung total tagihan menggunakan helper model (termasuk biaya registrasi jika belum pernah dibayar)
+        $amount = $student->calculateTotalBillingAmount();
+
+        // Tentukan tipe pembayaran
+        $package = $student->package;
+        $paymentType = 'package';
+        if ($package && $package->package_type === 'monthly_prestasi') {
+            $paymentType = 'monthly_prestasi';
+        }
+
+        // Simpan data ke tabel payments
+        $payment = Payment::create([
+            'student_id' => $student->id,
+            'payment_type' => $paymentType,
+            'amount' => $amount,
+            'receipt_path' => $imageName,
+            'status' => 'pending',
+        ]);
+
+        // Kirim notifikasi ke semua Admin
+        $payment->load('student');
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new PaymentSubmitted($payment, Auth::user()->name));
+        }
 
         return redirect()->back()->with('success', 'Bukti transaksi berhasil diunggah! Menunggu verifikasi Admin.');
     }
