@@ -27,6 +27,55 @@
             background-size: 40px 40px;
             background-position: 0 0, 20px 20px;
         }
+
+        /* Floating WhatsApp Button Style */
+        .float-wa {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 24px;
+            right: 24px;
+            background-color: #25d366;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            z-index: 9999;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pulse-wa 2s infinite;
+        }
+
+        .float-wa:hover {
+            background-color: #128c7e;
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 8px 25px rgba(18, 140, 126, 0.6);
+            color: #fff;
+        }
+
+        @keyframes pulse-wa {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .float-wa {
+                width: 50px;
+                height: 50px;
+                bottom: 16px;
+                right: 16px;
+                font-size: 26px;
+            }
+        }
     </style>
 </head>
 
@@ -200,6 +249,13 @@
             <p>Made with <i class="fa-solid fa-heart text-red-500"></i> in Indonesia</p>
         </div>
     </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a class="float-wa"
+        href="https://api.whatsapp.com/send/?phone=6281216700519&amp;text=Halo+Admin+Black+Diamond+Swimming+Club%2C+saya+ingin+tanya-tanya+mengenai+paket+dan+jadwal+latihan+renang.&amp;type=phone_number&amp;app_absent=0"
+        target="_blank" title="Hubungi CS Black Diamond via WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 
 </body>
 

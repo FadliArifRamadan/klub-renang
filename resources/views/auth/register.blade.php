@@ -1,70 +1,91 @@
 <x-guest-layout title="Black Diamond - Register">
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" class="space-y-4">
         @csrf
 
         <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Nama Lengkap')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required
-                autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <label for="name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-address-card mr-1 text-slate-400"></i> Nama Lengkap
+            </label>
+            <input id="name" type="text" name="name" :value="old('name')" required autofocus autocomplete="name"
+                class="block w-full border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
+                placeholder="Masukkan nama lengkap Anda" />
+            <x-input-error :messages="$errors->get('name')" class="mt-1" />
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="username" :value="__('Username')" />
-            <x-text-input id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')"
-                required />
-            <x-input-error :messages="$errors->get('username')" class="mt-2" />
+        <!-- Username -->
+        <div>
+            <label for="username" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-user mr-1 text-slate-400"></i> Username
+            </label>
+            <input id="username" type="text" name="username" :value="old('username')" required
+                class="block w-full border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
+                placeholder="Buat username akun Anda" />
+            <x-input-error :messages="$errors->get('username')" class="mt-1" />
         </div>
 
-        <div class="mt-4">
-            <x-input-label for="phone" :value="__('Nomor HP')" />
-            <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')"
-                required />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+        <!-- Phone Number -->
+        <div>
+            <label for="phone" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-phone mr-1 text-slate-400"></i> Nomor WhatsApp / HP
+            </label>
+            <input id="phone" type="text" name="phone" :value="old('phone')" required
+                class="block w-full border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
+                placeholder="Contoh: 081234567890" />
+            <x-input-error :messages="$errors->get('phone')" class="mt-1" />
         </div>
 
-        <div class="mt-4">
-            <x-input-label for="role" :value="__('Mendaftar Sebagai')" />
-            <select id="role" name="role"
-                class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                required>
-                <option value="parent">Orang Tua (Untuk mendaftarkan anak-anak)</option>
-                <option value="general">Umum (Untuk mendaftarkan diri sendiri)</option>
+        <!-- Role Select -->
+        <div>
+            <label for="role" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-users-gear mr-1 text-slate-400"></i> Mendaftar Sebagai
+            </label>
+            <select id="role" name="role" required
+                class="block w-full border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors bg-white">
+                <option value="parent">Orang Tua (Untuk Mendaftarkan Anak)</option>
+                <option value="general">Umum (Untuk Mendaftarkan Diri Sendiri)</option>
             </select>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
+            <x-input-error :messages="$errors->get('role')" class="mt-1" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
-                autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div>
+            <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-lock mr-1 text-slate-400"></i> Password
+            </label>
+            <input id="password" type="password" name="password" required autocomplete="new-password"
+                class="block w-full border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
+                placeholder="Buat password minimal 8 karakter" />
+            <x-input-error :messages="$errors->get('password')" class="mt-1" />
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
-                name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <div>
+            <label for="password_confirmation" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-shield-check mr-1 text-slate-400"></i> Konfirmasi Password
+            </label>
+            <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
+                class="block w-full border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
+                placeholder="Ketik ulang password Anda" />
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+        <!-- Submit Button -->
+        <div class="pt-2">
+            <button type="submit"
+                class="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all hover:-translate-y-0.5 text-sm">
+                Daftar Akun Baru <i class="fa-solid fa-user-plus text-xs"></i>
+            </button>
         </div>
     </form>
+
+    <!-- Footer Links -->
+    <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+        <p class="text-xs text-slate-500">
+            Sudah memiliki akun?
+            <a href="{{ route('login') }}" class="font-bold text-blue-600 hover:text-blue-700 hover:underline">
+                Masuk Disini
+            </a>
+        </p>
+    </div>
 </x-guest-layout>
