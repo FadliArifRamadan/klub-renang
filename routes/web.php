@@ -61,7 +61,7 @@ Route::middleware('auth')->group(function () {
         // Menggunakan Resource routes / RESTful convention
         Route::resource('locations', \App\Http\Controllers\Admin\LocationController::class)->except(['create', 'show', 'edit']);
         Route::resource('packages', \App\Http\Controllers\Admin\PackageController::class)->except(['create', 'show', 'edit']);
-        Route::resource('coaches', \App\Http\Controllers\Admin\CoachController::class)->except(['create', 'show', 'edit']);
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['create', 'show', 'edit']);
         Route::resource('swimming-classes', \App\Http\Controllers\Admin\SwimmingClassController::class)->except(['create', 'show', 'edit']);
         Route::resource('schedules', \App\Http\Controllers\Admin\ScheduleController::class)->except(['create', 'show', 'edit']);
 
@@ -74,6 +74,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/payments', [\App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
         Route::post('/payments/approve/{student_id}', [\App\Http\Controllers\Admin\PaymentController::class, 'verify'])->name('payments.approve');
         Route::post('/payments/reject/{payment_id}', [\App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('payments.reject');
+
+        // Pengajuan Pindah Jadwal Murid
+        Route::get('/schedule-requests', [\App\Http\Controllers\Admin\ScheduleRequestController::class, 'index'])->name('schedule-requests.index');
+        Route::post('/schedule-requests/approve/{id}', [\App\Http\Controllers\Admin\ScheduleRequestController::class, 'approve'])->name('schedule-requests.approve');
+        Route::post('/schedule-requests/reject/{id}', [\App\Http\Controllers\Admin\ScheduleRequestController::class, 'reject'])->name('schedule-requests.reject');
     });
 
     // 2. KELOMPOK ROUTE COACH
@@ -125,9 +130,16 @@ Route::middleware('auth')->group(function () {
             $totalLocations = \App\Models\Location::count();
 
             // Ambil data anak dari parent ini, beserta progress reports-nya
-            $children = $user->children()->with(['progressReports' => function ($q) {
-                $q->oldest('date');
-            }, 'location', 'secondaryLocation', 'coach', 'package', 'swimmingClass.category', 'schedules.location'])->oldest('name')->get();
+            $children = $user->children()->with([
+                'progressReports' => function ($q) { $q->oldest('date'); },
+                'location',
+                'secondaryLocation',
+                'coach',
+                'package',
+                'swimmingClass.category',
+                'schedules.location',
+                'scheduleChangeRequests' => function ($q) { $q->latest(); }
+            ])->oldest('name')->get();
 
             // Ambil anak yang sesinya baru saja habis (inactive & quota habis)
             $expiredStudents = $user->children()
@@ -138,8 +150,9 @@ Route::middleware('auth')->group(function () {
 
             $packages = \App\Models\Package::with('locationPrices')->oldest()->get();
             $locations = \App\Models\Location::oldest()->get();
+            $schedules = \App\Models\Schedule::with('location')->where('is_active', true)->get();
 
-            return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children', 'expiredStudents', 'packages', 'locations'));
+            return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children', 'expiredStudents', 'packages', 'locations', 'schedules'));
         })->name('dashboard');
 
         // Rute untuk melihat daftar anak (RESTful URI)
@@ -156,6 +169,9 @@ Route::middleware('auth')->group(function () {
 
         // Riwayat Absensi Anak
         Route::get('/attendances', [\App\Http\Controllers\Parents\AttendanceController::class, 'index'])->name('attendances.index');
+
+        // Pengajuan Pindah Jadwal Anak
+        Route::post('/schedule-requests/store/{student}', [\App\Http\Controllers\Parents\ScheduleRequestController::class, 'store'])->name('schedule-requests.store');
     });
 
     // 4. KELOMPOK ROUTE GENERAL (UMUM)
@@ -172,10 +188,16 @@ Route::middleware('auth')->group(function () {
 
             // Ambil data murid milik akun general ini (hanya 1), beserta progress reports-nya
             $myStudent = \App\Models\Student::where('user_id', $user->id)
-                ->with(['progressReports' => function ($q) {
-                    $q->oldest('date');
-                }, 'location', 'secondaryLocation', 'coach', 'package', 'swimmingClass.category', 'schedules.location'])
-                ->first();
+                ->with([
+                    'progressReports' => function ($q) { $q->oldest('date'); },
+                    'location',
+                    'secondaryLocation',
+                    'coach',
+                    'package',
+                    'swimmingClass.category',
+                    'schedules.location',
+                    'scheduleChangeRequests' => function ($q) { $q->latest(); }
+                ])->first();
 
             // Ambil murid yang sesinya baru saja habis (inactive & quota habis)
             $expiredStudents = \App\Models\Student::where('user_id', $user->id)
@@ -186,8 +208,14 @@ Route::middleware('auth')->group(function () {
 
             $packages = \App\Models\Package::with('locationPrices')->oldest()->get();
             $locations = \App\Models\Location::oldest()->get();
+            $schedules = \App\Models\Schedule::with('location')
+                ->where('is_active', true)
+                ->when($myStudent, function ($q) use ($myStudent) {
+                    return $q->where('swimming_class_id', $myStudent->swimming_class_id);
+                })
+                ->get();
 
-            return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent', 'expiredStudents', 'packages', 'locations'));
+            return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent', 'expiredStudents', 'packages', 'locations', 'schedules'));
         })->name('dashboard');
         Route::get('/students', [\App\Http\Controllers\General\StudentController::class, 'index'])->name('students.index');
         // Routes for General user to register a package (single registration)
@@ -201,6 +229,9 @@ Route::middleware('auth')->group(function () {
 
         // Riwayat Absensi
         Route::get('/attendances', [\App\Http\Controllers\General\AttendanceController::class, 'index'])->name('attendances.index');
+
+        // Pengajuan Pindah Jadwal Mandiri
+        Route::post('/schedule-requests/store/{student}', [\App\Http\Controllers\General\ScheduleRequestController::class, 'store'])->name('schedule-requests.store');
     });
 });
 

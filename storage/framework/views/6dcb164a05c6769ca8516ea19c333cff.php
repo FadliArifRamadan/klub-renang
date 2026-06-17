@@ -70,6 +70,38 @@
 
                 <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('admin.schedule-requests.index'),'active' => request()->routeIs('admin.schedule-requests.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('sidebar-nav-link'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('admin.schedule-requests.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('admin.schedule-requests.index'))]); ?>
+                    <i class="fa-solid fa-calendar-check w-5 text-center"></i>
+                    <span class="font-medium flex-1">Pengajuan Jadwal</span>
+                    <?php
+                        $pendingSchedCount = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
+                    ?>
+                    <?php if($pendingSchedCount > 0): ?>
+                        <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                            <?php echo e($pendingSchedCount); ?>
+
+                        </span>
+                    <?php endif; ?>
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $attributes = $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>
+<?php $component = $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5; ?>
+<?php unset($__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5); ?>
+<?php endif; ?>
+
+                <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('admin.students.index'),'active' => request()->routeIs('admin.students.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('sidebar-nav-link'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -96,16 +128,16 @@
 
                 <?php if (isset($component)) { $__componentOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('admin.coaches.index'),'active' => request()->routeIs('admin.coaches.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.sidebar-nav-link','data' => ['href' => route('admin.users.index'),'active' => request()->routeIs('admin.users.index')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('sidebar-nav-link'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('admin.coaches.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('admin.coaches.index'))]); ?>
-                    <i class="fa-solid fa-user-tie w-5 text-center"></i>
-                    <span class="font-medium">Kelola Coach</span>
+<?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('admin.users.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('admin.users.index'))]); ?>
+                    <i class="fa-solid fa-users-gear w-5 text-center"></i>
+                    <span class="font-medium">Kelola Pengguna</span>
                  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal0f13263f1f512da2bd4a4ff79680dcd5)): ?>

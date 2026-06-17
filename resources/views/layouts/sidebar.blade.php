@@ -32,6 +32,19 @@
                     <span class="font-medium">Verifikasi Pembayaran</span>
                 </x-sidebar-nav-link>
 
+                <x-sidebar-nav-link :href="route('admin.schedule-requests.index')" :active="request()->routeIs('admin.schedule-requests.index')">
+                    <i class="fa-solid fa-calendar-check w-5 text-center"></i>
+                    <span class="font-medium flex-1">Pengajuan Jadwal</span>
+                    @php
+                        $pendingSchedCount = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
+                    @endphp
+                    @if($pendingSchedCount > 0)
+                        <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                            {{ $pendingSchedCount }}
+                        </span>
+                    @endif
+                </x-sidebar-nav-link>
+
                 <x-sidebar-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.index')">
                     <i class="fa-solid fa-users w-5 text-center"></i>
                     <span class="font-medium">Kelola Murid</span>
@@ -40,9 +53,9 @@
                 <hr class="my-4 border-gray-200" />
                 <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Data Master</p>
 
-                <x-sidebar-nav-link :href="route('admin.coaches.index')" :active="request()->routeIs('admin.coaches.index')">
-                    <i class="fa-solid fa-user-tie w-5 text-center"></i>
-                    <span class="font-medium">Kelola Coach</span>
+                <x-sidebar-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+                    <i class="fa-solid fa-users-gear w-5 text-center"></i>
+                    <span class="font-medium">Kelola Pengguna</span>
                 </x-sidebar-nav-link>
 
                 <x-sidebar-nav-link :href="route('admin.swimming-classes.index')" :active="request()->routeIs('admin.swimming-classes.index')">

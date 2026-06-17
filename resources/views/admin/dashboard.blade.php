@@ -21,7 +21,7 @@
             </div>
 
             {{-- Metrics Grid --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 <!-- Card 1: Total Murid -->
                 <a href="{{ route('admin.students.index') }}"
                     class="group bg-white overflow-hidden shadow-sm hover:shadow-md sm:rounded-xl p-6 border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-between">
@@ -40,7 +40,7 @@
                 </a>
 
                 <!-- Card 2: Total Coach -->
-                <a href="{{ route('admin.coaches.index') }}"
+                <a href="{{ route('admin.users.index', ['role' => 'coach']) }}"
                     class="group bg-white overflow-hidden shadow-sm hover:shadow-md sm:rounded-xl p-6 border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-between">
                     <div class="flex items-center gap-4">
                         <div
@@ -100,7 +100,37 @@
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </div>
                 </a>
+
+                <!-- Card 5: Pending Schedule Requests -->
+                @php
+                    $pendingScheds = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
+                @endphp
+                <a href="{{ route('admin.schedule-requests.index') }}"
+                    class="group bg-white overflow-hidden shadow-sm hover:shadow-md sm:rounded-xl p-6 border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="p-3 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100 transition-colors {{ $pendingScheds > 0 ? 'animate-pulse' : '' }}">
+                            <i class="fa-solid fa-calendar-check text-2xl w-8 text-center"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pengajuan Jadwal</p>
+                            <div class="flex items-center gap-1.5">
+                                <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ $pendingScheds }} Pending</p>
+                                @if ($pendingScheds > 0)
+                                    <span
+                                        class="inline-flex items-center bg-indigo-100 text-indigo-850 text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-indigo-200">
+                                        Perlu Aksi
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-gray-300 group-hover:text-indigo-500 transition-colors">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </a>
             </div>
+
 
             {{-- Progress Chart Section --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 p-6 flex flex-col">

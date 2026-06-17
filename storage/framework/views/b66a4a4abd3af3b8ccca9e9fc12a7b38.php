@@ -228,7 +228,19 @@
     </section>
 
     <!-- Tim Instruktur Section -->
-    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section x-data="{ 
+        showModal: false, 
+        coach: { name: '', image: '', licenses: [], certificates: [], active: '' },
+        openModal(data) {
+            this.coach = data;
+            this.showModal = true;
+            document.body.style.overflow = 'hidden';
+        },
+        closeModal() {
+            this.showModal = false;
+            document.body.style.overflow = '';
+        }
+    }" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
             <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block">TIM INSTRUKTUR KAMI</span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Kenalan Dengan Coach Profesional
@@ -240,8 +252,14 @@
         <?php if($coaches->isNotEmpty()): ?>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div
-                        class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <div @click="openModal({
+                            name: '<?php echo e(addslashes($coach->name)); ?>',
+                            image: '<?php echo e($coach->image ? asset('storage/' . $coach->image) : ''); ?>',
+                            licenses: ['Lisensi C PRSI', 'Lisensi B PRSI', 'Lisensi Pelatih Fisik Dasar'],
+                            certificates: ['Sertifikat Keselamatan Air (Water Rescue)', 'Sertifikat First Aid & CPR', 'Sertifikat Analisa Gaya Renang'],
+                            active: 'Aktif melatih sejak 2021 di Black Diamond'
+                        })"
+                        class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
                         <!-- Photo Container -->
                         <div class="relative h-72 bg-slate-100 overflow-hidden">
                             <?php if($coach->image): ?>
@@ -258,22 +276,7 @@
                                 class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent">
                             </div>
 
-                            <!-- WhatsApp Badge -->
-                            <?php
-                                $waPhone = preg_replace('/[^0-9]/', '', $coach->phone ?? '');
-                                if (str_starts_with($waPhone, '0')) {
-                                    $waPhone = '62' . substr($waPhone, 1);
-                                }
-                            ?>
-                            <?php if($coach->phone): ?>
-                                <div
-                                    class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                                    <a href="https://wa.me/<?php echo e($waPhone); ?>" target="_blank"
-                                        class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold rounded-xl shadow-lg flex items-center justify-center gap-2 text-xs transition-colors">
-                                        <i class="fa-brands fa-whatsapp text-base"></i> Hubungi via WhatsApp
-                                    </a>
-                                </div>
-                            <?php endif; ?>
+                            <!-- Removed WhatsApp Badge -->
                         </div>
 
                         <!-- Details -->
@@ -281,12 +284,7 @@
                             <h3 class="font-extrabold text-slate-800 text-base mb-1 truncate"><?php echo e($coach->name); ?></h3>
                             <p class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-2">Instruktur Renang
                                 Profesional</p>
-                            <?php if($coach->phone): ?>
-                                <p class="text-xs text-slate-400 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-phone"></i>
-                                    <span><?php echo e($coach->phone); ?></span>
-                                </p>
-                            <?php endif; ?>
+                            <!-- Removed Phone Number -->
                         </div>
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -299,6 +297,112 @@
                 </p>
             </div>
         <?php endif; ?>
+
+        <!-- Coach Details Modal -->
+        <div x-show="showModal" 
+             x-cloak
+             style="display: none;"
+             class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8"
+             aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            
+            <!-- Modal Overlay -->
+            <div x-show="showModal" 
+                 x-transition:enter="ease-out duration-300" 
+                 x-transition:enter-start="opacity-0" 
+                 x-transition:enter-end="opacity-100" 
+                 x-transition:leave="ease-in duration-200" 
+                 x-transition:leave-start="opacity-100" 
+                 x-transition:leave-end="opacity-0" 
+                 @click="closeModal()"
+                 class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+
+            <!-- Modal Panel -->
+            <div x-show="showModal" 
+                 x-transition:enter="ease-out duration-300" 
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                 x-transition:leave="ease-in duration-200" 
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                 class="relative bg-white rounded-3xl shadow-2xl w-full max-w-4xl mx-auto overflow-hidden transition-all flex flex-col md:flex-row">
+                 
+                <!-- Close Button -->
+                <button @click="closeModal()" class="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-white/50 hover:bg-white text-slate-800 backdrop-blur transition-colors shadow-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <!-- Modal Left (Photo) -->
+                <div class="relative h-64 md:h-auto md:w-1/2 bg-slate-100 overflow-hidden shrink-0">
+                    <template x-if="coach.image">
+                        <img :src="coach.image" :alt="'Foto ' + coach.name" class="w-full h-full object-cover">
+                    </template>
+                    <template x-if="!coach.image">
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                            <i class="fa-solid fa-user-tie text-blue-200 text-7xl"></i>
+                        </div>
+                    </template>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 right-6 text-white">
+                        <h3 class="text-2xl font-extrabold mb-1" x-text="coach.name"></h3>
+                        <p class="text-sm text-blue-300 font-bold uppercase tracking-wider">Instruktur Renang Profesional</p>
+                    </div>
+                </div>
+
+                <!-- Modal Right (Details) -->
+                <div class="p-6 sm:p-8 md:p-10 overflow-y-auto md:w-1/2 max-h-[80vh]">
+                    <div class="space-y-8">
+                        
+                        <!-- Lisensi -->
+                        <div class="flex gap-4 items-start">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-id-card text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-base font-extrabold text-slate-800 mb-2">Lisensi</h4>
+                                <ul class="space-y-2">
+                                    <template x-for="lic in coach.licenses">
+                                        <li class="flex items-start gap-2">
+                                            <i class="fa-solid fa-check text-blue-500 mt-1 text-xs"></i>
+                                            <span class="text-sm text-slate-600 leading-relaxed" x-text="lic"></span>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Sertifikat -->
+                        <div class="flex gap-4 items-start">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-award text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-base font-extrabold text-slate-800 mb-2">Sertifikasi Keahlian</h4>
+                                <ul class="space-y-2">
+                                    <template x-for="cert in coach.certificates">
+                                        <li class="flex items-start gap-2">
+                                            <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
+                                            <span class="text-sm text-slate-600 leading-relaxed" x-text="cert"></span>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Aktif Melatih -->
+                        <div class="flex gap-4 items-start">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-person-swimming text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-base font-extrabold text-slate-800 mb-1">Pengalaman & Status</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed" x-text="coach.active"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 <?php $__env->stopSection(); ?>
 

@@ -496,8 +496,28 @@
                                     <div>Sisa Kuota: <span id="student-quota" class="font-bold text-blue-600">-</span>
                                     </div>
                                     <div id="student-schedule-container" class="hidden pt-1.5 mt-1.5 border-t border-gray-200">
-                                        <span class="font-bold text-gray-500 block mb-1">Jadwal Aktif:</span>
-                                        <div id="student-schedules" class="space-y-0.5"></div>
+                                        <span class="font-bold text-gray-500 block mb-1">Jadwal Latihan Aktif:</span>
+                                        <div id="student-schedules" class="space-y-0.5 mb-3"></div>
+
+                                        
+                                        <div id="student-pending-schedule-request" class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-[11px] hidden">
+                                            <div class="flex items-center gap-1.5 text-amber-800 font-bold mb-1">
+                                                <i class="fa-solid fa-clock-rotate-left"></i> Pengajuan Pindah Jadwal (Pending)
+                                            </div>
+                                            <p class="text-slate-650 leading-relaxed mb-1">
+                                                Menunggu persetujuan Admin untuk pindah ke jadwal berikut:
+                                            </p>
+                                            <div id="pending-schedules-list" class="space-y-1"></div>
+                                            <p class="text-[9px] text-slate-400 mt-2 font-semibold" id="pending-request-date"></p>
+                                        </div>
+
+                                        
+                                        <div id="student-schedule-change-wrapper" class="mt-3">
+                                            <button type="button" onclick="openScheduleRequestModal()"
+                                                class="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold rounded-lg transition-colors">
+                                                <i class="fa-solid fa-calendar-plus"></i> Ajukan Pindah Jadwal
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -581,6 +601,48 @@
                     } else {
                         schedulesContainer.classList.add('hidden');
                     }
+
+                    // Update pending schedule-change-request info
+                    const pendingBox       = document.getElementById('student-pending-schedule-request');
+                    const pendingListDiv   = document.getElementById('pending-schedules-list');
+                    const pendingDateEl    = document.getElementById('pending-request-date');
+                    const changeWrapper    = document.getElementById('student-schedule-change-wrapper');
+
+                    // Cari request pending dari anak yang dipilih
+                    const pendingReq = child.schedule_change_requests && child.schedule_change_requests.find(r => r.status === 'pending');
+
+                    if (pendingReq) {
+                        pendingBox.classList.remove('hidden');
+                        changeWrapper.classList.add('hidden'); // Sembunyikan tombol saat ada pending
+                        pendingListDiv.innerHTML = '';
+
+                        const newIds = pendingReq.new_schedule_ids || [];
+                        const allSchedules = <?php echo json_encode($schedules, 15, 512) ?>;
+                        const days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+
+                        newIds.forEach(sid => {
+                            const s = allSchedules.find(x => x.id == sid);
+                            if (s) {
+                                const dayName  = days[s.day_of_week] || 'Hari ?';
+                                const timeRange = `${s.start_time.substring(0,5)} - ${s.end_time.substring(0,5)}`;
+                                const locName  = s.location ? s.location.name : 'Lokasi ?';
+                                const type     = s.session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                                const el = document.createElement('div');
+                                el.className = 'bg-white border border-amber-100 rounded p-1.5 text-[11px] font-semibold text-gray-700 shadow-sm flex flex-col gap-0.5';
+                                el.innerHTML = `<div class="flex justify-between items-center"><span class="text-amber-700 font-bold">${dayName}, ${timeRange}</span><span class="px-1 py-0.2 text-[9px] bg-amber-50 text-amber-600 rounded">${type}</span></div><div class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fa-solid fa-location-dot"></i> ${locName}</div>`;
+                                pendingListDiv.appendChild(el);
+                            }
+                        });
+
+                        const reqDate = new Date(pendingReq.created_at);
+                        pendingDateEl.textContent = `Diajukan: ${reqDate.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })}`;
+                    } else {
+                        pendingBox.classList.add('hidden');
+                        changeWrapper.classList.remove('hidden');
+                    }
+
+                    // Simpan child id aktif untuk modal
+                    window.activeChildId = childId;
 
                     const reports = child.progress_reports || [];
                     const chartCanvasWrapper = document.getElementById('chart-canvas-wrapper');
@@ -797,6 +859,219 @@
                     selectDropdown.dispatchEvent(new Event('change'));
                 <?php endif; ?>
             });
+        </script>
+    <?php endif; ?>
+
+    
+    <?php if($children->isNotEmpty()): ?>
+        <div id="schedule-request-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none!important" x-data>
+            <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeScheduleRequestModal()"></div>
+            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col" style="max-height: 90vh;">
+                
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 flex items-center justify-between flex-shrink-0">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-white/20 rounded-lg">
+                            <i class="fa-solid fa-calendar-plus text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold text-base">Ajukan Pindah Jadwal & Lokasi</h3>
+                            <p class="text-blue-100 text-xs" id="modal-child-name">Anak</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeScheduleRequestModal()" class="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <form id="schedule-request-form" method="POST" action="" class="flex flex-col flex-1 overflow-hidden">
+                    <?php echo csrf_field(); ?>
+                    
+                    <div class="overflow-y-auto flex-1 p-6 space-y-5" style="scrollbar-width: thin;">
+
+                        
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-calendar-check text-gray-400"></i> Jadwal Aktif Saat Ini
+                            </h4>
+                            <div id="modal-current-schedules" class="space-y-1.5 text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-xl p-3">
+                                <p class="text-gray-400 italic text-center">Memuat jadwal...</p>
+                            </div>
+                        </div>
+
+                        
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-gray-400"></i> Lokasi Latihan Saat Ini
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3">
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Utama</p>
+                                    <p id="modal-current-location" class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-building text-blue-500"></i>
+                                        <span>—</span>
+                                    </p>
+                                </div>
+                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3">
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-1">Kedua</p>
+                                    <p id="modal-current-sec-location" class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-building text-indigo-500"></i>
+                                        <span>—</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-200">
+
+                        
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-calendar-plus text-blue-500"></i> Pilih Jadwal Baru
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <p class="text-[11px] text-gray-400 mb-2">Centang semua jadwal yang diinginkan (bisa lebih dari satu).</p>
+                            <div id="modal-schedules-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl" style="max-height: 200px; overflow-y: auto; scrollbar-width: thin;">
+                                <?php $__currentLoopData = $schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
+                                        $days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+                                        $dayName = $days[$sched->day_of_week] ?? '?';
+                                        $timeRange = substr($sched->start_time,0,5).' - '.substr($sched->end_time,0,5);
+                                        $type = $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                                    ?>
+                                    <label data-class-id="<?php echo e($sched->swimming_class_id); ?>" class="schedule-checkbox-item flex items-start gap-2.5 p-2 bg-white border border-gray-100 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50/50 transition-colors">
+                                        <input type="checkbox" name="schedule_ids[]" value="<?php echo e($sched->id); ?>"
+                                            class="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0">
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center justify-between gap-1">
+                                                <span class="text-[11px] font-bold text-gray-800 truncate"><?php echo e($dayName); ?>, <?php echo e($timeRange); ?></span>
+                                                <span class="text-[8px] px-1 py-0.2 rounded font-semibold shrink-0 <?php echo e($sched->session_type === 'dryland' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'); ?>"><?php echo e($type); ?></span>
+                                            </div>
+                                            <div class="text-[9px] text-gray-500 flex items-center gap-1 mt-0.5 truncate">
+                                                <i class="fa-solid fa-location-dot"></i>
+                                                <span class="truncate"><?php echo e($sched->location->name ?? '?'); ?></span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        </div>
+
+                        
+                        <div>
+                            <label for="schedule-reason" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-pen-to-square text-gray-400"></i> Alasan Pindah <span class="text-red-500">*</span>
+                            </label>
+                            <textarea id="schedule-reason" name="reason" rows="3" required
+                                placeholder="Tuliskan alasan Anda ingin pindah jadwal/lokasi..."
+                                class="w-full text-sm rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 resize-none"></textarea>
+                        </div>
+
+                    </div>
+
+                    
+                    <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex-shrink-0">
+                        <button type="button" onclick="closeScheduleRequestModal()"
+                            class="px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim Pengajuan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            const allSchedulesData = <?php echo json_encode($schedules, 15, 512) ?>;
+            const daysMap = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+
+            function openScheduleRequestModal() {
+                const childId = window.activeChildId;
+                if (!childId) return;
+
+                const childrenArr = <?php echo json_encode($children->load('schedules.location', 'location', 'secondaryLocation')) ?>;
+                const child = childrenArr.find(c => String(c.id) === String(childId));
+                if (!child) return;
+
+                // Update form action
+                const form = document.getElementById('schedule-request-form');
+                form.action = `/parent/schedule-requests/store/${child.id}`;
+
+                // Set child name in modal header
+                document.getElementById('modal-child-name').textContent = child.name;
+
+                // Tampilkan jadwal aktif saat ini
+                const currentDiv = document.getElementById('modal-current-schedules');
+                currentDiv.innerHTML = '';
+                if (child.schedules && child.schedules.length > 0) {
+                    child.schedules.forEach(s => {
+                        const dayName  = daysMap[s.day_of_week] || '?';
+                        const tr       = `${s.start_time.substring(0,5)} - ${s.end_time.substring(0,5)}`;
+                        const locName  = s.location ? s.location.name : 'Lokasi ?';
+                        const type     = s.session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                        const tag      = s.session_type === 'dryland' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700';
+                        const el = document.createElement('div');
+                        el.className = 'flex items-center justify-between py-1';
+                        el.innerHTML = `<span class="font-semibold text-gray-800">${dayName}, ${tr} — <span class="text-gray-500">${locName}</span></span><span class="text-[9px] px-1.5 py-0.5 rounded ${tag}">${type}</span>`;
+                        currentDiv.appendChild(el);
+                    });
+                } else {
+                    currentDiv.innerHTML = '<p class="text-gray-400 italic text-center text-xs">Tidak ada jadwal aktif.</p>';
+                }
+
+                // Tampilkan lokasi latihan saat ini
+                const locEl = document.getElementById('modal-current-location');
+                const secLocEl = document.getElementById('modal-current-sec-location');
+                locEl.innerHTML = `<i class="fa-solid fa-building text-blue-500"></i><span>${child.location ? child.location.name : 'Belum diatur'}</span>`;
+                secLocEl.innerHTML = `<i class="fa-solid fa-building text-indigo-500"></i><span>${child.secondary_location ? child.secondary_location.name : 'Tidak ada'}</span>`;
+
+                // Filter daftar jadwal baru berdasarkan swimming_class_id milik anak
+                const childClassId = child.swimming_class_id;
+                const items = document.querySelectorAll('.schedule-checkbox-item');
+                let visibleCount = 0;
+                items.forEach(item => {
+                    if (String(item.getAttribute('data-class-id')) === String(childClassId)) {
+                        item.style.display = 'flex';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Tampilkan pesan jika tidak ada jadwal baru tersedia untuk kelas anak ini
+                let noSchedMsg = document.getElementById('no-schedules-message');
+                if (visibleCount === 0) {
+                    if (!noSchedMsg) {
+                        noSchedMsg = document.createElement('p');
+                        noSchedMsg.id = 'no-schedules-message';
+                        noSchedMsg.className = 'text-gray-400 italic text-center text-xs py-4 col-span-full';
+                        noSchedMsg.textContent = 'Tidak ada jadwal latihan tersedia untuk tingkat kelas anak ini.';
+                        document.getElementById('modal-schedules-list').appendChild(noSchedMsg);
+                    } else {
+                        noSchedMsg.style.display = 'block';
+                    }
+                } else if (noSchedMsg) {
+                    noSchedMsg.style.display = 'none';
+                }
+
+                // Reset form state
+                form.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false);
+                document.getElementById('schedule-reason').value = '';
+                document.getElementById('par-new-location').value = '';
+                document.getElementById('par-new-sec-location').value = '';
+
+                // Tampilkan modal
+                const modal = document.getElementById('schedule-request-modal');
+                modal.style.removeProperty('display');
+                modal.style.display = 'flex';
+            }
+
+
+            function closeScheduleRequestModal() {
+                document.getElementById('schedule-request-modal').style.display = 'none';
+            }
         </script>
     <?php endif; ?>
 

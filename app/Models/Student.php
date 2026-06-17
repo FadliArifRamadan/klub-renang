@@ -81,6 +81,12 @@ class Student extends Model
         return $this->hasOne(Payment::class, 'student_id')->latestOfMany();
     }
 
+    // Relasi ke data pengajuan pindah jadwal
+    public function scheduleChangeRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ScheduleChangeRequest::class, 'student_id');
+    }
+
     // Accessor untuk label teks Gender
     public function getGenderLabelAttribute(): string
     {

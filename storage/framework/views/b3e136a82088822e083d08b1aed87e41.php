@@ -59,9 +59,11 @@
             0% {
                 box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
             }
+
             70% {
                 box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
             }
+
             100% {
                 box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
             }
@@ -99,15 +101,20 @@
                     <a href="<?php echo e(route('welcome')); ?>"
                         class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('welcome') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Home</a>
                     <a href="<?php echo e(route('about')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('about') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Tentang Kami</a>
+                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('about') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Tentang
+                        Kami</a>
                     <a href="<?php echo e(route('packages')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('packages') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Program Paket</a>
+                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('packages') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Program
+                        Paket</a>
                     <a href="<?php echo e(route('locations')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('locations') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Kolam Latihan</a>
+                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('locations') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Kolam
+                        Latihan</a>
                     <a href="<?php echo e(route('schedule')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('schedule') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Jadwal Latihan</a>
+                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('schedule') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Jadwal
+                        Latihan</a>
                     <a href="<?php echo e(route('contact')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('contact') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Kontak Kami</a>
+                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('contact') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Kontak
+                        Kami</a>
                 </nav>
 
                 <!-- Desktop Access Action Buttons -->
@@ -157,15 +164,20 @@
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('welcome')); ?>"
                     class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('welcome') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Home</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('about')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('about') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Tentang Kami</a>
+                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('about') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Tentang
+                    Kami</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('packages')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('packages') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Program Paket</a>
+                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('packages') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Program
+                    Paket</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('locations')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('locations') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Kolam Latihan</a>
+                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('locations') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Kolam
+                    Latihan</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('schedule')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('schedule') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Jadwal Latihan</a>
+                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('schedule') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Jadwal
+                    Latihan</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('contact')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('contact') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Kontak Kami</a>
+                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('contact') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Kontak
+                    Kami</a>
 
                 <div class="pt-4 border-t border-slate-100 flex flex-col gap-3 px-4">
                     <?php if(auth()->guard()->check()): ?>
@@ -215,11 +227,16 @@
                 <h4 class="font-bold text-sm tracking-wider uppercase text-slate-400">Navigasi Halaman</h4>
                 <ul class="space-y-2.5 text-sm text-slate-300">
                     <li><a href="<?php echo e(route('welcome')); ?>" class="hover:text-blue-400 transition-colors">Home</a></li>
-                    <li><a href="<?php echo e(route('about')); ?>" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li>
-                    <li><a href="<?php echo e(route('packages')); ?>" class="hover:text-blue-400 transition-colors">Program Paket</a></li>
-                    <li><a href="<?php echo e(route('locations')); ?>" class="hover:text-blue-400 transition-colors">Kolam Latihan</a></li>
-                    <li><a href="<?php echo e(route('schedule')); ?>" class="hover:text-blue-400 transition-colors">Jadwal Latihan</a></li>
-                    <li><a href="<?php echo e(route('contact')); ?>" class="hover:text-blue-400 transition-colors">Kontak Kami</a></li>
+                    <li><a href="<?php echo e(route('about')); ?>" class="hover:text-blue-400 transition-colors">Tentang Kami</a>
+                    </li>
+                    <li><a href="<?php echo e(route('packages')); ?>" class="hover:text-blue-400 transition-colors">Program
+                            Paket</a></li>
+                    <li><a href="<?php echo e(route('locations')); ?>" class="hover:text-blue-400 transition-colors">Kolam
+                            Latihan</a></li>
+                    <li><a href="<?php echo e(route('schedule')); ?>" class="hover:text-blue-400 transition-colors">Jadwal
+                            Latihan</a></li>
+                    <li><a href="<?php echo e(route('contact')); ?>" class="hover:text-blue-400 transition-colors">Kontak
+                            Kami</a></li>
                 </ul>
             </div>
 
@@ -252,7 +269,7 @@
 
     <!-- WhatsApp Floating Button -->
     <a class="float-wa"
-        href="https://api.whatsapp.com/send/?phone=6281216700519&amp;text=Halo+Admin+Black+Diamond+Swimming+Club%2C+saya+ingin+tanya-tanya+mengenai+paket+dan+jadwal+latihan+renang.&amp;type=phone_number&amp;app_absent=0"
+        href="https://api.whatsapp.com/send/?phone=6287881203283&amp;text=Halo+Admin+Black+Diamond+Swimming+Club%2C+saya+ingin+tanya-tanya+mengenai+paket+dan+jadwal+latihan+renang.&amp;type=phone_number&amp;app_absent=0"
         target="_blank" title="Hubungi CS Black Diamond via WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
