@@ -189,10 +189,34 @@
 
                 
                 <div id="chart-container" class="hidden flex-1 flex-col">
-                    
-                    <div class="relative w-full h-[360px] mb-6">
-                        <canvas id="progressChart"></canvas>
-                    </div>
+                        
+                        <div id="prestasi-charts-container" class="hidden flex-col space-y-8 w-full mt-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Kondisi Fisik</h4>
+                                    <div class="relative w-full h-[250px]">
+                                        <canvas id="radarChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Sistem Energi</h4>
+                                    <div class="relative w-full h-[250px]">
+                                        <canvas id="barChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Personal Best Time</h4>
+                                <div class="relative w-full h-[300px]">
+                                    <canvas id="lineChartPBT"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div id="freetext-container" class="hidden overflow-y-auto max-h-[400px] mt-4 space-y-4 pr-1 mb-6">
+                            
+                        </div>
 
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
@@ -245,6 +269,9 @@
             const latestNoteDate = document.getElementById('latest-note-date');
 
             let myChart = null;
+            let radarChartInst = null;
+            let barChartInst = null;
+            let lineChartPBTInst = null;
 
             // Handler perubahan dropdown murid di grafik
             selectDropdown.addEventListener('change', function() {
@@ -273,157 +300,267 @@
                 noDataState.classList.add('hidden');
                 chartContainer.classList.remove('hidden');
 
-                // Siapkan data untuk render chart
-                const labels = [];
-                const strengthData = [];
-                const enduranceData = [];
-                const flexibilityData = [];
-                const speedData = [];
-                const agilityData = [];
+                                    // Update catatan terakhir
+                    const latestReport = reports[reports.length - 1];
+                    latestNoteText.textContent = latestReport.notes ?
+                        `"${latestReport.notes}"` :
+                        `"Tidak ada catatan pada evaluasi terakhir."`;
+                    const ld = new Date(latestReport.date);
+                    latestNoteDate.textContent =
+                        `Diinput pada: ${ld.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}`;
 
-                reports.forEach(report => {
-                    // Format tanggal (DD-MM-YYYY)
-                    const d = new Date(report.date);
-                    const formattedDate = d.toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: '2-digit'
-                    });
+                                        const freetextContainer = document.getElementById('freetext-container');
+                    const prestasiContainer = document.getElementById('prestasi-charts-container');
 
-                    labels.push(formattedDate);
-                    strengthData.push(report.strength);
-                    enduranceData.push(report.endurance);
-                    flexibilityData.push(report.flexibility);
-                    speedData.push(report.speed);
-                    agilityData.push(report.agility);
-                });
+                    // Hancurkan chart lama jika ada
+                    if (radarChartInst) radarChartInst.destroy();
+                    if (barChartInst) barChartInst.destroy();
+                    if (lineChartPBTInst) lineChartPBTInst.destroy();
 
-                // Update catatan terakhir coach
-                const latestReport = reports[reports.length - 1];
-                if (latestReport.notes) {
-                    latestNoteText.textContent = `"${latestReport.notes}"`;
-                } else {
-                    latestNoteText.textContent = `"Tidak ada catatan pada evaluasi terakhir."`;
-                }
-                const d = new Date(latestReport.date);
-                latestNoteDate.textContent =
-                    `Diinput pada: ${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+                    // Cek apakah data ini adalah kelas Prestasi (memiliki Kondisi Fisik)
+                    // Kita cek dari report terakhir
+                    const isPrestasi = latestReport && latestReport.metrics && ('Kondisi Fisik' in latestReport.metrics);
 
-                // Update info murid
-                document.getElementById('student-coach').textContent = student.coach ? student.coach.name :
-                    'Belum Ditugaskan';
-                document.getElementById('student-location').textContent = student.location ? student
-                    .location.name : 'Belum Dipilih';
-                document.getElementById('student-quota').textContent = `${student.quota_left} sesi`;
+                    if (isPrestasi) {
+                        if (freetextContainer) freetextContainer.classList.add('hidden');
+                        if (prestasiContainer) prestasiContainer.classList.remove('hidden');
+                        prestasiContainer.style.display = 'flex';
 
-                // Hancurkan chart lama jika ada agar tidak tumpang tindih
-                if (myChart) {
-                    myChart.destroy();
-                }
+                        // --- 1. Siapkan Data ---
+                        const labels = [];
+                        const radarData = { Endurance: [], Fleksibilitas: [], Strength: [], Speed: [], Agility: [] };
+                        const barData = { Aerobic: [], Anaerobic: [] };
+                        const pbtData = { TestPerBulan: [], PbtEvent: [] };
 
-                // Render Chart.js baru
-                const ctx = document.getElementById('progressChart').getContext('2d');
-                myChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                                label: 'Strength',
-                                data: strengthData,
-                                borderColor: 'rgb(37, 99, 235)', // Blue
-                                backgroundColor: 'rgba(37, 99, 235, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
-                            },
-                            {
-                                label: 'Endurance',
-                                data: enduranceData,
-                                borderColor: 'rgb(16, 185, 129)', // Emerald
-                                backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
-                            },
-                            {
-                                label: 'Flexibility',
-                                data: flexibilityData,
-                                borderColor: 'rgb(147, 51, 234)', // Purple
-                                backgroundColor: 'rgba(147, 51, 234, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
-                            },
-                            {
-                                label: 'Speed',
-                                data: speedData,
-                                borderColor: 'rgb(239, 68, 68)', // Red
-                                backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
-                            },
-                            {
-                                label: 'Agility',
-                                data: agilityData,
-                                borderColor: 'rgb(245, 158, 11)', // Amber
-                                backgroundColor: 'rgba(245, 158, 11, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
+                        // Fungsi helper ubah "01:25.50" jadi detik "85.5"
+                        function parseTimeToSeconds(timeStr) {
+                            if (!timeStr) return null;
+                            const match = timeStr.toString().match(/(?:(\d+):)?(\d+)[.,:](\d+)/);
+                            if (match) {
+                                const m = parseInt(match[1] || 0);
+                                const s = parseInt(match[2] || 0);
+                                const ms = parseInt(match[3] || 0);
+                                // ms bisa 2 digit (50 = 500ms)
+                                const msVal = ms < 100 ? ms * 10 : ms; 
+                                return m * 60 + s + (msVal / 1000);
                             }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                labels: {
-                                    boxWidth: 15,
-                                    font: {
-                                        size: 11,
-                                        weight: '600'
+                            return null;
+                        }
+
+                        // Fungsi format balik dari detik ke "MM:SS.ms"
+                        function formatSecondsToTime(totalSeconds) {
+                            if (totalSeconds == null) return "-";
+                            const m = Math.floor(totalSeconds / 60);
+                            const s = Math.floor(totalSeconds % 60);
+                            const ms = Math.round((totalSeconds - Math.floor(totalSeconds)) * 100);
+                            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+                        }
+
+                        reports.forEach(report => {
+                            const d = new Date(report.date);
+                            labels.push(d.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' }));
+
+                            if (report.metrics) {
+                                // Radar (Kondisi Fisik)
+                                const kf = report.metrics['Kondisi Fisik'] || {};
+                                radarData.Endurance.push(kf['Endurance'] || 0);
+                                radarData.Fleksibilitas.push(kf['Fleksibilitas'] || 0);
+                                radarData.Strength.push(kf['Strength'] || 0);
+                                radarData.Speed.push(kf['Speed'] || 0);
+                                radarData.Agility.push(kf['Agility'] || 0);
+
+                                // Bar (Sistem Energi)
+                                const se = report.metrics['Sistem Energi'] || {};
+                                barData.Aerobic.push(se['Aerobic'] || 0);
+                                barData.Anaerobic.push(se['Anaerobic'] || 0);
+
+                                // Line (Personal Best Time)
+                                const pbt = report.metrics['Personal Best Time'] || {};
+                                pbtData.TestPerBulan.push(parseTimeToSeconds(pbt['Test per Bulan']));
+                                pbtData.PbtEvent.push({
+                                    val: parseTimeToSeconds(pbt['PBT Event']),
+                                    raw: pbt['PBT Event'] // Simpan teks aslinya (misal ada tambahan "Kejurda")
+                                });
+                            }
+                        });
+
+                        // Ambil 2 bulan terakhir untuk komparasi Radar
+                        const len = labels.length;
+                        const latestLabels = ['Endurance', 'Fleksibilitas', 'Strength', 'Speed', 'Agility'];
+                        const latestData = len > 0 ? [
+                            radarData.Endurance[len-1], radarData.Fleksibilitas[len-1], 
+                            radarData.Strength[len-1], radarData.Speed[len-1], radarData.Agility[len-1]
+                        ] : [];
+                        const prevData = len > 1 ? [
+                            radarData.Endurance[len-2], radarData.Fleksibilitas[len-2], 
+                            radarData.Strength[len-2], radarData.Speed[len-2], radarData.Agility[len-2]
+                        ] : [];
+
+                        // --- 2. Render Radar Chart (Kondisi Fisik) ---
+                        const ctxRadar = document.getElementById('radarChart').getContext('2d');
+                        const radarDatasets = [{
+                            label: labels[len-1] || 'Bulan Ini',
+                            data: latestData,
+                            backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                            borderColor: 'rgb(37, 99, 235)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgb(37, 99, 235)'
+                        }];
+                        if (len > 1) {
+                            radarDatasets.push({
+                                label: labels[len-2] || 'Bulan Lalu',
+                                data: prevData,
+                                backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                                borderColor: 'rgb(156, 163, 175)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgb(156, 163, 175)'
+                            });
+                        }
+                        radarChartInst = new Chart(ctxRadar, {
+                            type: 'radar',
+                            data: { labels: latestLabels, datasets: radarDatasets },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: { r: { min: 0, max: 100 } },
+                                plugins: { legend: { position: 'bottom' } }
+                            }
+                        });
+
+                        // --- 3. Render Bar Chart (Sistem Energi) ---
+                        const ctxBar = document.getElementById('barChart').getContext('2d');
+                        barChartInst = new Chart(ctxBar, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    { label: 'Aerobic', data: barData.Aerobic, backgroundColor: 'rgba(16, 185, 129, 0.7)' },
+                                    { label: 'Anaerobic', data: barData.Anaerobic, backgroundColor: 'rgba(239, 68, 68, 0.7)' }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { position: 'bottom' } },
+                                scales: { y: { beginAtZero: true, max: 100 } }
+                            }
+                        });
+
+                        // --- 4. Render Line Chart (Personal Best Time) ---
+                        const ctxLine = document.getElementById('lineChartPBT').getContext('2d');
+                        
+                        // Menyiapkan dataset
+                        const pbtDatasets = [
+                            {
+                                label: 'Test per Bulan',
+                                data: pbtData.TestPerBulan,
+                                borderColor: 'rgb(147, 51, 234)',
+                                backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'PBT Event',
+                                data: pbtData.PbtEvent.map(e => e.val), // Hanya nilainya
+                                type: 'scatter',
+                                pointBackgroundColor: 'rgb(245, 158, 11)',
+                                pointBorderColor: 'rgb(255, 255, 255)',
+                                pointRadius: 6,
+                                pointHoverRadius: 8
+                            }
+                        ];
+
+                        lineChartPBTInst = new Chart(ctxLine, {
+                            type: 'line',
+                            data: { labels: labels, datasets: pbtDatasets },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'bottom' },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                if (context.dataset.label === 'PBT Event') {
+                                                    const rawText = pbtData.PbtEvent[context.dataIndex].raw;
+                                                    return `Event: ${rawText || formatSecondsToTime(context.raw)}`;
+                                                }
+                                                return `Test: ${formatSecondsToTime(context.raw)}`;
+                                            }
+                                        }
                                     }
-                                }
-                            },
-                            tooltip: {
-                                padding: 10,
-                                cornerRadius: 8
-                            }
-                        },
-                        scales: {
-                            y: {
-                                min: 0,
-                                max: 100,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
                                 },
-                                title: {
-                                    display: true,
-                                    text: 'Skor Perkembangan',
-                                    font: {
-                                        weight: '600'
+                                scales: {
+                                    y: {
+                                        reverse: true, // Waktu tercepat (terkecil) ada di ATAS!
+                                        ticks: {
+                                            callback: function(value) { return formatSecondsToTime(value); }
+                                        },
+                                        title: { display: true, text: 'Waktu (MM:SS.ms)' }
                                     }
                                 }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                }
                             }
+                        });
+
+                    } else {
+                        // KELAS BELAJAR (TIMELINE TEXT)
+                        if (prestasiContainer) prestasiContainer.classList.add('hidden');
+                        if (prestasiContainer) prestasiContainer.style.display = 'none';
+
+                        if (freetextContainer) {
+                            freetextContainer.classList.remove('hidden');
+                            freetextContainer.innerHTML = '';
+
+                            const sortedReports = [...reports].reverse();
+                            sortedReports.forEach(report => {
+                                const d = new Date(report.date);
+                                const dateStr = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                                
+                                let metricsHtml = '';
+                                if (report.metrics) {
+                                    for (const [category, items] of Object.entries(report.metrics)) {
+                                        metricsHtml += `<div class="mb-3"><h5 class="text-sm font-bold text-slate-800 border-b pb-1 mb-2">${category}</h5><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+                                        for (const [key, val] of Object.entries(items)) {
+                                            let badgeColor = 'bg-slate-100 text-slate-700';
+                                            if (val === 'Sangat Mahir' || val === 'Lulus Tahap Ini' || val === 'Sudah Lancar') badgeColor = 'bg-green-100 text-green-700';
+                                            else if (val === 'Berkembang Baik' || val === 'Mulai Bisa') badgeColor = 'bg-blue-100 text-blue-700';
+                                            else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
+                                            else if (val === 'Belum Berkembang' || val === 'Belum Bisa' || val === 'Belum Memulai') badgeColor = 'bg-red-100 text-red-700';
+
+                                            metricsHtml += `<div class="text-xs flex justify-between items-center p-2 bg-slate-50 rounded border border-slate-100">
+                                                <span class="font-medium text-slate-600">${key}</span>
+                                                <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
+                                            </div>`;
+                                        }
+                                        metricsHtml += `</div></div>`;
+                                    }
+                                }
+
+                                const item = document.createElement('div');
+                                item.className = 'relative pl-6 pb-6 border-l-2 border-indigo-100 last:pb-0 last:border-l-0';
+                                item.innerHTML = `
+                                    <span class="absolute -left-[7px] top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-indigo-500 ring-4 ring-white"></span>
+                                    <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <span class="text-sm font-bold text-indigo-700">
+                                                <i class="fa-regular fa-calendar-days mr-1"></i> Bulan: ${dateStr}
+                                            </span>
+                                        </div>
+                                        <div class="mb-4">
+                                            ${metricsHtml}
+                                        </div>
+                                        ${report.notes ? `
+                                        <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-md">
+                                            <p class="text-xs font-bold text-indigo-800 mb-1"><i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:</p>
+                                            <p class="text-sm text-slate-700 italic">${report.notes}</p>
+                                        </div>` : ''}
+                                    </div>
+                                `;
+                                freetextContainer.appendChild(item);
+                            });
                         }
                     }
-                });
-            });
-
-            // Auto select murid pertama di dropdown grafik jika ada
-            <?php if($students->isNotEmpty()): ?>
-                selectDropdown.value = "<?php echo e($students->first()->id); ?>";
-                selectDropdown.dispatchEvent(new Event('change'));
-            <?php endif; ?>
-        });
+                    });
     </script>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>

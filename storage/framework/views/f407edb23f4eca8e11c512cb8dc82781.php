@@ -36,20 +36,27 @@
                 <div class="lg:col-span-5">
                     <?php
                         $studentCategories = $students->mapWithKeys(function($s) {
-                            return [$s->id => $s->swimmingClass->category->slug ?? 'belajar'];
+                            $className = strtolower($s->swimmingClass->name ?? '');
+                            $mapped = 'anak-anak'; // default
+                            if (str_contains($className, 'batita')) $mapped = 'batita';
+                            elseif (str_contains($className, 'balita')) $mapped = 'balita';
+                            elseif (str_contains($className, 'anak') || str_contains($className, 'dewasa')) $mapped = 'anak-anak';
+                            elseif (in_array($className, ['pra junior', 'junior', 'senior', 'finswimming'])) $mapped = 'prestasi';
+                            return [$s->id => $mapped];
                         });
+                        $options = ['Belum Berkembang', 'Mulai Terlihat', 'Berkembang Baik', 'Sangat Mahir'];
                     ?>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100"
                         x-data="{
                             selectedStudentId: '<?php echo e(old('student_id', '')); ?>',
                             categoriesMap: <?php echo \Illuminate\Support\Js::from($studentCategories)->toHtml() ?>,
-                            get isPrestasi() {
-                                return this.selectedStudentId && this.categoriesMap[this.selectedStudentId] === 'prestasi';
+                            get classType() {
+                                return this.selectedStudentId ? this.categoriesMap[this.selectedStudentId] : null;
                             }
                         }">
                         <h3 class="text-lg font-bold text-gray-800 border-b pb-4 mb-6 flex items-center gap-2">
                             <i class="fa-solid fa-file-signature text-blue-600"></i>
-                            <span x-text="isPrestasi ? 'Input Nilai Fisik Murid' : 'Input Catatan Perkembangan'">Input Nilai Fisik Murid</span>
+                            <span>Input Catatan Perkembangan</span>
                         </h3>
 
                         <form action="<?php echo e(route('coach.progress.store')); ?>" method="POST">
@@ -66,42 +73,22 @@
                                     <option value="" disabled selected>-- Pilih Murid Latihan --</option>
                                     <?php $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option value="<?php echo e($student->id); ?>">
-                                            <?php echo e($student->name); ?> (<?php echo e($student->location->name ?? 'Kolam Latihan'); ?>)
+                                            <?php echo e($student->name); ?> (<?php echo e($student->swimmingClass->name ?? 'Belum ada kelas'); ?>)
                                         </option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
-                                <?php $__errorArgs = ['student_id'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                    <p class="text-red-500 text-xs mt-1 font-semibold"><?php echo e($message); ?></p>
-                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
                             </div>
 
                             
                             <div class="grid grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <label for="date" class="block text-sm font-medium text-gray-700 mb-1.5">
-                                        Tanggal Tes *
+                                        Bulan Penilaian *
                                     </label>
-                                    <input type="date" name="date" id="date"
-                                        value="<?php echo e(old('date', date('Y-m-d'))); ?>" max="<?php echo e(date('Y-m-d')); ?>"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 text-sm"
+                                    <input type="month" name="date" id="date"
+                                        value="<?php echo e(old('date', date('Y-m'))); ?>"
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 text-sm"
                                         required>
-                                    <?php $__errorArgs = ['date'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                        <p class="text-red-500 text-xs mt-1 font-semibold"><?php echo e($message); ?></p>
-                                    <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1.5">
@@ -113,174 +100,273 @@ unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            <div x-show="isPrestasi" x-transition>
-                                <hr class="my-6 border-gray-150">
-                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Indikator Fisik
-                                    Murid (1 - 100)</p>
+                            <hr class="my-6 border-gray-150">
 
-                                
-                                <?php
-                                    $indicators = [
-                                        [
-                                            'name' => 'strength',
-                                            'label' => 'Strength (Kekuatan)',
-                                            'icon' => 'fa-dumbbell',
-                                            'color' => 'text-blue-600',
-                                            'bg' => 'accent-blue-600',
-                                        ],
-                                        [
-                                            'name' => 'endurance',
-                                            'label' => 'Endurance / VO2Max',
-                                            'icon' => 'fa-heart-pulse',
-                                            'color' => 'text-emerald-600',
-                                            'bg' => 'accent-emerald-600',
-                                        ],
-                                        [
-                                            'name' => 'flexibility',
-                                            'label' => 'Flexibility (Kelenturan)',
-                                            'icon' => 'fa-child-reaching',
-                                            'color' => 'text-purple-600',
-                                            'bg' => 'accent-purple-600',
-                                        ],
-                                        [
-                                            'name' => 'speed',
-                                            'label' => 'Speed (Kecepatan)',
-                                            'icon' => 'fa-gauge-high',
-                                            'color' => 'text-red-600',
-                                            'bg' => 'accent-red-600',
-                                        ],
-                                        [
-                                            'name' => 'agility',
-                                            'label' => 'Agility (Kelincahan)',
-                                            'icon' => 'fa-bolt-lightning',
-                                            'color' => 'text-amber-500',
-                                            'bg' => 'accent-amber-500',
-                                        ],
-                                    ];
-                                ?>
-
-                                <?php $__currentLoopData = $indicators; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ind): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <div class="mb-5">
-                                        <div class="flex justify-between items-center mb-1.5">
-                                            <span class="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                                <i class="fa-solid <?php echo e($ind['icon']); ?> <?php echo e($ind['color']); ?> w-4"></i>
-                                                <?php echo e($ind['label']); ?>
-
-                                            </span>
-                                            <span id="val-<?php echo e($ind['name']); ?>"
-                                                class="bg-gray-100 text-gray-800 text-xs font-bold px-2 py-0.5 rounded shadow-sm border">
-                                                <?php echo e(old($ind['name'], 50)); ?>
-
-                                            </span>
-                                        </div>
-                                        <input type="range" name="<?php echo e($ind['name']); ?>" id="range-<?php echo e($ind['name']); ?>"
-                                            min="1" max="100" value="<?php echo e(old($ind['name'], 50)); ?>"
-                                            class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer transition-all duration-150 <?php echo e($ind['bg']); ?>"
-                                            oninput="document.getElementById('val-<?php echo e($ind['name']); ?>').innerText = this.value">
-                                        <?php $__errorArgs = [$ind['name']];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                            <p class="text-red-500 text-xs mt-1 font-semibold"><?php echo e($message); ?></p>
-                                        <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                            <!-- Form Batita -->
+                            <template x-if="classType === 'batita'">
+                                <div class="space-y-4">
+                                    <h4 class="font-bold text-blue-600 mb-2">Penilaian Batita</h4>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Water Comfort</label>
+                                        <select name="metrics[Batita][Water Comfort]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Calm">Calm</option>
+                                            <option value="Fear reduce">Fear reduce</option>
+                                            <option value="Exploration">Exploration</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
                                     </div>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </div>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Water Skills</label>
+                                        <select name="metrics[Batita][Water Skills]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Splashing">Splashing</option>
+                                            <option value="Wall gripping">Wall gripping</option>
+                                            <option value="Floating (front & back)">Floating (front & back)</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Water Safety</label>
+                                        <select name="metrics[Batita][Water Safety]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Breath control">Breath control</option>
+                                            <option value="Submersion">Submersion</option>
+                                            <option value="Turn & grab">Turn & grab</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Form Balita -->
+                            <template x-if="classType === 'balita'">
+                                <div class="space-y-4">
+                                    <h4 class="font-bold text-blue-600 mb-2">Penilaian Balita</h4>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Water Safety</label>
+                                        <select name="metrics[Balita][Water Safety]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Jump">Jump</option>
+                                            <option value="Wall exit">Wall exit</option>
+                                            <option value="Water trapping">Water trapping</option>
+                                            <option value="Rollover">Rollover</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Propulsion & Streamline</label>
+                                        <select name="metrics[Balita][Propulsion & Streamline]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Streamline glide">Streamline glide</option>
+                                            <option value="Flutter kick">Flutter kick</option>
+                                            <option value="Paddling">Paddling</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </template>
+
+                                <!-- Form Anak2 & Dewasa -->
+                            <template x-if="classType === 'anak-anak'">
+                                <div class="space-y-4">
+                                    <h4 class="font-bold text-blue-600 mb-2">Basic Skills & Stroke Intro</h4>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">1. Freestyle (Gaya Bebas)</label>
+                                        <select name="metrics[Basic Skills][Freestyle]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Pulling">Pulling</option>
+                                            <option value="Side Breathing">Side Breathing</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">2. Backstroke (Gaya Punggung)</label>
+                                        <select name="metrics[Basic Skills][Backstroke]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Pulling">Pulling</option>
+                                            <option value="Breath Control">Breath Control</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">3. Breaststroke (Gaya Dada)</label>
+                                        <select name="metrics[Basic Skills][Breaststroke]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Pulling">Pulling</option>
+                                            <option value="Breathing">Breathing</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">4. Butterfly (Gaya Kupu-kupu)</label>
+                                        <select name="metrics[Basic Skills][Butterfly]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Pulling">Pulling</option>
+                                            <option value="Breathing">Breathing</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <h4 class="font-bold text-blue-600 mb-2 mt-4">Stroke Refinement & Endurance</h4>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Distance 25m</label>
+                                        <select name="metrics[Stroke Refinement][Distance 25m]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Nilai...</option>
+                                            <option value="Belum Bisa">Belum Bisa</option>
+                                            <option value="Mulai Bisa">Mulai Bisa</option>
+                                            <option value="Sudah Lancar">Sudah Lancar</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Dive</label>
+                                        <select name="metrics[Stroke Refinement][Dive]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Nilai...</option>
+                                            <option value="Belum Bisa">Belum Bisa</option>
+                                            <option value="Mulai Bisa">Mulai Bisa</option>
+                                            <option value="Sudah Lancar">Sudah Lancar</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Turns</label>
+                                        <select name="metrics[Stroke Refinement][Turns]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Nilai...</option>
+                                            <option value="Belum Bisa">Belum Bisa</option>
+                                            <option value="Mulai Bisa">Mulai Bisa</option>
+                                            <option value="Sudah Lancar">Sudah Lancar</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Form Prestasi -->
+                            <template x-if="classType === 'prestasi'">
+                                <div class="space-y-4">
+                                    <h4 class="font-bold text-blue-600 mb-2">Kondisi Fisik</h4>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Endurance</label>
+                                        <input type="number" name="metrics[Kondisi Fisik][Endurance]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Fleksibilitas</label>
+                                        <input type="number" name="metrics[Kondisi Fisik][Fleksibilitas]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Strength (Kekuatan)</label>
+                                        <input type="number" name="metrics[Kondisi Fisik][Strength]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Speed (Kecepatan)</label>
+                                        <input type="number" name="metrics[Kondisi Fisik][Speed]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Agility (Kelincahan)</label>
+                                        <input type="number" name="metrics[Kondisi Fisik][Agility]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                    </div>
+
+                                    <h4 class="font-bold text-blue-600 mb-2 mt-4">Sistem Energi</h4>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Aerobic</label>
+                                        <input type="number" name="metrics[Sistem Energi][Aerobic]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Anaerobic</label>
+                                        <input type="number" name="metrics[Sistem Energi][Anaerobic]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                    </div>
+
+                                    <h4 class="font-bold text-blue-600 mb-2 mt-4">Personal Best Time</h4>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Test per Bulan</label>
+                                        <input type="text" name="metrics[Personal Best Time][Test per Bulan]" class="w-full text-sm rounded-md border-gray-300" placeholder="Contoh: 01:25.50" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">PBT Event (Opsional)</label>
+                                        <input type="text" name="metrics[Personal Best Time][PBT Event]" class="w-full text-sm rounded-md border-gray-300" placeholder="Contoh: 01:22.10 (Kejurda)">
+                                    </div>
+                                </div>
+                            </template>
 
                             
-                            <div class="mb-6 mt-4">
-                                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1.5" x-text="isPrestasi ? 'Catatan Perkembangan (Opsional)' : 'Catatan Perkembangan (Wajib) *'">
-                                    Catatan Perkembangan (Opsional)
+                            <div class="mb-6 mt-6">
+                                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                    Catatan Tambahan (Opsional)
                                 </label>
-                                <textarea name="notes" id="notes" rows="4" placeholder="Tulis catatan penting tentang latihan hari ini..."
-                                    x-bind:required="!isPrestasi"
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 text-sm"><?php echo e(old('notes')); ?></textarea>
+                                <textarea name="notes" id="notes" rows="3" placeholder="Tulis catatan penting..."
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 text-sm"><?php echo e(old('notes')); ?></textarea>
                             </div>
 
-                            <button type="submit"
-                                class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-150 text-sm flex justify-center items-center gap-2">
-                                <i class="fa-solid fa-floppy-disk"></i>
-                                Simpan Perkembangan
-                            </button>
+                            <div x-show="classType !== null">
+                                <button type="submit"
+                                    class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-150 text-sm flex justify-center items-center gap-2">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    Simpan Perkembangan
+                                </button>
+                            </div>
+                            <div x-show="classType === null" class="text-center text-sm text-gray-500 mt-4">
+                                Silakan pilih murid untuk menampilkan form.
+                            </div>
                         </form>
                     </div>
                 </div>
 
                 
                 <div class="lg:col-span-7 flex flex-col gap-6">
-                    <div
-                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100 flex-1 flex flex-col">
-
-                        <div
-                            class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-6 gap-4">
-                            <h3 id="panel-title" class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <i id="panel-icon" class="fa-solid fa-chart-line text-blue-600"></i>
-                                <span id="panel-title-text">Visualisasi Perkembangan</span>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100 flex-1 flex flex-col">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-6 gap-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <i class="fa-solid fa-clock-rotate-left text-blue-600"></i>
+                                <span>Riwayat Perkembangan Terakhir</span>
                             </h3>
 
-                            
                             <div class="w-full sm:w-64">
                                 <select id="chart_student_id"
-                                    class="w-full text-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50">
-                                    <option value="" disabled selected>-- Pilih Murid Grafik --</option>
+                                    class="w-full text-xs rounded-md border-gray-300 shadow-sm text-gray-900 font-semibold bg-gray-50">
+                                    <option value="" disabled selected>-- Pilih Murid --</option>
                                     <?php $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e($student->id); ?>">
-                                            <?php echo e($student->name); ?>
-
-                                        </option>
+                                        <option value="<?php echo e($student->id); ?>"><?php echo e($student->name); ?></option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
                         </div>
 
-                        
-                        <div id="chart-empty-state"
-                            class="flex-1 flex flex-col items-center justify-center text-center p-12 text-gray-400">
-                            <i class="fa-solid fa-chart-column text-6xl mb-4 text-gray-200"></i>
-                            <p class="font-medium text-gray-600">Silakan pilih murid pada dropdown di atas</p>
-                            <p class="text-xs mt-1">Grafik/riwayat perkembangan akan dirender setelah murid dipilih.</p>
-                        </div>
-
-                        
-                        <div id="chart-no-data-state"
-                            class="hidden flex-1 flex-col items-center justify-center text-center p-12 text-gray-400">
+                        <div id="chart-empty-state" class="flex-1 flex flex-col items-center justify-center text-center p-12 text-gray-400">
                             <i class="fa-solid fa-folder-open text-6xl mb-4 text-gray-200"></i>
-                            <p class="font-medium text-gray-600">Belum ada riwayat perkembangan murid ini</p>
-                            <p class="text-xs mt-1">Gunakan form di sebelah kiri untuk menginput data perkembangan pertama.</p>
+                            <p class="font-medium text-gray-600">Silakan pilih murid</p>
                         </div>
 
-                        
-                        <div id="chart-container" class="hidden flex-1 flex-col">
-                            
-                            <div class="relative w-full h-[320px] mb-6">
-                                <canvas id="progressChart"></canvas>
-                            </div>
-
-                            
-                            <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-4 mt-auto">
-                                <h4
-                                    class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Coach
-                                </h4>
-                                <p id="latest-note" class="text-sm text-gray-600 italic">"Tidak ada catatan pada evaluasi terakhir."</p>
-                                <div id="latest-note-date" class="text-[10px] text-gray-400 mt-1 font-semibold">Diinput pada: -</div>
-                            </div>
+                        <div id="chart-no-data-state" class="hidden flex-1 flex-col items-center justify-center text-center p-12 text-gray-400">
+                            <i class="fa-solid fa-folder-open text-6xl mb-4 text-gray-200"></i>
+                            <p class="font-medium text-gray-600">Belum ada riwayat</p>
                         </div>
 
-                        
-                        <div id="notes-timeline-container" class="hidden flex-1 flex-col overflow-y-auto max-h-[450px]">
-                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-                                <i class="fa-solid fa-clock-rotate-left mr-1"></i> Riwayat Catatan Perkembangan Sesi
-                            </h4>
-                            <div id="notes-timeline" class="space-y-4 pr-2">
-                                <!-- Will be populated by JS -->
+                        <div id="notes-timeline-container" class="hidden flex-1 flex-col overflow-y-auto max-h-[600px]">
+                            <div id="notes-timeline" class="space-y-6 pr-2">
+                                <!-- Populated via JS -->
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -288,43 +374,30 @@ unset($__errorArgs, $__bag); ?>
         </div>
     </div>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Data murid & perkembangan dari Laravel yang dijadikan object JS
-            const studentsMap = <?php echo json_encode($students->keyBy('id'), 15, 512) ?>;
-            const categoriesMap = <?php echo json_encode($studentCategories, 15, 512) ?>;
+            const studentsMap = <?php echo json_encode($students->keyBy('id')->map(function($s) {
+                return [
+                    'id' => $s->id, 'name' => $s->name, 'progress_reports' => $s->progressReports
+                ];
+            })) ?>;
 
             const selectDropdown = document.getElementById('chart_student_id');
             const emptyState = document.getElementById('chart-empty-state');
             const noDataState = document.getElementById('chart-no-data-state');
-            const chartContainer = document.getElementById('chart-container');
             const notesTimelineContainer = document.getElementById('notes-timeline-container');
             const notesTimeline = document.getElementById('notes-timeline');
-            const latestNoteText = document.getElementById('latest-note');
-            const latestNoteDate = document.getElementById('latest-note-date');
-            const panelTitleText = document.getElementById('panel-title-text');
-            const panelIcon = document.getElementById('panel-icon');
 
-            let myChart = null;
-
-            // Handler perubahan dropdown murid di grafik
             selectDropdown.addEventListener('change', function() {
                 const studentId = this.value;
                 const student = studentsMap[studentId];
-                const categorySlug = categoriesMap[studentId] || 'belajar';
 
                 if (!student) return;
 
                 const reports = student.progress_reports || [];
 
                 if (reports.length === 0) {
-                    // Tampilkan state tidak ada data
                     emptyState.classList.add('hidden');
-                    chartContainer.classList.add('hidden');
-                    chartContainer.classList.remove('flex');
                     notesTimelineContainer.classList.add('hidden');
                     notesTimelineContainer.classList.remove('flex');
                     noDataState.classList.remove('hidden');
@@ -332,212 +405,68 @@ unset($__errorArgs, $__bag); ?>
                     return;
                 }
 
-                // Sembunyikan state kosong & tidak ada data
                 emptyState.classList.add('hidden');
                 noDataState.classList.add('hidden');
                 noDataState.classList.remove('flex');
+                
+                notesTimelineContainer.classList.remove('hidden');
+                notesTimelineContainer.classList.add('flex');
 
-                if (categorySlug === 'prestasi') {
-                    // Tampilkan grafik, sembunyikan timeline
-                    notesTimelineContainer.classList.add('hidden');
-                    notesTimelineContainer.classList.remove('flex');
-                    chartContainer.classList.remove('hidden');
-                    chartContainer.classList.add('flex');
+                notesTimeline.innerHTML = '';
+                const sortedReports = [...reports].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                    // Sesuaikan Title & Icon Panel
-                    panelTitleText.innerText = 'Visualisasi Perkembangan';
-                    panelIcon.className = 'fa-solid fa-chart-line text-blue-600';
+                sortedReports.forEach(report => {
+                    const d = new Date(report.date);
+                    const monthYear = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                    
+                    let metricsHtml = '';
+                    if (report.metrics) {
+                        for (const [category, items] of Object.entries(report.metrics)) {
+                            metricsHtml += `<div class="mb-3"><h5 class="text-sm font-bold text-slate-800 border-b pb-1 mb-2">${category}</h5><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+                            for (const [key, val] of Object.entries(items)) {
+                                let badgeColor = 'bg-slate-100 text-slate-700';
+                                if (val === 'Sangat Mahir') badgeColor = 'bg-green-100 text-green-700';
+                                else if (val === 'Berkembang Baik') badgeColor = 'bg-blue-100 text-blue-700';
+                                else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
+                                else if (val === 'Belum Berkembang') badgeColor = 'bg-red-100 text-red-700';
 
-                    // Siapkan data untuk render chart
-                    const labels = [];
-                    const strengthData = [];
-                    const enduranceData = [];
-                    const flexibilityData = [];
-                    const speedData = [];
-                    const agilityData = [];
-
-                    reports.forEach(report => {
-                        // Format tanggal (DD-MM-YYYY)
-                        const d = new Date(report.date);
-                        const formattedDate = d.toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: '2-digit'
-                        });
-
-                        labels.push(formattedDate);
-                        strengthData.push(report.strength);
-                        enduranceData.push(report.endurance);
-                        flexibilityData.push(report.flexibility);
-                        speedData.push(report.speed);
-                        agilityData.push(report.agility);
-                    });
-
-                    // Update catatan terakhir coach
-                    const latestReport = reports[reports.length - 1];
-                    if (latestReport.notes) {
-                        latestNoteText.textContent = `"${latestReport.notes}"`;
-                    } else {
-                        latestNoteText.textContent = `"Tidak ada catatan pada evaluasi terakhir."`;
-                    }
-                    const d = new Date(latestReport.date);
-                    latestNoteDate.textContent =
-                        `Diinput pada: ${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-
-                    // Hancurkan chart lama jika ada agar tidak tumpang tindih
-                    if (myChart) {
-                        myChart.destroy();
-                    }
-
-                    // Render Chart.js baru
-                    const ctx = document.getElementById('progressChart').getContext('2d');
-                    myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                    label: 'Strength',
-                                    data: strengthData,
-                                    borderColor: 'rgb(37, 99, 235)', // Blue
-                                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                                    borderWidth: 2.5,
-                                    tension: 0.3,
-                                    fill: false
-                                },
-                                {
-                                    label: 'Endurance',
-                                    data: enduranceData,
-                                    borderColor: 'rgb(16, 185, 129)', // Emerald
-                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                    borderWidth: 2.5,
-                                    tension: 0.3,
-                                    fill: false
-                                },
-                                {
-                                    label: 'Flexibility',
-                                    data: flexibilityData,
-                                    borderColor: 'rgb(147, 51, 234)', // Purple
-                                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                                    borderWidth: 2.5,
-                                    tension: 0.3,
-                                    fill: false
-                                },
-                                {
-                                    label: 'Speed',
-                                    data: speedData,
-                                    borderColor: 'rgb(239, 68, 68)', // Red
-                                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                                    borderWidth: 2.5,
-                                    tension: 0.3,
-                                    fill: false
-                                },
-                                {
-                                    label: 'Agility',
-                                    data: agilityData,
-                                    borderColor: 'rgb(245, 158, 11)', // Amber
-                                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                                    borderWidth: 2.5,
-                                    tension: 0.3,
-                                    fill: false
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                    labels: {
-                                        boxWidth: 15,
-                                        font: {
-                                            size: 11,
-                                            weight: '600'
-                                        }
-                                    }
-                                },
-                                tooltip: {
-                                    padding: 10,
-                                    cornerRadius: 8
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    min: 0,
-                                    max: 100,
-                                    grid: {
-                                        color: 'rgba(0, 0, 0, 0.05)'
-                                    },
-                                    title: {
-                                        display: true,
-                                        text: 'Skor Perkembangan',
-                                        font: {
-                                            weight: '600'
-                                        }
-                                    }
-                                },
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
+                                metricsHtml += `<div class="text-xs flex justify-between items-center p-2 bg-slate-50 rounded">
+                                    <span class="font-medium text-slate-600">${key}</span>
+                                    <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
+                                </div>`;
                             }
+                            metricsHtml += `</div></div>`;
                         }
-                    });
-                } else {
-                    // Belajar: Tampilkan timeline notes, sembunyikan grafik
-                    chartContainer.classList.add('hidden');
-                    chartContainer.classList.remove('flex');
-                    notesTimelineContainer.classList.remove('hidden');
-                    notesTimelineContainer.classList.add('flex');
+                    }
 
-                    // Sesuaikan Title & Icon Panel
-                    panelTitleText.innerText = 'Riwayat Perkembangan';
-                    panelIcon.className = 'fa-solid fa-clock-rotate-left text-indigo-600';
-
-                    // Kosongkan dan isi timeline
-                    notesTimeline.innerHTML = '';
-                    // Urutkan dari yang terbaru ke terlama
-                    const sortedReports = [...reports].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                    sortedReports.forEach(report => {
-                        const d = new Date(report.date);
-                        const dateFormatted = d.toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                        });
-
-                        const item = document.createElement('div');
-                        item.className = 'relative pl-6 pb-6 border-l-2 border-indigo-100 last:pb-0 last:border-l-0';
-                        item.innerHTML = `
-                            <!-- Dot -->
-                            <span class="absolute -left-[7px] top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-indigo-500 ring-4 ring-white"></span>
-                            <div class="bg-slate-50 border border-slate-100 rounded-lg p-4 shadow-sm hover:shadow transition-all duration-150">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-semibold text-slate-400">
-                                        <i class="fa-regular fa-calendar-days mr-1"></i> ${dateFormatted}
-                                    </span>
-                                    <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-bold border border-indigo-100">
-                                        Sesi Latihan
-                                    </span>
-                                </div>
-                                <p class="text-sm text-slate-700 whitespace-pre-line font-medium leading-relaxed">
-                                    ${report.notes || 'Tidak ada catatan.'}
-                                </p>
+                    const item = document.createElement('div');
+                    item.className = 'relative pl-6 pb-6 border-l-2 border-indigo-100 last:pb-0 last:border-l-0';
+                    item.innerHTML = `
+                        <span class="absolute -left-[7px] top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-indigo-500 ring-4 ring-white"></span>
+                        <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm font-bold text-indigo-700">
+                                    <i class="fa-regular fa-calendar-days mr-1"></i> Bulan: ${monthYear}
+                                </span>
                             </div>
-                        `;
-                        notesTimeline.appendChild(item);
-                    });
-                }
+                            <div class="mb-4">
+                                ${metricsHtml}
+                            </div>
+                            ${report.notes ? `
+                            <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-md">
+                                <p class="text-xs font-bold text-indigo-800 mb-1"><i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:</p>
+                                <p class="text-sm text-slate-700 italic">${report.notes}</p>
+                            </div>` : ''}
+                        </div>
+                    `;
+                    notesTimeline.appendChild(item);
+                });
             });
 
-            // Auto select murid pertama di dropdown grafik jika ada & form baru saja disubmit
             <?php if(old('student_id')): ?>
                 selectDropdown.value = "<?php echo e(old('student_id')); ?>";
                 selectDropdown.dispatchEvent(new Event('change'));
             <?php elseif($students->isNotEmpty()): ?>
-                // Pilih murid pertama
                 selectDropdown.value = "<?php echo e($students->first()->id); ?>";
                 selectDropdown.dispatchEvent(new Event('change'));
             <?php endif; ?>
@@ -552,5 +481,4 @@ unset($__errorArgs, $__bag); ?>
 <?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
 <?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
 <?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
-<?php endif; ?>
-<?php /**PATH D:\laragon\www\klub-renang\resources\views/coach/progress/index.blade.php ENDPATH**/ ?>
+<?php endif; ?><?php /**PATH D:\laragon\www\klub-renang\resources\views/coach/progress/index.blade.php ENDPATH**/ ?>

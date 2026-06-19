@@ -11,13 +11,23 @@ use Illuminate\Http\Request;
 class ScheduleController extends Controller
 {
     // 1. Tampilkan Semua Jadwal & Form Tambah/Edit
-    public function index()
+    public function index(Request $request)
     {
-        $schedules = Schedule::with(['swimmingClass.category', 'location'])->orderBy('day_of_week')->orderBy('start_time')->paginate(15);
+        $locationId = $request->get('location_id');
+        
+        $query = Schedule::with(['swimmingClass.category', 'location'])
+            ->orderBy('day_of_week')
+            ->orderBy('start_time');
+            
+        if ($locationId) {
+            $query->where('location_id', $locationId);
+        }
+        
+        $schedules = $query->paginate(15)->withQueryString();
         $swimmingClasses = SwimmingClass::where('is_active', true)->get();
         $locations = Location::all();
 
-        return view('admin.schedules.index', compact('schedules', 'swimmingClasses', 'locations'));
+        return view('admin.schedules.index', compact('schedules', 'swimmingClasses', 'locations', 'locationId'));
     }
 
     // 2. Simpan Jadwal Baru

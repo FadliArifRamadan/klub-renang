@@ -27,14 +27,31 @@
             @endif
 
             <div class="bg-white p-6 rounded-lg shadow sm:rounded-lg">
-                <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div>
                         <h3 class="text-lg font-medium text-gray-900">Jadwal Sesi Latihan Mingguan</h3>
                         <p class="text-sm text-gray-500 mt-1">Mengatur jadwal hari, waktu, lokasi kolam, dan jenis sesi (latihan renang/darat) untuk setiap kelas.</p>
                     </div>
-                    <x-primary-button type="button" x-data="" x-on:click="$dispatch('open-modal', 'create-schedule-modal')">
-                        <i class="fa-solid fa-plus mr-2"></i> Tambah Jadwal Baru
-                    </x-primary-button>
+                    
+                    <div class="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+                        <x-primary-button type="button" x-data="" x-on:click="$dispatch('open-modal', 'create-schedule-modal')">
+                            <i class="fa-solid fa-plus mr-2"></i> Tambah Jadwal Baru
+                        </x-primary-button>
+                    </div>
+                </div>
+
+                {{-- Tab Filter Lokasi --}}
+                <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit mb-6">
+                    <a href="{{ route('admin.schedules.index') }}" 
+                        class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($locationId) ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
+                        Semua
+                    </a>
+                    @foreach($locations as $loc)
+                        <a href="{{ route('admin.schedules.index', ['location_id' => $loc->id]) }}" 
+                            class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ $locationId == $loc->id ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
+                            {{ $loc->name }}
+                        </a>
+                    @endforeach
                 </div>
 
                 <div class="relative overflow-x-auto border sm:rounded-lg">
