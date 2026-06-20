@@ -40,7 +40,8 @@
                             $mapped = 'anak-anak'; // default
                             if (str_contains($className, 'batita')) $mapped = 'batita';
                             elseif (str_contains($className, 'balita')) $mapped = 'balita';
-                            elseif (str_contains($className, 'anak') || str_contains($className, 'dewasa')) $mapped = 'anak-anak';
+                            elseif (str_contains($className, 'dewasa')) $mapped = 'dewasa';
+                            elseif (str_contains($className, 'anak')) $mapped = 'anak-anak';
                             elseif (in_array($className, ['pra junior', 'junior', 'senior', 'finswimming'])) $mapped = 'prestasi';
                             return [$s->id => $mapped];
                         });
@@ -257,6 +258,61 @@
                                             <option value="Belum Bisa">Belum Bisa</option>
                                             <option value="Mulai Bisa">Mulai Bisa</option>
                                             <option value="Sudah Lancar">Sudah Lancar</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Form Dewasa (Basic Skills & Stroke Intro ONLY) -->
+                            <template x-if="classType === 'dewasa'">
+                                <div class="space-y-4">
+                                    <h4 class="font-bold text-blue-600 mb-2">Basic Skills & Stroke Intro</h4>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">1. Freestyle (Gaya Bebas)</label>
+                                        <select name="metrics[Basic Skills][Freestyle]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Pulling">Pulling</option>
+                                            <option value="Side Breathing">Side Breathing</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">2. Backstroke (Gaya Punggung)</label>
+                                        <select name="metrics[Basic Skills][Backstroke]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Pulling">Pulling</option>
+                                            <option value="Breath Control">Breath Control</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">3. Breaststroke (Gaya Dada)</label>
+                                        <select name="metrics[Basic Skills][Breaststroke]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Pulling">Pulling</option>
+                                            <option value="Breathing">Breathing</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">4. Butterfly (Gaya Kupu-kupu)</label>
+                                        <select name="metrics[Basic Skills][Butterfly]" class="w-full text-sm rounded-md border-gray-300 mb-2" required>
+                                            <option value="">Pilih Tahap Dikuasai...</option>
+                                            <option value="Belum Memulai">Belum Memulai</option>
+                                            <option value="Kicking">Kicking</option>
+                                            <option value="Pulling">Pulling</option>
+                                            <option value="Breathing">Breathing</option>
+                                            <option value="Lulus Tahap Ini">Lulus Tahap Ini</option>
                                         </select>
                                     </div>
                                 </div>

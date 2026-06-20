@@ -412,16 +412,25 @@
 
                     
                     <?php if($children->isNotEmpty()): ?>
-                        <div class="w-full sm:w-72">
-                            <select id="chart_child_id"
-                                class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50 p-2.5">
-                                <option value="" disabled selected>-- Pilih Anak --</option>
-                                <?php $__currentLoopData = $children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($child->id); ?>">
-                                        <?php echo e($child->name); ?> (<?php echo e($child->package->name ?? 'Tanpa Paket'); ?>)
-                                    </option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
+                        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                            <div class="w-full sm:w-64">
+                                <select id="chart_child_id"
+                                    class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50 p-2.5">
+                                    <option value="" disabled selected>-- Pilih Anak --</option>
+                                    <?php $__currentLoopData = $children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($child->id); ?>">
+                                            <?php echo e($child->name); ?> (<?php echo e($child->package->name ?? 'Tanpa Paket'); ?>)
+                                        </option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                            <div class="w-full sm:w-40">
+                                <select id="chart_year_filter"
+                                    class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50 p-2.5"
+                                    disabled>
+                                    <option value="" disabled selected>-- Tahun --</option>
+                                </select>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -460,6 +469,14 @@
                     </div>
 
                     
+                    <div id="chart-year-empty-state"
+                        class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4 text-gray-400">
+                        <i class="fa-regular fa-calendar-xmark text-6xl mb-4 text-gray-200"></i>
+                        <p class="font-medium text-gray-600" id="year-empty-title">Belum ada data latihan di tahun ini</p>
+                        <p class="text-xs text-gray-400 mt-1 max-w-sm" id="year-empty-subtext">Pilih tahun lain atau tunggu hingga Coach menginput data perkembangan.</p>
+                    </div>
+
+                    
                     <div id="chart-container" class="hidden flex-1 flex-col">
                         
                         <div id="prestasi-charts-container" class="hidden flex-col space-y-8 w-full mt-4">
@@ -471,36 +488,14 @@
                                     </div>
                                 </div>
                                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <button id="barPrev" onclick="navigateBarChart(-1)" class="p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed" disabled>
-                                            <i class="fa-solid fa-chevron-left text-xs"></i>
-                                        </button>
-                                        <div class="text-center">
-                                            <h4 class="text-sm font-bold text-slate-700">Sistem Energi</h4>
-                                            <span id="barPageInfo" class="text-[10px] text-slate-400"></span>
-                                        </div>
-                                        <button id="barNext" onclick="navigateBarChart(1)" class="p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed" disabled>
-                                            <i class="fa-solid fa-chevron-right text-xs"></i>
-                                        </button>
-                                    </div>
+                                    <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Sistem Energi</h4>
                                     <div class="relative w-full h-[250px]">
                                         <canvas id="barChart"></canvas>
                                     </div>
                                 </div>
                             </div>
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <div class="flex items-center justify-between mb-2">
-                                    <button id="pbtPrev" onclick="navigatePbtChart(-1)" class="p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed" disabled>
-                                        <i class="fa-solid fa-chevron-left text-xs"></i>
-                                    </button>
-                                    <div class="text-center">
-                                        <h4 class="text-sm font-bold text-slate-700">Personal Best Time</h4>
-                                        <span id="pbtPageInfo" class="text-[10px] text-slate-400"></span>
-                                    </div>
-                                    <button id="pbtNext" onclick="navigatePbtChart(1)" class="p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed" disabled>
-                                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                                    </button>
-                                </div>
+                                <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Personal Best Time</h4>
                                 <div class="relative w-full h-[300px]">
                                     <canvas id="lineChartPBT"></canvas>
                                 </div>
@@ -584,8 +579,10 @@
                 });
 
                 const selectDropdown = document.getElementById('chart_child_id');
+                const yearDropdown = document.getElementById('chart_year_filter');
                 const emptyState = document.getElementById('chart-empty-state');
                 const noDataState = document.getElementById('chart-no-data-state');
+                const yearEmptyState = document.getElementById('chart-year-empty-state');
                 const chartContainer = document.getElementById('chart-container');
                 const latestNoteText = document.getElementById('latest-note');
                 const latestNoteDate = document.getElementById('latest-note-date');
@@ -594,12 +591,309 @@
                 let radarChartInst = null;
                 let barChartInst = null;
                 let lineChartPBTInst = null;
+                let activeChild = null;
+                let allReports = [];
 
+                // Helper: sembunyikan semua state
+                function hideAllStates() {
+                    emptyState.classList.add('hidden');
+                    noDataState.classList.add('hidden');
+                    noDataState.style.display = '';
+                    yearEmptyState.classList.add('hidden');
+                    yearEmptyState.style.display = '';
+                    chartContainer.classList.add('hidden');
+                    chartContainer.style.display = '';
+                }
+
+                // Helper: hancurkan semua chart
+                function destroyAllCharts() {
+                    if (myChart) { myChart.destroy(); myChart = null; }
+                    if (radarChartInst) { radarChartInst.destroy(); radarChartInst = null; }
+                    if (barChartInst) { barChartInst.destroy(); barChartInst = null; }
+                    if (lineChartPBTInst) { lineChartPBTInst.destroy(); lineChartPBTInst = null; }
+                }
+
+                // Fungsi helper ubah "01:25.50" jadi detik "85.5"
+                function parseTimeToSeconds(timeStr) {
+                    if (!timeStr) return null;
+                    const match = String(timeStr).match(/(?:(\d+):)?(\d+)[.,:](\d+)/);
+                    if (match) {
+                        const m = parseInt(match[1] || 0);
+                        const s = parseInt(match[2] || 0);
+                        const ms = parseInt(match[3] || 0);
+                        const msVal = ms < 100 ? ms * 10 : ms;
+                        return m * 60 + s + (msVal / 1000);
+                    }
+                    return null;
+                }
+
+                // Fungsi format balik dari detik ke "MM:SS.ms"
+                function formatSecondsToTime(totalSeconds) {
+                    if (totalSeconds == null) return "-";
+                    const m = Math.floor(totalSeconds / 60);
+                    const s = Math.floor(totalSeconds % 60);
+                    const ms = Math.round((totalSeconds - Math.floor(totalSeconds)) * 100);
+                    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+                }
+
+                // ====================================================
+                // FUNGSI UTAMA: Render grafik berdasarkan tahun terpilih
+                // ====================================================
+                function renderChartsForYear(year) {
+                    destroyAllCharts();
+
+                    const reports = allReports;
+                    const filteredReports = reports.filter(r => new Date(r.date).getFullYear() === year);
+
+                    const freetextContainer = document.getElementById('freetext-container');
+                    const prestasiContainer = document.getElementById('prestasi-charts-container');
+
+                    // Cek apakah kelas Prestasi
+                    const latestReportAll = reports[reports.length - 1];
+                    const isPrestasi = latestReportAll && latestReportAll.metrics && ('Kondisi Fisik' in latestReportAll.metrics);
+
+                    if (filteredReports.length === 0) {
+                        // Tahun dipilih tapi tidak ada data
+                        hideAllStates();
+                        yearEmptyState.classList.remove('hidden');
+                        yearEmptyState.style.display = 'flex';
+                        document.getElementById('year-empty-title').textContent = `Belum ada data latihan di tahun ${year}`;
+                        document.getElementById('year-empty-subtext').textContent = 'Pilih tahun lain atau tunggu hingga Coach menginput data perkembangan.';
+                        return;
+                    }
+
+                    // Tampilkan container grafik
+                    hideAllStates();
+                    chartContainer.classList.remove('hidden');
+                    chartContainer.style.display = 'flex';
+
+                    // Update catatan terakhir (dari data di tahun ini)
+                    const latestInYear = filteredReports[filteredReports.length - 1];
+                    latestNoteText.textContent = latestInYear.notes ?
+                        `"${latestInYear.notes}"` :
+                        `"Tidak ada catatan pada evaluasi terakhir."`;
+                    const ld = new Date(latestInYear.date);
+                    latestNoteDate.textContent =
+                        `Diinput pada: ${ld.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}`;
+
+                    if (isPrestasi) {
+                        if (freetextContainer) freetextContainer.classList.add('hidden');
+                        if (prestasiContainer) prestasiContainer.classList.remove('hidden');
+                        prestasiContainer.style.display = 'flex';
+
+                        // --- 1. Siapkan Data dari report tahun ini ---
+                        const labels = [];
+                        const radarData = { Endurance: [], Fleksibilitas: [], Strength: [], Speed: [], Agility: [] };
+                        const barData = { Aerobic: [], Anaerobic: [] };
+                        const pbtData = { TestPerBulan: [], PbtEvent: [] };
+
+                        filteredReports.forEach(report => {
+                            const d = new Date(report.date);
+                            labels.push(d.toLocaleDateString('id-ID', { month: 'short' }));
+
+                            if (report.metrics) {
+                                const kf = report.metrics['Kondisi Fisik'] || {};
+                                radarData.Endurance.push(kf['Endurance'] || 0);
+                                radarData.Fleksibilitas.push(kf['Fleksibilitas'] || 0);
+                                radarData.Strength.push(kf['Strength'] || 0);
+                                radarData.Speed.push(kf['Speed'] || 0);
+                                radarData.Agility.push(kf['Agility'] || 0);
+
+                                const se = report.metrics['Sistem Energi'] || {};
+                                barData.Aerobic.push(se['Aerobic'] || 0);
+                                barData.Anaerobic.push(se['Anaerobic'] || 0);
+
+                                const pbt = report.metrics['Personal Best Time'] || {};
+                                pbtData.TestPerBulan.push(parseTimeToSeconds(pbt['Test per Bulan']));
+                                pbtData.PbtEvent.push({
+                                    val: parseTimeToSeconds(pbt['PBT Event']),
+                                    raw: pbt['PBT Event']
+                                });
+                            }
+                        });
+
+                        const len = labels.length;
+
+                        // --- 2. Radar Chart (Kondisi Fisik) — maks 2 titik terakhir ---
+                        const latestLabels = ['Endurance', 'Fleksibilitas', 'Strength', 'Speed', 'Agility'];
+                        const latestData = len > 0 ? [
+                            radarData.Endurance[len-1], radarData.Fleksibilitas[len-1],
+                            radarData.Strength[len-1], radarData.Speed[len-1], radarData.Agility[len-1]
+                        ] : [];
+                        const prevData = len > 1 ? [
+                            radarData.Endurance[len-2], radarData.Fleksibilitas[len-2],
+                            radarData.Strength[len-2], radarData.Speed[len-2], radarData.Agility[len-2]
+                        ] : [];
+
+                        const radarDatasets = [{
+                            label: labels[len-1] || 'Terbaru',
+                            data: latestData,
+                            backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                            borderColor: 'rgb(37, 99, 235)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgb(37, 99, 235)'
+                        }];
+                        if (len > 1) {
+                            radarDatasets.push({
+                                label: labels[len-2] || 'Sebelumnya',
+                                data: prevData,
+                                backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                                borderColor: 'rgb(156, 163, 175)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgb(156, 163, 175)'
+                            });
+                        }
+                        radarChartInst = new Chart(document.getElementById('radarChart').getContext('2d'), {
+                            type: 'radar',
+                            data: { labels: latestLabels, datasets: radarDatasets },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: { r: { min: 0, max: 100 } },
+                                plugins: { legend: { position: 'bottom' } }
+                            }
+                        });
+
+                        // --- 3. Bar Chart (Sistem Energi) — langsung semua bulan di tahun ini ---
+                        barChartInst = new Chart(document.getElementById('barChart').getContext('2d'), {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    { label: 'Aerobic', data: barData.Aerobic, backgroundColor: 'rgba(16, 185, 129, 0.7)' },
+                                    { label: 'Anaerobic', data: barData.Anaerobic, backgroundColor: 'rgba(239, 68, 68, 0.7)' }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { position: 'bottom' } },
+                                scales: { y: { beginAtZero: true, max: 100 } }
+                            }
+                        });
+
+                        // --- 4. Line Chart (Personal Best Time) ---
+                        const pbtDatasets = [
+                            {
+                                label: 'Test per Bulan',
+                                data: pbtData.TestPerBulan,
+                                borderColor: 'rgb(147, 51, 234)',
+                                backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'PBT Event',
+                                data: pbtData.PbtEvent.map(e => e.val),
+                                type: 'scatter',
+                                pointBackgroundColor: 'rgb(245, 158, 11)',
+                                pointBorderColor: 'rgb(255, 255, 255)',
+                                pointRadius: 6,
+                                pointHoverRadius: 8
+                            }
+                        ];
+
+                        lineChartPBTInst = new Chart(document.getElementById('lineChartPBT').getContext('2d'), {
+                            type: 'line',
+                            data: { labels: labels, datasets: pbtDatasets },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'bottom' },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                if (context.dataset.label === 'PBT Event') {
+                                                    const rawText = pbtData.PbtEvent[context.dataIndex].raw;
+                                                    return `Event: ${rawText || formatSecondsToTime(context.raw)}`;
+                                                }
+                                                return `Test: ${formatSecondsToTime(context.raw)}`;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        reverse: true,
+                                        ticks: {
+                                            callback: function(value) { return formatSecondsToTime(value); }
+                                        },
+                                        title: { display: true, text: 'Waktu (MM:SS.ms)' }
+                                    }
+                                }
+                            }
+                        });
+
+                    } else {
+                        // KELAS BELAJAR (TIMELINE TEXT)
+                        if (prestasiContainer) prestasiContainer.classList.add('hidden');
+                        if (prestasiContainer) prestasiContainer.style.display = 'none';
+
+                        if (freetextContainer) {
+                            freetextContainer.classList.remove('hidden');
+                            freetextContainer.innerHTML = '';
+
+                            const sortedReports = [...filteredReports].reverse();
+                            sortedReports.forEach(report => {
+                                const d = new Date(report.date);
+                                const dateStr = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+
+                                let metricsHtml = '';
+                                if (report.metrics) {
+                                    for (const [category, items] of Object.entries(report.metrics)) {
+                                        metricsHtml += `<div class="mb-3"><h5 class="text-sm font-bold text-slate-800 border-b pb-1 mb-2">${category}</h5><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+                                        for (const [key, val] of Object.entries(items)) {
+                                            let badgeColor = 'bg-slate-100 text-slate-700';
+                                            if (val === 'Sangat Mahir' || val === 'Lulus Tahap Ini' || val === 'Sudah Lancar') badgeColor = 'bg-green-100 text-green-700';
+                                            else if (val === 'Berkembang Baik' || val === 'Mulai Bisa') badgeColor = 'bg-blue-100 text-blue-700';
+                                            else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
+                                            else if (val === 'Belum Berkembang' || val === 'Belum Bisa' || val === 'Belum Memulai') badgeColor = 'bg-red-100 text-red-700';
+
+                                            metricsHtml += `<div class="text-xs flex justify-between items-center p-2 bg-slate-50 rounded border border-slate-100">
+                                                <span class="font-medium text-slate-600">${key}</span>
+                                                <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
+                                            </div>`;
+                                        }
+                                        metricsHtml += `</div></div>`;
+                                    }
+                                }
+
+                                const item = document.createElement('div');
+                                item.className = 'relative pl-6 pb-6 border-l-2 border-indigo-100 last:pb-0 last:border-l-0';
+                                item.innerHTML = `
+                                    <span class="absolute -left-[7px] top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-indigo-500 ring-4 ring-white"></span>
+                                    <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <span class="text-sm font-bold text-indigo-700">
+                                                <i class="fa-regular fa-calendar-days mr-1"></i> Bulan: ${dateStr}
+                                            </span>
+                                        </div>
+                                        <div class="mb-4">
+                                            ${metricsHtml}
+                                        </div>
+                                        ${report.notes ? `
+                                        <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-md">
+                                            <p class="text-xs font-bold text-indigo-800 mb-1"><i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:</p>
+                                            <p class="text-sm text-slate-700 italic">${report.notes}</p>
+                                        </div>` : ''}
+                                    </div>
+                                `;
+                                freetextContainer.appendChild(item);
+                            });
+                        }
+                    }
+                }
+
+                // ====================================================
+                // EVENT: Pilih Anak → populate dropdown tahun
+                // ====================================================
                 selectDropdown.addEventListener('change', function() {
                     const childId = String(this.value);
                     const child = childrenMap[childId];
-
                     if (!child) return;
+
+                    activeChild = child;
 
                     // Info anak
                     document.getElementById('student-class').textContent = child.swimming_class ?
@@ -652,12 +946,11 @@
                     const pendingDateEl    = document.getElementById('pending-request-date');
                     const changeWrapper    = document.getElementById('student-schedule-change-wrapper');
 
-                    // Cari request pending dari anak yang dipilih
                     const pendingReq = child.schedule_change_requests && child.schedule_change_requests.find(r => r.status === 'pending');
 
                     if (pendingReq) {
                         pendingBox.classList.remove('hidden');
-                        changeWrapper.classList.add('hidden'); // Sembunyikan tombol saat ada pending
+                        changeWrapper.classList.add('hidden');
                         pendingListDiv.innerHTML = '';
 
                         const newIds = pendingReq.new_schedule_ids || [];
@@ -688,347 +981,45 @@
                     // Simpan child id aktif untuk modal
                     window.activeChildId = childId;
 
-                    const reports = child.progress_reports || [];
+                    allReports = child.progress_reports || [];
 
-                    // Jika TIDAK ada data perkembangan
-                    if (reports.length === 0) {
-                        emptyState.classList.add('hidden');
-
-                        chartContainer.classList.add('hidden');
-                        chartContainer.style.display = '';
-
-                        if (myChart) {
-                            myChart.destroy();
-                            myChart = null;
-                        }
-
+                    // Jika TIDAK ada data perkembangan sama sekali
+                    if (allReports.length === 0) {
+                        hideAllStates();
                         noDataState.classList.remove('hidden');
                         noDataState.style.display = 'flex';
-
                         document.getElementById('no-data-subtext').textContent =
                             `Hubungi Coach pendamping untuk menginput data perkembangan fisik pertama.`;
+                        yearDropdown.disabled = true;
+                        yearDropdown.innerHTML = '<option value="" disabled selected>-- Tahun --</option>';
                         return;
                     }
 
-                    // Tampilkan grafik (sembunyikan state kosong)
-                    emptyState.classList.add('hidden');
-                    noDataState.classList.add('hidden');
-                    noDataState.style.display = '';
-                    chartContainer.classList.remove('hidden');
-                    chartContainer.style.display = 'flex';
-
-                    // Update catatan terakhir
-                    const latestReport = reports[reports.length - 1];
-                    latestNoteText.textContent = latestReport.notes ?
-                        `"${latestReport.notes}"` :
-                        `"Tidak ada catatan pada evaluasi terakhir."`;
-
-                    const ld = new Date(latestReport.date);
-                    latestNoteDate.textContent =
-                        `Diinput pada: ${ld.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}`;
-
-                    const freetextContainer = document.getElementById('freetext-container');
-                    const prestasiContainer = document.getElementById('prestasi-charts-container');
-
-                    // Hancurkan chart lama jika ada
-                    if (radarChartInst) radarChartInst.destroy();
-                    if (barChartInst) barChartInst.destroy();
-                    if (lineChartPBTInst) lineChartPBTInst.destroy();
-
-                    // Cek apakah data ini adalah kelas Prestasi (memiliki Kondisi Fisik)
-                    const isPrestasi = latestReport && latestReport.metrics && ('Kondisi Fisik' in latestReport.metrics);
-
-                    if (isPrestasi) {
-                        if (freetextContainer) freetextContainer.classList.add('hidden');
-                        if (prestasiContainer) prestasiContainer.classList.remove('hidden');
-                        prestasiContainer.style.display = 'flex';
-
-                        // --- 1. Siapkan Data ---
-                        const labels = [];
-                        const radarData = { Endurance: [], Fleksibilitas: [], Strength: [], Speed: [], Agility: [] };
-                        const barData = { Aerobic: [], Anaerobic: [] };
-                        const pbtData = { TestPerBulan: [], PbtEvent: [] };
-
-                        // Fungsi helper ubah "01:25.50" jadi detik "85.5"
-                        function parseTimeToSeconds(timeStr) {
-                            if (!timeStr) return null;
-                            const match = timeStr.match(/(?:(\d+):)?(\d+)[.,:](\d+)/);
-                            if (match) {
-                                const m = parseInt(match[1] || 0);
-                                const s = parseInt(match[2] || 0);
-                                const ms = parseInt(match[3] || 0);
-                                const msVal = ms < 100 ? ms * 10 : ms; 
-                                return m * 60 + s + (msVal / 1000);
-                            }
-                            return null;
-                        }
-
-                        // Fungsi format balik dari detik ke "MM:SS.ms"
-                        function formatSecondsToTime(totalSeconds) {
-                            if (totalSeconds == null) return "-";
-                            const m = Math.floor(totalSeconds / 60);
-                            const s = Math.floor(totalSeconds % 60);
-                            const ms = Math.round((totalSeconds - Math.floor(totalSeconds)) * 100);
-                            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
-                        }
-
-                        reports.forEach(report => {
-                            const d = new Date(report.date);
-                            labels.push(d.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' }));
-
-                            if (report.metrics) {
-                                const kf = report.metrics['Kondisi Fisik'] || {};
-                                radarData.Endurance.push(kf['Endurance'] || 0);
-                                radarData.Fleksibilitas.push(kf['Fleksibilitas'] || 0);
-                                radarData.Strength.push(kf['Strength'] || 0);
-                                radarData.Speed.push(kf['Speed'] || 0);
-                                radarData.Agility.push(kf['Agility'] || 0);
-
-                                const se = report.metrics['Sistem Energi'] || {};
-                                barData.Aerobic.push(se['Aerobic'] || 0);
-                                barData.Anaerobic.push(se['Anaerobic'] || 0);
-
-                                const pbt = report.metrics['Personal Best Time'] || {};
-                                pbtData.TestPerBulan.push(parseTimeToSeconds(pbt['Test per Bulan']));
-                                pbtData.PbtEvent.push({
-                                    val: parseTimeToSeconds(pbt['PBT Event']),
-                                    raw: pbt['PBT Event']
-                                });
-                            }
-                        });
-
-                        // Ambil 2 bulan terakhir untuk komparasi Radar
-                        const len = labels.length;
-                        const latestLabels = ['Endurance', 'Fleksibilitas', 'Strength', 'Speed', 'Agility'];
-                        const latestData = len > 0 ? [
-                            radarData.Endurance[len-1], radarData.Fleksibilitas[len-1], 
-                            radarData.Strength[len-1], radarData.Speed[len-1], radarData.Agility[len-1]
-                        ] : [];
-                        const prevData = len > 1 ? [
-                            radarData.Endurance[len-2], radarData.Fleksibilitas[len-2], 
-                            radarData.Strength[len-2], radarData.Speed[len-2], radarData.Agility[len-2]
-                        ] : [];
-
-                        // --- 2. Render Radar Chart (Kondisi Fisik) — selalu 2 bulan terakhir ---
-                        const ctxRadar = document.getElementById('radarChart').getContext('2d');
-                        const radarDatasets = [{
-                            label: labels[len-1] || 'Bulan Ini',
-                            data: latestData,
-                            backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                            borderColor: 'rgb(37, 99, 235)',
-                            borderWidth: 2,
-                            pointBackgroundColor: 'rgb(37, 99, 235)'
-                        }];
-                        if (len > 1) {
-                            radarDatasets.push({
-                                label: labels[len-2] || 'Bulan Lalu',
-                                data: prevData,
-                                backgroundColor: 'rgba(156, 163, 175, 0.2)',
-                                borderColor: 'rgb(156, 163, 175)',
-                                borderWidth: 2,
-                                pointBackgroundColor: 'rgb(156, 163, 175)'
-                            });
-                        }
-                        radarChartInst = new Chart(ctxRadar, {
-                            type: 'radar',
-                            data: { labels: latestLabels, datasets: radarDatasets },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: { r: { min: 0, max: 100 } },
-                                plugins: { legend: { position: 'bottom' } }
-                            }
-                        });
-
-                        // ====================================================
-                        // PAGINATION: Sistem Energi & PBT (maks 6 bulan)
-                        // ====================================================
-                        const MAX_VISIBLE = 6;
-
-                        // --- Bar Chart (Sistem Energi) dengan Paginasi ---
-                        let barPage = Math.max(0, len - MAX_VISIBLE); // Mulai dari data terbaru
-                        window._barChartAllData = { labels, barData, len };
-
-                        function renderBarChart() {
-                            if (barChartInst) barChartInst.destroy();
-                            const start = barPage;
-                            const end = Math.min(barPage + MAX_VISIBLE, len);
-                            const sliceLabels = labels.slice(start, end);
-                            const sliceAerobic = barData.Aerobic.slice(start, end);
-                            const sliceAnaerobic = barData.Anaerobic.slice(start, end);
-
-                            barChartInst = new Chart(document.getElementById('barChart').getContext('2d'), {
-                                type: 'bar',
-                                data: {
-                                    labels: sliceLabels,
-                                    datasets: [
-                                        { label: 'Aerobic', data: sliceAerobic, backgroundColor: 'rgba(16, 185, 129, 0.7)' },
-                                        { label: 'Anaerobic', data: sliceAnaerobic, backgroundColor: 'rgba(239, 68, 68, 0.7)' }
-                                    ]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: { legend: { position: 'bottom' } },
-                                    scales: { y: { beginAtZero: true, max: 100 } }
-                                }
-                            });
-
-                            // Update navigasi
-                            document.getElementById('barPrev').disabled = (barPage <= 0);
-                            document.getElementById('barNext').disabled = (barPage + MAX_VISIBLE >= len);
-                            document.getElementById('barPageInfo').textContent = len > MAX_VISIBLE
-                                ? `${start + 1}–${end} dari ${len} bulan`
-                                : '';
-                        }
-
-                        window.navigateBarChart = function(dir) {
-                            barPage += dir * MAX_VISIBLE;
-                            barPage = Math.max(0, Math.min(barPage, len - MAX_VISIBLE));
-                            renderBarChart();
-                        };
-
-                        renderBarChart();
-
-                        // --- Line Chart PBT dengan Paginasi ---
-                        let pbtPage = Math.max(0, len - MAX_VISIBLE);
-                        window._pbtChartAllData = { labels, pbtData, len };
-
-                        function renderPbtChart() {
-                            if (lineChartPBTInst) lineChartPBTInst.destroy();
-                            const start = pbtPage;
-                            const end = Math.min(pbtPage + MAX_VISIBLE, len);
-                            const sliceLabels = labels.slice(start, end);
-                            const sliceTest = pbtData.TestPerBulan.slice(start, end);
-                            const sliceEvent = pbtData.PbtEvent.slice(start, end);
-
-                            const pbtDatasets = [
-                                {
-                                    label: 'Test per Bulan',
-                                    data: sliceTest,
-                                    borderColor: 'rgb(147, 51, 234)',
-                                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                                    tension: 0.3,
-                                    fill: true
-                                },
-                                {
-                                    label: 'PBT Event',
-                                    data: sliceEvent.map(e => e.val),
-                                    type: 'scatter',
-                                    pointBackgroundColor: 'rgb(245, 158, 11)',
-                                    pointBorderColor: 'rgb(255, 255, 255)',
-                                    pointRadius: 6,
-                                    pointHoverRadius: 8
-                                }
-                            ];
-
-                            lineChartPBTInst = new Chart(document.getElementById('lineChartPBT').getContext('2d'), {
-                                type: 'line',
-                                data: { labels: sliceLabels, datasets: pbtDatasets },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: { position: 'bottom' },
-                                        tooltip: {
-                                            callbacks: {
-                                                label: function(context) {
-                                                    if (context.dataset.label === 'PBT Event') {
-                                                        const rawText = sliceEvent[context.dataIndex].raw;
-                                                        return `Event: ${rawText || formatSecondsToTime(context.raw)}`;
-                                                    }
-                                                    return `Test: ${formatSecondsToTime(context.raw)}`;
-                                                }
-                                            }
-                                        }
-                                    },
-                                    scales: {
-                                        y: {
-                                            reverse: true,
-                                            ticks: {
-                                                callback: function(value) { return formatSecondsToTime(value); }
-                                            },
-                                            title: { display: true, text: 'Waktu (MM:SS.ms)' }
-                                        }
-                                    }
-                                }
-                            });
-
-                            // Update navigasi
-                            document.getElementById('pbtPrev').disabled = (pbtPage <= 0);
-                            document.getElementById('pbtNext').disabled = (pbtPage + MAX_VISIBLE >= len);
-                            document.getElementById('pbtPageInfo').textContent = len > MAX_VISIBLE
-                                ? `${start + 1}–${end} dari ${len} bulan`
-                                : '';
-                        }
-
-                        window.navigatePbtChart = function(dir) {
-                            pbtPage += dir * MAX_VISIBLE;
-                            pbtPage = Math.max(0, Math.min(pbtPage, len - MAX_VISIBLE));
-                            renderPbtChart();
-                        };
-
-                        renderPbtChart();
-
-                    } else {
-                        // KELAS BELAJAR (TIMELINE TEXT)
-                        if (prestasiContainer) prestasiContainer.classList.add('hidden');
-                        if (prestasiContainer) prestasiContainer.style.display = 'none';
-
-                        if (freetextContainer) {
-                            freetextContainer.classList.remove('hidden');
-                            freetextContainer.innerHTML = '';
-
-                            const sortedReports = [...reports].reverse();
-                            sortedReports.forEach(report => {
-                                const d = new Date(report.date);
-                                const dateStr = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-                                
-                                let metricsHtml = '';
-                                if (report.metrics) {
-                                    for (const [category, items] of Object.entries(report.metrics)) {
-                                        metricsHtml += `<div class="mb-3"><h5 class="text-sm font-bold text-slate-800 border-b pb-1 mb-2">${category}</h5><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
-                                        for (const [key, val] of Object.entries(items)) {
-                                            let badgeColor = 'bg-slate-100 text-slate-700';
-                                            if (val === 'Sangat Mahir' || val === 'Lulus Tahap Ini' || val === 'Sudah Lancar') badgeColor = 'bg-green-100 text-green-700';
-                                            else if (val === 'Berkembang Baik' || val === 'Mulai Bisa') badgeColor = 'bg-blue-100 text-blue-700';
-                                            else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
-                                            else if (val === 'Belum Berkembang' || val === 'Belum Bisa' || val === 'Belum Memulai') badgeColor = 'bg-red-100 text-red-700';
-
-                                            metricsHtml += `<div class="text-xs flex justify-between items-center p-2 bg-slate-50 rounded border border-slate-100">
-                                                <span class="font-medium text-slate-600">${key}</span>
-                                                <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
-                                            </div>`;
-                                        }
-                                        metricsHtml += `</div></div>`;
-                                    }
-                                }
-
-                                const item = document.createElement('div');
-                                item.className = 'relative pl-6 pb-6 border-l-2 border-indigo-100 last:pb-0 last:border-l-0';
-                                item.innerHTML = `
-                                    <span class="absolute -left-[7px] top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-indigo-500 ring-4 ring-white"></span>
-                                    <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
-                                        <div class="flex justify-between items-center mb-4">
-                                            <span class="text-sm font-bold text-indigo-700">
-                                                <i class="fa-regular fa-calendar-days mr-1"></i> Bulan: ${dateStr}
-                                            </span>
-                                        </div>
-                                        <div class="mb-4">
-                                            ${metricsHtml}
-                                        </div>
-                                        ${report.notes ? `
-                                        <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-md">
-                                            <p class="text-xs font-bold text-indigo-800 mb-1"><i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:</p>
-                                            <p class="text-sm text-slate-700 italic">${report.notes}</p>
-                                        </div>` : ''}
-                                    </div>
-                                `;
-                                freetextContainer.appendChild(item);
-                            });
-                        }
-                    }
+                    // Populate dropdown tahun (descending)
+                    const years = [...new Set(allReports.map(r => new Date(r.date).getFullYear()))].sort((a, b) => b - a);
+                    yearDropdown.innerHTML = '';
+                    years.forEach((y, i) => {
+                        const opt = document.createElement('option');
+                        opt.value = y;
+                        opt.textContent = y;
+                        if (i === 0) opt.selected = true; // Tahun terbaru default
+                        yearDropdown.appendChild(opt);
                     });
+                    yearDropdown.disabled = false;
+
+                    // Langsung render tahun terbaru
+                    renderChartsForYear(years[0]);
+                });
+
+                // ====================================================
+                // EVENT: Pilih Tahun → re-render grafik
+                // ====================================================
+                yearDropdown.addEventListener('change', function() {
+                    const selectedYear = parseInt(this.value);
+                    if (!isNaN(selectedYear)) {
+                        renderChartsForYear(selectedYear);
+                    }
+                });
 
                 // Auto-select anak pertama jika ada
                 <?php if($children->isNotEmpty()): ?>

@@ -31,7 +31,7 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'unique:users,name'],
             'username' => ['required', 'string', 'lowercase', 'max:255', 'unique:' . User::class],
             'phone' => ['required', 'string', 'max:20'],
             'role' => ['required', 'in:parent,general'], // Membatasi agar tidak ada yang nembak jadi admin/coach

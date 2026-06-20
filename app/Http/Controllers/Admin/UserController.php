@@ -45,7 +45,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
+            'name'     => 'required|string|max:255|unique:users,name',
             'username' => 'required|string|max:255|unique:users,username',
             'phone'    => 'required|string|max:15',
             'role'     => 'required|string|in:admin,coach,parent,general',
@@ -77,7 +77,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
+            'name'     => 'required|string|max:255|unique:users,name,' . $user->id,
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'phone'    => 'required|string|max:15',
             'role'     => 'required|string|in:admin,coach,parent,general',

@@ -67,7 +67,7 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:students,name',
             'birth_date' => 'required|date',
             'gender' => 'required|in:L,P',
             'swimming_class_id' => 'required|exists:swimming_classes,id',
