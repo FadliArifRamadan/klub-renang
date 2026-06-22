@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Student;
 
-#[Fillable(['name', 'username', 'phone', 'role', 'password', 'image'])]
+#[Fillable(['name', 'username', 'phone', 'role', 'password', 'image', 'licenses', 'certifications', 'experience'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -28,6 +28,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'licenses' => 'array',
+            'certifications' => 'array',
         ];
     }
 

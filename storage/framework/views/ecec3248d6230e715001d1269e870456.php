@@ -382,16 +382,17 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                                                        <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
+                                                        <div x-data="{ show: false }" class="relative mt-1">
+                                                            <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'password-'.e($user->id).'','class' => 'block mt-1 w-full','type' => 'password','name' => 'password','placeholder' => 'Kosongkan jika tidak ingin diubah']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'password-'.e($user->id).'','class' => 'block w-full pr-10','xBind:type' => 'show ? \'text\' : \'password\'','name' => 'password','placeholder' => 'Kosongkan jika tidak ingin diubah']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'password-'.e($user->id).'','class' => 'block mt-1 w-full','type' => 'password','name' => 'password','placeholder' => 'Kosongkan jika tidak ingin diubah']); ?>
+<?php $component->withAttributes(['id' => 'password-'.e($user->id).'','class' => 'block w-full pr-10','x-bind:type' => 'show ? \'text\' : \'password\'','name' => 'password','placeholder' => 'Kosongkan jika tidak ingin diubah']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -402,6 +403,10 @@
 <?php $component = $__componentOriginal18c21970322f9e5c938bc954620c12bb; ?>
 <?php unset($__componentOriginal18c21970322f9e5c938bc954620c12bb); ?>
 <?php endif; ?>
+                                                            <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition">
+                                                                <i x-bind:class="show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-sm"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
 
                                                     
@@ -432,6 +437,45 @@
                                                         <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
                                                     </div>
                                                 </div>
+
+                                                    
+                                                    <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-4">
+                                                        <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">
+                                                            <i class="fa-solid fa-id-badge mr-1"></i> Profil Coach
+                                                        </h4>
+
+                                                        
+                                                        <div x-data="{ items: <?php echo e(json_encode($user->licenses ?? [])); ?> }">
+                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Lisensi</label>
+                                                            <template x-for="(item, index) in items" :key="index">
+                                                                <div class="flex items-center gap-2 mb-1.5">
+                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Lisensi C PRSI">
+                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                                                </div>
+                                                            </template>
+                                                            <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Lisensi</button>
+                                                            <input type="hidden" name="licenses" :value="JSON.stringify(items)">
+                                                        </div>
+
+                                                        
+                                                        <div x-data="{ items: <?php echo e(json_encode($user->certifications ?? [])); ?> }">
+                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Sertifikasi Keahlian</label>
+                                                            <template x-for="(item, index) in items" :key="index">
+                                                                <div class="flex items-center gap-2 mb-1.5">
+                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Sertifikat First Aid & CPR">
+                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                                                </div>
+                                                            </template>
+                                                            <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Sertifikasi</button>
+                                                            <input type="hidden" name="certifications" :value="JSON.stringify(items)">
+                                                        </div>
+
+                                                        
+                                                        <div>
+                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Pengalaman & Status</label>
+                                                            <input type="text" name="experience" value="<?php echo e($user->experience); ?>" class="w-full text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Aktif melatih sejak 2021 di Black Diamond">
+                                                        </div>
+                                                    </div>
 
                                                 <div class="mt-6 flex justify-end space-x-3">
                                                     <?php if (isset($component)) { $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af = $component; } ?>
@@ -800,16 +844,17 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                    <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
+                    <div x-data="{ show: false }" class="relative mt-1">
+                        <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'create-password','class' => 'block mt-1 w-full','type' => 'password','name' => 'password','required' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'create-password','class' => 'block w-full pr-10','xBind:type' => 'show ? \'text\' : \'password\'','name' => 'password','required' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'create-password','class' => 'block mt-1 w-full','type' => 'password','name' => 'password','required' => true]); ?>
+<?php $component->withAttributes(['id' => 'create-password','class' => 'block w-full pr-10','x-bind:type' => 'show ? \'text\' : \'password\'','name' => 'password','required' => true]); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -820,6 +865,10 @@
 <?php $component = $__componentOriginal18c21970322f9e5c938bc954620c12bb; ?>
 <?php unset($__componentOriginal18c21970322f9e5c938bc954620c12bb); ?>
 <?php endif; ?>
+                        <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition">
+                            <i x-bind:class="show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-sm"></i>
+                        </button>
+                    </div>
                 </div>
 
                 
@@ -836,6 +885,45 @@
                             hover:file:bg-blue-100
                             border border-slate-200 rounded-lg cursor-pointer bg-white" />
                     <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
+                </div>
+
+                
+                <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-4">
+                    <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">
+                        <i class="fa-solid fa-id-badge mr-1"></i> Profil Coach
+                    </h4>
+
+                    
+                    <div x-data="{ items: [] }">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Lisensi</label>
+                        <template x-for="(item, index) in items" :key="index">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Lisensi C PRSI">
+                                <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                            </div>
+                        </template>
+                        <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Lisensi</button>
+                        <input type="hidden" name="licenses" :value="JSON.stringify(items)">
+                    </div>
+
+                    
+                    <div x-data="{ items: [] }">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Sertifikasi Keahlian</label>
+                        <template x-for="(item, index) in items" :key="index">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Sertifikat First Aid & CPR">
+                                <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                            </div>
+                        </template>
+                        <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Sertifikasi</button>
+                        <input type="hidden" name="certifications" :value="JSON.stringify(items)">
+                    </div>
+
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Pengalaman & Status</label>
+                        <input type="text" name="experience" class="w-full text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Aktif melatih sejak 2021 di Black Diamond">
+                    </div>
                 </div>
             </div>
 

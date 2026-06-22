@@ -231,8 +231,33 @@
                         </div>
 
                         
-                        <div id="freetext-container" class="hidden overflow-y-auto max-h-[400px] mt-4 space-y-4 pr-1 mb-6">
-                            
+                        <div id="freetext-container" class="hidden mt-4 mb-6">
+                            <div style="display: flex; height: 420px; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; background: #fff;">
+                                
+                                <div style="width: 200px; min-width: 200px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                                    <div style="padding: 12px; border-bottom: 1px solid #e2e8f0; background: rgba(241,245,249,0.8);">
+                                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                            <i class="fa-regular fa-calendar-days"></i> Menu Bulan
+                                        </h4>
+                                    </div>
+                                    <div id="freetext-month-list" style="flex: 1; overflow-y: auto; padding: 8px;" class="space-y-1">
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+                                    <div id="freetext-detail-panel" style="flex: 1; overflow-y: auto; padding: 20px;">
+                                        <div id="freetext-detail-empty" class="flex flex-col items-center justify-center h-full text-gray-400">
+                                            <i class="fa-regular fa-hand-pointer text-4xl mb-3 text-gray-200"></i>
+                                            <p class="text-sm font-medium text-gray-500">Pilih bulan di samping kiri</p>
+                                            <p class="text-xs text-gray-400 mt-1">Detail catatan perkembangan akan ditampilkan di sini.</p>
+                                        </div>
+                                        <div id="freetext-detail-content" class="hidden">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     
@@ -525,22 +550,48 @@
                     });
 
                 } else {
-                    // KELAS BELAJAR (TIMELINE TEXT)
+                    // KELAS BELAJAR (VERTICAL TABS — 2 Kolom)
                     if (prestasiContainer) { prestasiContainer.classList.add('hidden'); prestasiContainer.style.display = 'none'; }
 
                     if (freetextContainer) {
                         freetextContainer.classList.remove('hidden');
-                        freetextContainer.innerHTML = '';
+
+                        const monthList = document.getElementById('freetext-month-list');
+                        const detailEmpty = document.getElementById('freetext-detail-empty');
+                        const detailContent = document.getElementById('freetext-detail-content');
+                        monthList.innerHTML = '';
+                        detailContent.innerHTML = '';
+                        detailContent.classList.add('hidden');
+                        detailEmpty.classList.remove('hidden');
 
                         const sortedReports = [...filteredReports].reverse();
-                        sortedReports.forEach(report => {
+
+                        function showMonthDetail(report, btnEl) {
+                            monthList.querySelectorAll('button').forEach(b => {
+                                b.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
+                                b.classList.add('bg-white', 'text-slate-700', 'hover:bg-indigo-50');
+                                b.querySelector('.month-dot')?.classList.remove('bg-white');
+                                b.querySelector('.month-dot')?.classList.add('bg-indigo-400');
+                            });
+                            btnEl.classList.remove('bg-white', 'text-slate-700', 'hover:bg-indigo-50');
+                            btnEl.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
+                            btnEl.querySelector('.month-dot')?.classList.remove('bg-indigo-400');
+                            btnEl.querySelector('.month-dot')?.classList.add('bg-white');
+
+                            detailEmpty.classList.add('hidden');
+                            detailContent.classList.remove('hidden');
+
                             const d = new Date(report.date);
                             const dateStr = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
                             let metricsHtml = '';
                             if (report.metrics) {
                                 for (const [category, items] of Object.entries(report.metrics)) {
-                                    metricsHtml += `<div class="mb-3"><h5 class="text-sm font-bold text-slate-800 border-b pb-1 mb-2">${category}</h5><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+                                    metricsHtml += `<div class="mb-4">
+                                        <h5 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-1.5 mb-3 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-layer-group text-indigo-500 text-xs"></i> ${category}
+                                        </h5>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
                                     for (const [key, val] of Object.entries(items)) {
                                         let badgeColor = 'bg-slate-100 text-slate-700';
                                         if (val === 'Sangat Mahir' || val === 'Lulus Tahap Ini' || val === 'Sudah Lancar') badgeColor = 'bg-green-100 text-green-700';
@@ -548,7 +599,7 @@
                                         else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
                                         else if (val === 'Belum Berkembang' || val === 'Belum Bisa' || val === 'Belum Memulai') badgeColor = 'bg-red-100 text-red-700';
 
-                                        metricsHtml += `<div class="text-xs flex justify-between items-center p-2 bg-slate-50 rounded border border-slate-100">
+                                        metricsHtml += `<div class="text-xs flex justify-between items-center p-2.5 bg-slate-50 rounded-lg border border-slate-100">
                                             <span class="font-medium text-slate-600">${key}</span>
                                             <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
                                         </div>`;
@@ -557,27 +608,44 @@
                                 }
                             }
 
-                            const item = document.createElement('div');
-                            item.className = 'relative pl-6 pb-6 border-l-2 border-indigo-100 last:pb-0 last:border-l-0';
-                            item.innerHTML = `
-                                <span class="absolute -left-[7px] top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-indigo-500 ring-4 ring-white"></span>
-                                <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
-                                    <div class="flex justify-between items-center mb-4">
-                                        <span class="text-sm font-bold text-indigo-700">
-                                            <i class="fa-regular fa-calendar-days mr-1"></i> Bulan: ${dateStr}
-                                        </span>
-                                    </div>
-                                    <div class="mb-4">
-                                        ${metricsHtml}
-                                    </div>
-                                    ${report.notes ? `
-                                    <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-md">
-                                        <p class="text-xs font-bold text-indigo-800 mb-1"><i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:</p>
-                                        <p class="text-sm text-slate-700 italic">${report.notes}</p>
-                                    </div>` : ''}
+                            detailContent.innerHTML = `
+                                <div class="flex items-center gap-2 mb-5">
+                                    <div class="w-1 h-6 bg-indigo-500 rounded-full"></div>
+                                    <h4 class="text-base font-bold text-slate-800">Bulan: ${dateStr}</h4>
                                 </div>
+                                <div class="mb-5">
+                                    ${metricsHtml || '<p class="text-sm text-gray-400 italic">Tidak ada data metrik untuk bulan ini.</p>'}
+                                </div>
+                                ${report.notes ? `
+                                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
+                                    <p class="text-xs font-bold text-indigo-800 mb-1.5 flex items-center gap-1">
+                                        <i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:
+                                    </p>
+                                    <p class="text-sm text-slate-700 italic leading-relaxed">${report.notes}</p>
+                                </div>` : `
+                                <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl">
+                                    <p class="text-xs text-slate-400 italic">Tidak ada catatan dari pelatih pada bulan ini.</p>
+                                </div>`}
                             `;
-                            freetextContainer.appendChild(item);
+                        }
+
+                        sortedReports.forEach((report, idx) => {
+                            const d = new Date(report.date);
+                            const monthName = d.toLocaleDateString('id-ID', { month: 'long' });
+
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm font-semibold transition-all duration-150 bg-white text-slate-700 hover:bg-indigo-50 border border-transparent';
+                            btn.innerHTML = `
+                                <span class="month-dot w-2 h-2 rounded-full bg-indigo-400 shrink-0"></span>
+                                <span class="truncate">${monthName}</span>
+                            `;
+                            btn.addEventListener('click', () => showMonthDetail(report, btn));
+                            monthList.appendChild(btn);
+
+                            if (idx === 0) {
+                                showMonthDetail(report, btn);
+                            }
                         });
                     }
                 }

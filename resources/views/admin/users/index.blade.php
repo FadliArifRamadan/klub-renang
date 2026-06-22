@@ -192,8 +192,13 @@
 
                                                     <div>
                                                         <x-input-label for="password-{{ $user->id }}" value="Ubah Password" class="font-bold text-xs" />
-                                                        <x-text-input id="password-{{ $user->id }}" class="block mt-1 w-full" type="password" name="password"
-                                                            placeholder="Kosongkan jika tidak ingin diubah" />
+                                                        <div x-data="{ show: false }" class="relative mt-1">
+                                                            <x-text-input id="password-{{ $user->id }}" class="block w-full pr-10" x-bind:type="show ? 'text' : 'password'" name="password"
+                                                                placeholder="Kosongkan jika tidak ingin diubah" />
+                                                            <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition">
+                                                                <i x-bind:class="show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-sm"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
 
                                                     {{-- Upload Foto Profil - Khusus Coach --}}
@@ -224,6 +229,45 @@
                                                         <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
                                                     </div>
                                                 </div>
+
+                                                    {{-- Profil Coach: Lisensi, Sertifikasi, Pengalaman --}}
+                                                    <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-4">
+                                                        <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">
+                                                            <i class="fa-solid fa-id-badge mr-1"></i> Profil Coach
+                                                        </h4>
+
+                                                        {{-- Lisensi --}}
+                                                        <div x-data="{ items: {{ json_encode($user->licenses ?? []) }} }">
+                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Lisensi</label>
+                                                            <template x-for="(item, index) in items" :key="index">
+                                                                <div class="flex items-center gap-2 mb-1.5">
+                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Lisensi C PRSI">
+                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                                                </div>
+                                                            </template>
+                                                            <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Lisensi</button>
+                                                            <input type="hidden" name="licenses" :value="JSON.stringify(items)">
+                                                        </div>
+
+                                                        {{-- Sertifikasi --}}
+                                                        <div x-data="{ items: {{ json_encode($user->certifications ?? []) }} }">
+                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Sertifikasi Keahlian</label>
+                                                            <template x-for="(item, index) in items" :key="index">
+                                                                <div class="flex items-center gap-2 mb-1.5">
+                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Sertifikat First Aid & CPR">
+                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                                                </div>
+                                                            </template>
+                                                            <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Sertifikasi</button>
+                                                            <input type="hidden" name="certifications" :value="JSON.stringify(items)">
+                                                        </div>
+
+                                                        {{-- Pengalaman --}}
+                                                        <div>
+                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Pengalaman & Status</label>
+                                                            <input type="text" name="experience" value="{{ $user->experience }}" class="w-full text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Aktif melatih sejak 2021 di Black Diamond">
+                                                        </div>
+                                                    </div>
 
                                                 <div class="mt-6 flex justify-end space-x-3">
                                                     <x-secondary-button type="button" x-on:click="$dispatch('close')">
@@ -331,7 +375,12 @@
 
                 <div>
                     <x-input-label for="create-password" value="Password" class="font-bold text-xs" />
-                    <x-text-input id="create-password" class="block mt-1 w-full" type="password" name="password" required />
+                    <div x-data="{ show: false }" class="relative mt-1">
+                        <x-text-input id="create-password" class="block w-full pr-10" x-bind:type="show ? 'text' : 'password'" name="password" required />
+                        <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition">
+                            <i x-bind:class="show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-sm"></i>
+                        </button>
+                    </div>
                 </div>
 
                 {{-- Upload Foto Profil - Khusus Coach --}}
@@ -348,6 +397,45 @@
                             hover:file:bg-blue-100
                             border border-slate-200 rounded-lg cursor-pointer bg-white" />
                     <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
+                </div>
+
+                {{-- Profil Coach: Lisensi, Sertifikasi, Pengalaman --}}
+                <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-4">
+                    <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">
+                        <i class="fa-solid fa-id-badge mr-1"></i> Profil Coach
+                    </h4>
+
+                    {{-- Lisensi --}}
+                    <div x-data="{ items: [] }">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Lisensi</label>
+                        <template x-for="(item, index) in items" :key="index">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Lisensi C PRSI">
+                                <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                            </div>
+                        </template>
+                        <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Lisensi</button>
+                        <input type="hidden" name="licenses" :value="JSON.stringify(items)">
+                    </div>
+
+                    {{-- Sertifikasi --}}
+                    <div x-data="{ items: [] }">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Sertifikasi Keahlian</label>
+                        <template x-for="(item, index) in items" :key="index">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Sertifikat First Aid & CPR">
+                                <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                            </div>
+                        </template>
+                        <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Sertifikasi</button>
+                        <input type="hidden" name="certifications" :value="JSON.stringify(items)">
+                    </div>
+
+                    {{-- Pengalaman --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Pengalaman & Status</label>
+                        <input type="text" name="experience" class="w-full text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Aktif melatih sejak 2021 di Black Diamond">
+                    </div>
                 </div>
             </div>
 

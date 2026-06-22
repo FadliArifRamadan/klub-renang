@@ -28,9 +28,14 @@
                     </a>
                 @endif
             </div>
-            <input id="password" type="password" name="password" required autocomplete="current-password"
-                class="block w-full border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
-                placeholder="Masukkan password Anda" />
+            <div x-data="{ show: false }" class="relative">
+                <input id="password" :type="show ? 'text' : 'password'" name="password" required autocomplete="current-password"
+                    class="block w-full border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 pr-10 shadow-sm text-sm transition-colors"
+                    placeholder="Masukkan password Anda" />
+                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition">
+                    <i :class="show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-sm"></i>
+                </button>
+            </div>
             <x-input-error :messages="$errors->get('password')" class="mt-1" />
         </div>
 

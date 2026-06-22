@@ -61,9 +61,14 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ];
 
-        // Upload foto khusus Coach
-        if ($request->role === 'coach' && $request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('coaches', 'public');
+        // Data khusus Coach
+        if ($request->role === 'coach') {
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image')->store('coaches', 'public');
+            }
+            $data['licenses'] = $request->licenses ? json_decode($request->licenses, true) : [];
+            $data['certifications'] = $request->certifications ? json_decode($request->certifications, true) : [];
+            $data['experience'] = $request->experience;
         }
 
         User::create($data);
@@ -97,7 +102,7 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
-        // Penanganan foto khusus Coach
+        // Penanganan data khusus Coach
         if ($request->role === 'coach') {
             if ($request->hasFile('image')) {
                 // Hapus gambar lama jika ada
@@ -106,12 +111,18 @@ class UserController extends Controller
                 }
                 $data['image'] = $request->file('image')->store('coaches', 'public');
             }
+            $data['licenses'] = $request->licenses ? json_decode($request->licenses, true) : [];
+            $data['certifications'] = $request->certifications ? json_decode($request->certifications, true) : [];
+            $data['experience'] = $request->experience;
         } else {
-            // Jika role diubah dari Coach ke non-Coach, hapus gambar lamanya
+            // Jika role diubah dari Coach ke non-Coach, hapus data coach
             if ($user->image) {
                 Storage::disk('public')->delete($user->image);
                 $data['image'] = null;
             }
+            $data['licenses'] = null;
+            $data['certifications'] = null;
+            $data['experience'] = null;
         }
 
         $user->update($data);

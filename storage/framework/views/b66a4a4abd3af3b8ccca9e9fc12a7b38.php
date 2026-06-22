@@ -255,9 +255,10 @@
                     <div @click="openModal({
                             name: '<?php echo e(addslashes($coach->name)); ?>',
                             image: '<?php echo e($coach->image ? asset('storage/' . $coach->image) : ''); ?>',
-                            licenses: ['Lisensi C PRSI', 'Lisensi B PRSI', 'Lisensi Pelatih Fisik Dasar'],
-                            certificates: ['Sertifikat Keselamatan Air (Water Rescue)', 'Sertifikat First Aid & CPR', 'Sertifikat Analisa Gaya Renang'],
-                            active: 'Aktif melatih sejak 2021 di Black Diamond'
+                            licenses: <?php echo e(Js::from($coach->licenses ?? [])); ?>,
+                            certificates: <?php echo e(Js::from($coach->certifications ?? [])); ?>,
+                            active: <?php echo e(Js::from($coach->experience ?? 'Belum ada informasi pengalaman')); ?>
+
                         })"
                         class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
                         <!-- Photo Container -->

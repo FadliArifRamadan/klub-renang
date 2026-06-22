@@ -1104,7 +1104,7 @@
 
     
     <?php if($children->isNotEmpty()): ?>
-        <div id="schedule-request-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none!important" x-data>
+        <div id="schedule-request-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none" x-data>
             <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeScheduleRequestModal()"></div>
             <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col" style="max-height: 90vh;">
                 
@@ -1299,8 +1299,6 @@
                 // Reset form state
                 form.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false);
                 document.getElementById('schedule-reason').value = '';
-                document.getElementById('par-new-location').value = '';
-                document.getElementById('par-new-sec-location').value = '';
 
                 // Tampilkan modal
                 const modal = document.getElementById('schedule-request-modal');
