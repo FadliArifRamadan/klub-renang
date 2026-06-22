@@ -283,26 +283,85 @@
                     @endphp
 
                     @if($isFreetext)
-                        {{-- Kelas Belajar: Tampilkan list catatan teks --}}
+                        {{-- Kelas Belajar: Layout Vertical Tabs (2 Kolom) --}}
                         <div class="flex flex-col">
                             <div class="flex items-center gap-2 mb-4">
                                 <span class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full border border-green-200">Kelas Belajar Renang</span>
                                 <span class="text-xs text-gray-500">Catatan perkembangan dari pelatih</span>
                             </div>
-                            <div class="overflow-y-auto max-h-[340px] space-y-2 pr-1">
-                                @foreach($myStudent->progressReports->sortByDesc('date') as $report)
-                                    <div class="bg-white border border-gray-100 rounded-xl p-3 shadow-sm">
-                                        <div class="flex items-start gap-2">
-                                            <div class="p-1.5 bg-green-50 text-green-600 rounded-lg shrink-0 mt-0.5">
-                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div class="text-[10px] text-gray-400 font-semibold mb-0.5">{{ $report->date->translatedFormat('d F Y') }}</div>
-                                                <p class="text-sm text-gray-700 leading-relaxed">{{ $report->notes ?? 'Tidak ada catatan.' }}</p>
-                                            </div>
-                                        </div>
+                            @php
+                                $sortedReports = $myStudent->progressReports->sortByDesc('date')->values();
+                            @endphp
+                            <div x-data="{ activeMonth: 0 }" style="display: flex; height: 420px; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; background: #fff;">
+                                {{-- Kolom Kiri: Sidebar Menu Bulan --}}
+                                <div style="width: 200px; min-width: 200px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                                    <div style="padding: 12px; border-bottom: 1px solid #e2e8f0; background: rgba(241,245,249,0.8);">
+                                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                            <i class="fa-regular fa-calendar-days"></i> Menu Bulan
+                                        </h4>
                                     </div>
-                                @endforeach
+                                    <div style="flex: 1; overflow-y: auto; padding: 8px;" class="space-y-1">
+                                        @foreach($sortedReports as $idx => $report)
+                                            <button type="button" @click="activeMonth = {{ $idx }}"
+                                                class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm font-semibold transition-all duration-150 border border-transparent"
+                                                :class="activeMonth === {{ $idx }} ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-indigo-50'">
+                                                <span class="w-2 h-2 rounded-full shrink-0" :class="activeMonth === {{ $idx }} ? 'bg-white' : 'bg-indigo-400'"></span>
+                                                <span class="truncate">{{ $report->date->translatedFormat('F') }}</span>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                {{-- Kolom Kanan: Detail Bulan Terpilih --}}
+                                <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+                                    <div style="flex: 1; overflow-y: auto; padding: 20px;">
+                                        @foreach($sortedReports as $idx => $report)
+                                            <div x-show="activeMonth === {{ $idx }}" x-cloak>
+                                                <div class="flex items-center gap-2 mb-5">
+                                                    <div class="w-1 h-6 bg-indigo-500 rounded-full"></div>
+                                                    <h4 class="text-base font-bold text-slate-800">Bulan: {{ $report->date->translatedFormat('F Y') }}</h4>
+                                                </div>
+                                                @if($report->metrics)
+                                                    @foreach($report->metrics as $category => $items)
+                                                        <div class="mb-4">
+                                                            <h5 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-1.5 mb-3 flex items-center gap-1.5">
+                                                                <i class="fa-solid fa-layer-group text-indigo-500 text-xs"></i> {{ $category }}
+                                                            </h5>
+                                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                                @foreach($items as $key => $val)
+                                                                    @php
+                                                                        $badgeColor = 'bg-slate-100 text-slate-700';
+                                                                        if (in_array($val, ['Sangat Mahir', 'Lulus Tahap Ini', 'Sudah Lancar'])) $badgeColor = 'bg-green-100 text-green-700';
+                                                                        elseif (in_array($val, ['Berkembang Baik', 'Mulai Bisa'])) $badgeColor = 'bg-blue-100 text-blue-700';
+                                                                        elseif ($val === 'Mulai Terlihat') $badgeColor = 'bg-amber-100 text-amber-700';
+                                                                        elseif (in_array($val, ['Belum Berkembang', 'Belum Bisa', 'Belum Memulai'])) $badgeColor = 'bg-red-100 text-red-700';
+                                                                    @endphp
+                                                                    <div class="text-xs flex justify-between items-center p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                                                                        <span class="font-medium text-slate-600">{{ $key }}</span>
+                                                                        <span class="px-2 py-0.5 rounded-full font-bold {{ $badgeColor }}">{{ $val }}</span>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <p class="text-sm text-gray-400 italic">Tidak ada data metrik untuk bulan ini.</p>
+                                                @endif
+                                                @if($report->notes)
+                                                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl mt-4">
+                                                        <p class="text-xs font-bold text-indigo-800 mb-1.5 flex items-center gap-1">
+                                                            <i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:
+                                                        </p>
+                                                        <p class="text-sm text-slate-700 italic leading-relaxed">{{ $report->notes }}</p>
+                                                    </div>
+                                                @else
+                                                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl mt-4">
+                                                        <p class="text-xs text-slate-400 italic">Tidak ada catatan dari pelatih pada bulan ini.</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
                             {{-- Catatan terakhir summary --}}
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
