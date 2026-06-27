@@ -219,6 +219,37 @@
                                                     </select>
                                                 </div>
 
+                                                <div class="mt-4">
+                                                    <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'progress_form_type-'.e($class->id).'','value' => 'Tipe Form Penilaian (Coach)']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-label'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['for' => 'progress_form_type-'.e($class->id).'','value' => 'Tipe Form Penilaian (Coach)']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+                                                    <select id="progress_form_type-<?php echo e($class->id); ?>" name="progress_form_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                                        <option value="" disabled <?php if(!$class->progress_form_type): echo 'selected'; endif; ?>>-- Pilih Tipe Form --</option>
+                                                        <option value="batita" <?php if(old('progress_form_type', $class->progress_form_type) == 'batita'): echo 'selected'; endif; ?>>Batita (Water Comfort, Skills, Safety)</option>
+                                                        <option value="balita" <?php if(old('progress_form_type', $class->progress_form_type) == 'balita'): echo 'selected'; endif; ?>>Balita (Water Safety, Propulsion)</option>
+                                                        <option value="anak-anak" <?php if(old('progress_form_type', $class->progress_form_type) == 'anak-anak'): echo 'selected'; endif; ?>>Anak-anak (Basic Skills & Stroke Intro)</option>
+                                                        <option value="dewasa" <?php if(old('progress_form_type', $class->progress_form_type) == 'dewasa'): echo 'selected'; endif; ?>>Dewasa (Basic Skills Only)</option>
+                                                        <option value="prestasi" <?php if(old('progress_form_type', $class->progress_form_type) == 'prestasi'): echo 'selected'; endif; ?>>Prestasi (Fisik, Sistem Energi, PBT)</option>
+                                                    </select>
+                                                </div>
+
                                                 <div class="grid grid-cols-2 gap-4 mt-4">
                                                     <div>
                                                         <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -644,6 +675,38 @@
                         <option value="<?php echo e($cat->id); ?>" <?php if(old('class_category_id') == $cat->id): echo 'selected'; endif; ?>><?php echo e($cat->name); ?></option>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
+            </div>
+
+            <div class="mt-4">
+                <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'create-progress-form','value' => 'Tipe Form Penilaian (Coach)']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-label'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['for' => 'create-progress-form','value' => 'Tipe Form Penilaian (Coach)']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+                <select id="create-progress-form" name="progress_form_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                    <option value="" disabled selected>-- Pilih Tipe Form --</option>
+                    <option value="batita" <?php if(old('progress_form_type') == 'batita'): echo 'selected'; endif; ?>>Batita (Water Comfort, Skills, Safety)</option>
+                    <option value="balita" <?php if(old('progress_form_type') == 'balita'): echo 'selected'; endif; ?>>Balita (Water Safety, Propulsion)</option>
+                    <option value="anak-anak" <?php if(old('progress_form_type') == 'anak-anak'): echo 'selected'; endif; ?>>Anak-anak (Basic Skills & Stroke Intro)</option>
+                    <option value="dewasa" <?php if(old('progress_form_type') == 'dewasa'): echo 'selected'; endif; ?>>Dewasa (Basic Skills Only)</option>
+                    <option value="prestasi" <?php if(old('progress_form_type') == 'prestasi'): echo 'selected'; endif; ?>>Prestasi (Fisik, Sistem Energi, PBT)</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">Menentukan metrik penilaian apa yang akan muncul saat pelatih mencatat perkembangan murid di kelas ini.</p>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mt-4">

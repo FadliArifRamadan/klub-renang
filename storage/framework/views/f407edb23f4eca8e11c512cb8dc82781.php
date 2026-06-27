@@ -1,30 +1,40 @@
-<x-app-layout title="Coach - Catat Perkembangan">
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve(['title' => 'Coach - Catat Perkembangan'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Catat & Pantau Perkembangan') }}
-        </h2>
-    </x-slot>
+            <?php echo e(__('Catat & Pantau Perkembangan')); ?>
 
-    @if (session('success'))
+        </h2>
+     <?php $__env->endSlot(); ?>
+
+    <?php if(session('success')): ?>
         <div class="flex p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
             <i class="fa-solid fa-circle-check mt-0.5 mr-2 text-lg"></i>
-            <div><span class="font-bold">Sukses!</span> {{ session('success') }}</div>
+            <div><span class="font-bold">Sukses!</span> <?php echo e(session('success')); ?></div>
         </div>
-    @endif
-    @if (session('error'))
+    <?php endif; ?>
+    <?php if(session('error')): ?>
         <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
             <i class="fa-solid fa-triangle-exclamation mt-0.5 mr-2 text-lg"></i>
-            <div><span class="font-bold">Error!</span> {{ session('error') }}</div>
+            <div><span class="font-bold">Error!</span> <?php echo e(session('error')); ?></div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                {{-- Kiri: Form Input Perkembangan (Lg: 5/12) --}}
+                
                 <div class="lg:col-span-5">
-                    @php
+                    <?php
                         $studentCategories = $students->mapWithKeys(function($s) {
                             $formType = $s->swimmingClass->progress_form_type ?? null;
                             $categorySlug = $s->swimmingClass->category->slug ?? '';
@@ -47,11 +57,11 @@
                             return [$s->id => $mapped];
                         });
                         $options = ['Belum Berkembang', 'Mulai Terlihat', 'Berkembang Baik', 'Sangat Mahir'];
-                    @endphp
+                    ?>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100"
                         x-data="{
-                            selectedStudentId: '{{ old('student_id', '') }}',
-                            categoriesMap: @js($studentCategories),
+                            selectedStudentId: '<?php echo e(old('student_id', '')); ?>',
+                            categoriesMap: <?php echo \Illuminate\Support\Js::from($studentCategories)->toHtml() ?>,
                             get classType() {
                                 return this.selectedStudentId ? this.categoriesMap[this.selectedStudentId] : null;
                             }
@@ -61,10 +71,10 @@
                             <span>Input Catatan Perkembangan</span>
                         </h3>
 
-                        <form action="{{ route('coach.progress.store') }}" method="POST">
-                            @csrf
+                        <form action="<?php echo e(route('coach.progress.store')); ?>" method="POST">
+                            <?php echo csrf_field(); ?>
 
-                            {{-- Pilih Murid --}}
+                            
                             <div class="mb-4">
                                 <label for="student_id" class="block text-sm font-medium text-gray-700 mb-1.5">
                                     Pilih Murid *
@@ -73,22 +83,22 @@
                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900"
                                     required>
                                     <option value="" disabled selected>-- Pilih Murid Latihan --</option>
-                                    @foreach ($students as $student)
-                                        <option value="{{ $student->id }}">
-                                            {{ $student->name }} ({{ $student->swimmingClass->name ?? 'Belum ada kelas' }})
+                                    <?php $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($student->id); ?>">
+                                            <?php echo e($student->name); ?> (<?php echo e($student->swimmingClass->name ?? 'Belum ada kelas'); ?>)
                                         </option>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
 
-                            {{-- Bulan & Coach --}}
+                            
                             <div class="grid grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <label for="date" class="block text-sm font-medium text-gray-700 mb-1.5">
                                         Bulan Penilaian *
                                     </label>
                                     <input type="month" name="date" id="date"
-                                        value="{{ old('date', date('Y-m')) }}"
+                                        value="<?php echo e(old('date', date('Y-m'))); ?>"
                                         class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 text-sm"
                                         required>
                                 </div>
@@ -96,7 +106,7 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1.5">
                                         Nama Coach
                                     </label>
-                                    <input type="text" value="{{ Auth::user()->name }}"
+                                    <input type="text" value="<?php echo e(Auth::user()->name); ?>"
                                         class="w-full rounded-md border-gray-300 bg-gray-50 shadow-sm text-gray-500 text-sm cursor-not-allowed"
                                         readonly>
                                 </div>
@@ -366,13 +376,13 @@
                                 </div>
                             </template>
 
-                            {{-- Catatan tambahan --}}
+                            
                             <div class="mb-6 mt-6">
                                 <label for="notes" class="block text-sm font-medium text-gray-700 mb-1.5">
                                     Catatan Tambahan (Opsional)
                                 </label>
                                 <textarea name="notes" id="notes" rows="3" placeholder="Tulis catatan penting..."
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 text-sm">{{ old('notes') }}</textarea>
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 text-sm"><?php echo e(old('notes')); ?></textarea>
                             </div>
 
                             <div x-show="classType !== null">
@@ -389,7 +399,7 @@
                     </div>
                 </div>
 
-                {{-- Kanan: Visualisasi History --}}
+                
                 <div class="lg:col-span-7 flex flex-col gap-6">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100 flex-1 flex flex-col">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-6 gap-4">
@@ -402,9 +412,9 @@
                                 <select id="chart_student_id"
                                     class="w-full text-xs rounded-md border-gray-300 shadow-sm text-gray-900 font-semibold bg-gray-50">
                                     <option value="" disabled selected>-- Pilih Murid --</option>
-                                    @foreach ($students as $student)
-                                        <option value="{{ $student->id }}">{{ $student->name }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($student->id); ?>"><?php echo e($student->name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
                         </div>
@@ -433,13 +443,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const studentsMap = @json($students->keyBy('id')->map(function($s) {
+            const studentsMap = <?php echo json_encode($students->keyBy('id')->map(function($s) {
                 return [
-                    'id' => $s->id,
-                    'name' => $s->name,
-                    'progress_reports' => $s->progressReports
+                    'id' => $s->id, 'name' => $s->name, 'progress_reports' => $s->progressReports
                 ];
-            }));
+            })) ?>;
 
             const selectDropdown = document.getElementById('chart_student_id');
             const emptyState = document.getElementById('chart-empty-state');
@@ -522,13 +530,22 @@
                 });
             });
 
-            @if (old('student_id'))
-                selectDropdown.value = "{{ old('student_id') }}";
+            <?php if(old('student_id')): ?>
+                selectDropdown.value = "<?php echo e(old('student_id')); ?>";
                 selectDropdown.dispatchEvent(new Event('change'));
-            @elseif ($students->isNotEmpty())
-                selectDropdown.value = "{{ $students->first()->id }}";
+            <?php elseif($students->isNotEmpty()): ?>
+                selectDropdown.value = "<?php echo e($students->first()->id); ?>";
                 selectDropdown.dispatchEvent(new Event('change'));
-            @endif
+            <?php endif; ?>
         });
     </script>
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?><?php /**PATH D:\laragon\www\klub-renang\resources\views/coach/progress/index.blade.php ENDPATH**/ ?>

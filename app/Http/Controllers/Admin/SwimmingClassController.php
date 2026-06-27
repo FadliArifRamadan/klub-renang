@@ -27,6 +27,7 @@ class SwimmingClassController extends Controller
             'age_min' => 'required|integer|min:0',
             'age_max' => 'nullable|integer|gte:age_min',
             'max_quota' => 'required|integer|min:1',
+            'progress_form_type' => 'required|in:batita,balita,anak-anak,dewasa,prestasi',
             'description' => 'nullable|string',
         ]);
 
@@ -36,6 +37,7 @@ class SwimmingClassController extends Controller
             'age_min' => $request->age_min,
             'age_max' => $request->age_max,
             'max_quota' => $request->max_quota,
+            'progress_form_type' => $request->progress_form_type,
             'description' => $request->description,
             'is_active' => true,
         ]);
@@ -52,6 +54,7 @@ class SwimmingClassController extends Controller
             'age_min' => 'required|integer|min:0',
             'age_max' => 'nullable|integer|gte:age_min',
             'max_quota' => 'required|integer|min:1',
+            'progress_form_type' => 'required|in:batita,balita,anak-anak,dewasa,prestasi',
             'description' => 'nullable|string',
             'is_active' => 'required|boolean',
         ]);
@@ -62,6 +65,7 @@ class SwimmingClassController extends Controller
             'age_min' => $request->age_min,
             'age_max' => $request->age_max,
             'max_quota' => $request->max_quota,
+            'progress_form_type' => $request->progress_form_type,
             'description' => $request->description,
             'is_active' => $request->is_active,
         ]);

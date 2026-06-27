@@ -17,8 +17,7 @@
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
-                x-data="registrationForm()"
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6" x-data="registrationForm()"
                 x-init="init()">
 
                 <h3 class="text-lg font-medium text-gray-900 mb-6 border-b pb-3">
@@ -235,14 +234,15 @@
                             <?php $__currentLoopData = $classCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <label
                                     class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all duration-150"
-                                    :class="selectedCategoryId == '<?php echo e($cat->id); ?>'
-                                        ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
-                                        : 'border-gray-200 hover:border-gray-300 bg-white'"
+                                    :class="selectedCategoryId == '<?php echo e($cat->id); ?>' ?
+                                        'border-blue-500 bg-blue-50 ring-2 ring-blue-200' :
+                                        'border-gray-200 hover:border-gray-300 bg-white'"
                                     @click="selectCategory('<?php echo e($cat->id); ?>')">
                                     <input type="radio" name="_category" value="<?php echo e($cat->id); ?>"
                                         x-model="selectedCategoryId" class="hidden" />
                                     <div>
-                                        <i class="fa-solid <?php echo e($cat->slug === 'belajar' ? 'fa-person-swimming text-blue-500' : 'fa-trophy text-amber-500'); ?> text-2xl"></i>
+                                        <i
+                                            class="fa-solid <?php echo e($cat->slug === 'belajar' ? 'fa-person-swimming text-blue-500' : 'fa-trophy text-amber-500'); ?> text-2xl"></i>
                                     </div>
                                     <div>
                                         <p class="font-bold text-sm text-gray-800"><?php echo e($cat->name); ?></p>
@@ -280,12 +280,12 @@
 <?php endif; ?>
                         <select id="swimming_class_id" name="swimming_class_id"
                             class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                            x-model="selectedClassId"
-                            @change="onClassChange()"
-                            required>
+                            x-model="selectedClassId" @change="onClassChange()" required>
                             <option value="">-- Pilih Tingkat Kelas --</option>
                             <template x-for="cls in filteredClasses" :key="cls.id">
-                                <option :value="cls.id" x-text="cls.name + ' (' + cls.age_min + (cls.age_max ? '-' + cls.age_max : '+') + ' thn)'"></option>
+                                <option :value="cls.id"
+                                    x-text="cls.name + ' (' + cls.age_min + (cls.age_max ? '-' + cls.age_max : '+') + ' thn)'">
+                                </option>
                             </template>
                         </select>
                         <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
@@ -334,9 +334,7 @@
 <?php endif; ?>
                         <select id="location_id" name="location_id"
                             class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                            x-model="selectedLocationId"
-                            @change="onLocationChange()"
-                            required>
+                            x-model="selectedLocationId" @change="onLocationChange()" required>
                             <option value="">-- Pilih Kolam Renang --</option>
                             <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $location): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <option value="<?php echo e($location->id); ?>">
@@ -390,12 +388,12 @@
 <?php endif; ?>
                         <select id="package_id" name="package_id"
                             class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                            x-model="selectedPackageId"
-                            @change="onPackageChange()"
-                            required>
+                            x-model="selectedPackageId" @change="onPackageChange()" required>
                             <option value="">-- Pilih Paket Latihan --</option>
                             <template x-for="pkg in filteredPackages" :key="pkg.id">
-                                <option :value="pkg.id" x-text="pkg.name + ' — ' + formatPrice(getPackagePrice(pkg)) + ' (' + pkg.sessions + 'x Pertemuan)'"></option>
+                                <option :value="pkg.id"
+                                    x-text="pkg.name + ' — ' + formatPrice(getPackagePrice(pkg)) + ' (' + pkg.sessions + 'x Pertemuan)'">
+                                </option>
                             </template>
                         </select>
                         <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
@@ -453,7 +451,8 @@
                                 </option>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
-                        <small class="text-gray-400 mt-1 block">*Untuk paket 8 pertemuan (2x seminggu), Anda bisa memilih 2 lokasi berbeda sesuai ketersediaan jadwal.</small>
+                        <small class="text-gray-400 mt-1 block">*Untuk paket 8 pertemuan (2x seminggu), Anda bisa
+                            memilih 2 lokasi berbeda sesuai ketersediaan jadwal.</small>
                         <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->get('secondary_location_id'),'class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -501,21 +500,26 @@
                         <p class="text-xs text-gray-400 mb-2">Centang jadwal latihan yang diinginkan.</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-1">
                             <template x-for="sched in filteredSchedules" :key="sched.id">
-                                <label class="flex items-center gap-2.5 p-3 border rounded-lg cursor-pointer transition-all duration-100 text-sm"
-                                    :class="selectedScheduleIds.includes(String(sched.id))
-                                        ? 'border-blue-400 bg-blue-50'
-                                        : 'border-gray-200 hover:border-gray-300'">
+                                <label
+                                    class="flex items-center gap-2.5 p-3 border rounded-lg cursor-pointer transition-all duration-100 text-sm"
+                                    :class="selectedScheduleIds.includes(String(sched.id)) ?
+                                        'border-blue-400 bg-blue-50' :
+                                        'border-gray-200 hover:border-gray-300'">
                                     <input type="checkbox" name="schedule_ids[]" :value="sched.id"
                                         class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                         @change="toggleSchedule(sched.id)"
                                         :checked="selectedScheduleIds.includes(String(sched.id))" />
                                     <div>
-                                        <span class="font-semibold text-gray-700" x-text="getDayName(sched.day_of_week)"></span>
-                                        <span class="text-gray-500" x-text="formatTime(sched.start_time) + ' - ' + formatTime(sched.end_time)"></span>
+                                        <span class="font-semibold text-gray-700"
+                                            x-text="getDayName(sched.day_of_week)"></span>
+                                        <span class="text-gray-500"
+                                            x-text="formatTime(sched.start_time) + ' - ' + formatTime(sched.end_time)"></span>
                                         <span class="text-[10px] ml-1 px-1.5 py-0.5 rounded-full font-bold"
-                                            :class="sched.session_type === 'swim' ? 'bg-cyan-100 text-cyan-700' : 'bg-orange-100 text-orange-700'"
+                                            :class="sched.session_type === 'swim' ? 'bg-cyan-100 text-cyan-700' :
+                                                'bg-orange-100 text-orange-700'"
                                             x-text="sched.session_type === 'swim' ? 'Renang' : 'Dryland'"></span>
-                                        <span class="block text-[10px] text-gray-400" x-text="sched.location?.name || ''"></span>
+                                        <span class="block text-[10px] text-gray-400"
+                                            x-text="sched.location?.name || ''"></span>
                                     </div>
                                 </label>
                             </template>
@@ -542,10 +546,11 @@
 <?php endif; ?>
                     </div>
 
-                    <div class="mt-5 bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-lg text-xs" 
+                    <div class="mt-5 bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-lg text-xs"
                         x-show="filteredSchedules.length === 0 && selectedClassId && selectedLocationId" x-transition>
                         <i class="fa-solid fa-circle-exclamation mr-1"></i>
-                        <strong>Tidak Ada Jadwal:</strong> Belum ada jadwal latihan yang tersedia untuk kelas dan lokasi kolam terpilih. Silakan hubungi admin atau pilih lokasi/kelas lain.
+                        <strong>Tidak Ada Jadwal:</strong> Belum ada jadwal latihan yang tersedia untuk kelas dan lokasi
+                        kolam terpilih. Silakan hubungi admin atau pilih lokasi/kelas lain.
                     </div>
 
                     
@@ -607,30 +612,34 @@
 
                     
                     <div class="mt-6" x-show="selectedPackageId" x-transition>
-                        <div class="bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-100 rounded-xl p-5 shadow-sm">
+                        <div
+                            class="bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-100 rounded-xl p-5 shadow-sm">
                             <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
                                 <i class="fa-solid fa-calculator text-blue-500"></i> Ringkasan Pembayaran
                             </h4>
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Paket Kursus</span>
-                                    <span class="font-semibold text-gray-800" x-text="formatPrice(calculatedPackagePrice)"></span>
+                                    <span class="font-semibold text-gray-800"
+                                        x-text="formatPrice(calculatedPackagePrice)"></span>
                                 </div>
                                 <div class="flex justify-between" x-show="showRegistrationFee">
-                                    <span class="text-gray-500">Biaya Pendaftaran <span class="text-[10px]">(sekali seumur hidup)</span></span>
+                                    <span class="text-gray-500">Biaya Pendaftaran</span>
                                     <span class="font-semibold text-gray-800">Rp 30.000</span>
                                 </div>
                                 <hr class="border-blue-200 !my-3" />
                                 <div class="flex justify-between text-base">
                                     <span class="font-bold text-gray-800">Total Bayar</span>
-                                    <span class="font-extrabold text-blue-600 text-lg" x-text="formatPrice(totalAmount)"></span>
+                                    <span class="font-extrabold text-blue-600 text-lg"
+                                        x-text="formatPrice(totalAmount)"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="flex flex-col items-end mt-8 border-t pt-4">
-                        <p class="text-xs text-red-500 mb-2 font-medium" x-show="selectedPackageId && selectedScheduleIds.length === 0">
+                        <p class="text-xs text-red-500 mb-2 font-medium"
+                            x-show="selectedPackageId && selectedScheduleIds.length === 0">
                             *Anda wajib memilih minimal satu jadwal latihan untuk melanjutkan pendaftaran.
                         </p>
                         <?php if (isset($component)) { $__componentOriginald411d1792bd6cc877d687758b753742c = $component; } ?>

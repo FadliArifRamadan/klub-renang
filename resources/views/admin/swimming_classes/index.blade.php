@@ -121,6 +121,18 @@
                                                     </select>
                                                 </div>
 
+                                                <div class="mt-4">
+                                                    <x-input-label for="progress_form_type-{{ $class->id }}" value="Tipe Form Penilaian (Coach)" />
+                                                    <select id="progress_form_type-{{ $class->id }}" name="progress_form_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                                        <option value="" disabled @selected(!$class->progress_form_type)>-- Pilih Tipe Form --</option>
+                                                        <option value="batita" @selected(old('progress_form_type', $class->progress_form_type) == 'batita')>Batita (Water Comfort, Skills, Safety)</option>
+                                                        <option value="balita" @selected(old('progress_form_type', $class->progress_form_type) == 'balita')>Balita (Water Safety, Propulsion)</option>
+                                                        <option value="anak-anak" @selected(old('progress_form_type', $class->progress_form_type) == 'anak-anak')>Anak-anak (Basic Skills & Stroke Intro)</option>
+                                                        <option value="dewasa" @selected(old('progress_form_type', $class->progress_form_type) == 'dewasa')>Dewasa (Basic Skills Only)</option>
+                                                        <option value="prestasi" @selected(old('progress_form_type', $class->progress_form_type) == 'prestasi')>Prestasi (Fisik, Sistem Energi, PBT)</option>
+                                                    </select>
+                                                </div>
+
                                                 <div class="grid grid-cols-2 gap-4 mt-4">
                                                     <div>
                                                         <x-input-label for="age_min-{{ $class->id }}" value="Usia Minimum (Tahun)" />
@@ -231,6 +243,19 @@
                         <option value="{{ $cat->id }}" @selected(old('class_category_id') == $cat->id)>{{ $cat->name }}</option>
                     @endforeach
                 </select>
+            </div>
+
+            <div class="mt-4">
+                <x-input-label for="create-progress-form" value="Tipe Form Penilaian (Coach)" />
+                <select id="create-progress-form" name="progress_form_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                    <option value="" disabled selected>-- Pilih Tipe Form --</option>
+                    <option value="batita" @selected(old('progress_form_type') == 'batita')>Batita (Water Comfort, Skills, Safety)</option>
+                    <option value="balita" @selected(old('progress_form_type') == 'balita')>Balita (Water Safety, Propulsion)</option>
+                    <option value="anak-anak" @selected(old('progress_form_type') == 'anak-anak')>Anak-anak (Basic Skills & Stroke Intro)</option>
+                    <option value="dewasa" @selected(old('progress_form_type') == 'dewasa')>Dewasa (Basic Skills Only)</option>
+                    <option value="prestasi" @selected(old('progress_form_type') == 'prestasi')>Prestasi (Fisik, Sistem Energi, PBT)</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1">Menentukan metrik penilaian apa yang akan muncul saat pelatih mencatat perkembangan murid di kelas ini.</p>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mt-4">
