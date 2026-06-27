@@ -33,7 +33,7 @@ class AttendanceController extends Controller
         // Ambil murid aktif yang dilatih oleh coach ini
         $students = Student::where('coach_id', Auth::id())
             ->where('status', 'active')
-            ->with(['location', 'package', 'schedules'])
+            ->with(['location', 'package', 'schedules', 'attendances'])
             ->oldest('name')
             ->get();
 
@@ -66,6 +66,14 @@ class AttendanceController extends Controller
 
                     // Pastikan murid memang dilatih oleh coach ini
                     if ($student->coach_id == $coachId) {
+                        // Validasi sisa kuota sesi spesifik (berenang / darat)
+                        $sessionType = $request->session_type;
+                        if ($sessionType === 'swim' && $student->swim_sessions_left <= 0) {
+                            throw new \Exception("Kuota sesi berenang untuk {$student->name} sudah habis.");
+                        } elseif ($sessionType === 'dryland' && $student->dryland_sessions_left <= 0) {
+                            throw new \Exception("Kuota sesi latihan darat untuk {$student->name} sudah habis.");
+                        }
+
                         // 1. Simpan data absensi
                         Attendance::create([
                             'student_id' => $student->id,

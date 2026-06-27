@@ -108,6 +108,8 @@
                                             }
                                         @endphp
                                         <tr data-session-types="{{ json_encode($sessionTypes) }}"
+                                            data-swim-left="{{ $student->swim_sessions_left }}"
+                                            data-dryland-left="{{ $student->dryland_sessions_left }}"
                                             class="student-row bg-white border-b hover:bg-gray-50 transition-colors duration-150 {{ $quotaEmpty ? 'bg-red-50/30' : '' }}">
                                             <td class="px-4 py-4 text-center">{{ $loop->iteration }}</td>
                                             {{-- Checkbox --}}
@@ -150,14 +152,24 @@
                                                 @if ($quotaEmpty)
                                                     <span
                                                         class="bg-red-100 text-red-800 border border-red-300 text-xs px-2.5 py-1 rounded-full font-bold inline-flex items-center gap-1">
-                                                        <i class="fa-solid fa-circle-exclamation"></i> Kuota Habis (0
-                                                        Sesi)
+                                                        <i class="fa-solid fa-circle-exclamation"></i> Kuota Habis
                                                     </span>
                                                 @else
-                                                    <span
-                                                        class="text-blue-600 font-bold text-sm bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg">
-                                                        {{ $student->quota_left }} Sesi
-                                                    </span>
+                                                    <div class="flex flex-col gap-1 items-center">
+                                                        <span class="text-blue-600 font-bold text-sm bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg">
+                                                            {{ $student->quota_left }} Total
+                                                        </span>
+                                                        @if($student->package && !is_null($student->package->swim_sessions))
+                                                            <div class="flex gap-1.5 mt-0.5">
+                                                                <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold {{ $student->swim_sessions_left > 0 ? 'bg-cyan-100 text-cyan-700' : 'bg-red-100 text-red-700' }}">
+                                                                    🏊 {{ $student->swim_sessions_left }}/{{ $student->package->swim_sessions }}
+                                                                </span>
+                                                                <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold {{ $student->dryland_sessions_left > 0 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700' }}">
+                                                                    🏋 {{ $student->dryland_sessions_left }}/{{ $student->package->dryland_sessions ?? 0 }}
+                                                                </span>
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 @endif
                                             </td>
                                         </tr>
@@ -195,9 +207,9 @@
 
                 btnSelectAll.addEventListener('click', function() {
                     allChecked = !allChecked;
-                    // Hanya centang checkbox yang barisnya sedang ditampilkan (tidak di-hide)
+                    // Hanya centang checkbox yang barisnya sedang ditampilkan DAN tidak di-disable
                     const visibleCheckboxes = Array.from(checkboxes).filter(cb => {
-                        return cb.closest('.student-row').style.display !== 'none';
+                        return cb.closest('.student-row').style.display !== 'none' && !cb.disabled;
                     });
                     
                     visibleCheckboxes.forEach(cb => {
@@ -226,14 +238,59 @@
                     
                     studentRows.forEach(row => {
                         const types = JSON.parse(row.dataset.sessionTypes || '[]');
+                        const cb = row.querySelector('.student-checkbox');
                         
                         if (types.includes(selectedType)) {
                             row.style.display = '';
+                            
+                            // Cek kuota sesi spesifik
+                            const swimLeft = parseInt(row.dataset.swimLeft || '0');
+                            const drylandLeft = parseInt(row.dataset.drylandLeft || '0');
+                            const sessionsLeft = selectedType === 'swim' ? swimLeft : drylandLeft;
+                            
+                            // Hapus badge warning sebelumnya jika ada
+                            const oldBadge = row.querySelector('.quota-warning-badge');
+                            if (oldBadge) oldBadge.remove();
+                            
+                            if (sessionsLeft <= 0) {
+                                // Kuota sesi tipe ini sudah habis — disable checkbox
+                                if (cb) {
+                                    cb.checked = false;
+                                    cb.disabled = true;
+                                    cb.classList.add('opacity-30', 'cursor-not-allowed');
+                                    cb.classList.remove('cursor-pointer');
+                                }
+                                row.classList.add('opacity-50');
+                                
+                                // Tambah badge warning di kolom nama
+                                const nameCell = row.querySelectorAll('td')[2]; // kolom ke-3 = Nama
+                                if (nameCell) {
+                                    const badge = document.createElement('span');
+                                    badge.className = 'quota-warning-badge block text-[10px] mt-0.5 px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-bold w-fit';
+                                    badge.textContent = selectedType === 'swim' ? '⚠ Kuota Renang Habis' : '⚠ Kuota Darat Habis';
+                                    nameCell.appendChild(badge);
+                                }
+                            } else {
+                                // Kuota masih ada — enable checkbox
+                                if (cb) {
+                                    cb.disabled = false;
+                                    cb.classList.remove('opacity-30', 'cursor-not-allowed');
+                                    cb.classList.add('cursor-pointer');
+                                }
+                                row.classList.remove('opacity-50');
+                            }
                         } else {
                             row.style.display = 'none';
-                            // Uncheck jika disembunyikan
-                            const cb = row.querySelector('.student-checkbox');
-                            if (cb) cb.checked = false;
+                            // Uncheck & hapus badge jika disembunyikan
+                            if (cb) {
+                                cb.checked = false;
+                                cb.disabled = false;
+                                cb.classList.remove('opacity-30', 'cursor-not-allowed');
+                                cb.classList.add('cursor-pointer');
+                            }
+                            row.classList.remove('opacity-50');
+                            const oldBadge = row.querySelector('.quota-warning-badge');
+                            if (oldBadge) oldBadge.remove();
                         }
                     });
 

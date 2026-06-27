@@ -206,4 +206,80 @@ class Student extends Model
         }
         return $amount;
     }
+
+    /**
+     * Get the count of swim attendances recorded for the current active package period.
+     */
+    public function getSwimAttendancesCountAttribute(): int
+    {
+        if (!$this->package_activated_at) {
+            return 0;
+        }
+
+        if ($this->relationLoaded('attendances')) {
+            return $this->attendances
+                ->where('session_type', 'swim')
+                ->where('created_at', '>=', $this->package_activated_at)
+                ->count();
+        }
+
+        return $this->attendances()
+            ->where('session_type', 'swim')
+            ->where('created_at', '>=', $this->package_activated_at)
+            ->count();
+    }
+
+    /**
+     * Get the count of dryland attendances recorded for the current active package period.
+     */
+    public function getDrylandAttendancesCountAttribute(): int
+    {
+        if (!$this->package_activated_at) {
+            return 0;
+        }
+
+        if ($this->relationLoaded('attendances')) {
+            return $this->attendances
+                ->where('session_type', 'dryland')
+                ->where('created_at', '>=', $this->package_activated_at)
+                ->count();
+        }
+
+        return $this->attendances()
+            ->where('session_type', 'dryland')
+            ->where('created_at', '>=', $this->package_activated_at)
+            ->count();
+    }
+
+    /**
+     * Get remaining swim sessions for the current active package.
+     */
+    public function getSwimSessionsLeftAttribute(): int
+    {
+        $package = $this->package;
+        if (!$package) return 0;
+        
+        // Jika paket tidak membatasi sesi renang secara spesifik
+        if (is_null($package->swim_sessions)) {
+            return $this->quota_left;
+        }
+
+        return max(0, $package->swim_sessions - $this->swim_attendances_count);
+    }
+
+    /**
+     * Get remaining dryland sessions for the current active package.
+     */
+    public function getDrylandSessionsLeftAttribute(): int
+    {
+        $package = $this->package;
+        if (!$package) return 0;
+
+        // Jika paket tidak membatasi sesi darat secara spesifik
+        if (is_null($package->dryland_sessions)) {
+            return $this->quota_left;
+        }
+
+        return max(0, $package->dryland_sessions - $this->dryland_attendances_count);
+    }
 }
