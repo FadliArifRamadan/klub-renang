@@ -170,7 +170,12 @@ class StudentController extends Controller
                 );
             }
 
-            // 2. Hitung total tagihan termasuk biaya registrasi jika belum pernah dibayar
+            // 2. Terapkan aturan 3 bulan: jika inactive > 3 bulan, kenakan biaya daftar lagi
+            if ($student->shouldPayRegistrationFee()) {
+                $student->update(['registration_fee_paid' => false]);
+            }
+
+            // 3. Hitung total tagihan termasuk biaya registrasi jika perlu
             $amount = $student->calculateTotalBillingAmount();
 
             // 3. Simpan data ke tabel payments

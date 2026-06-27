@@ -361,7 +361,16 @@
                 if (radarChartInst) { radarChartInst.destroy(); radarChartInst = null; }
                 if (barChartInst) { barChartInst.destroy(); barChartInst = null; }
                 if (lineChartPBTInst) { lineChartPBTInst.destroy(); lineChartPBTInst = null; }
-                if (freetextContainer) { freetextContainer.classList.add('hidden'); freetextContainer.innerHTML = ''; }
+                if (freetextContainer) {
+                    freetextContainer.classList.add('hidden');
+                    // Hanya kosongkan konten dinamis, jangan hapus struktur HTML layout
+                    const ml = document.getElementById('freetext-month-list');
+                    const dc = document.getElementById('freetext-detail-content');
+                    const de = document.getElementById('freetext-detail-empty');
+                    if (ml) ml.innerHTML = '';
+                    if (dc) { dc.innerHTML = ''; dc.classList.add('hidden'); }
+                    if (de) de.classList.remove('hidden');
+                }
                 if (prestasiContainer) { prestasiContainer.classList.add('hidden'); prestasiContainer.style.display = 'none'; }
             }
 

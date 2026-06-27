@@ -101,9 +101,14 @@
                                     @foreach ($students as $student)
                                         @php
                                             $quotaEmpty = $student->quota_left <= 0;
+                                            $sessionTypes = $student->schedules->pluck('session_type')->unique()->toArray();
+                                            // Jika murid belum punya jadwal, tampilkan di kedua jenis sesi (fallback)
+                                            if (empty($sessionTypes)) {
+                                                $sessionTypes = ['swim', 'dryland'];
+                                            }
                                         @endphp
-                                        <tr
-                                            class="bg-white border-b hover:bg-gray-50 transition-colors duration-150 {{ $quotaEmpty ? 'bg-red-50/30' : '' }}">
+                                        <tr data-session-types="{{ json_encode($sessionTypes) }}"
+                                            class="student-row bg-white border-b hover:bg-gray-50 transition-colors duration-150 {{ $quotaEmpty ? 'bg-red-50/30' : '' }}">
                                             <td class="px-4 py-4 text-center">{{ $loop->iteration }}</td>
                                             {{-- Checkbox --}}
                                             <td class="px-6 py-4 text-center">
@@ -190,7 +195,12 @@
 
                 btnSelectAll.addEventListener('click', function() {
                     allChecked = !allChecked;
-                    checkboxes.forEach(cb => {
+                    // Hanya centang checkbox yang barisnya sedang ditampilkan (tidak di-hide)
+                    const visibleCheckboxes = Array.from(checkboxes).filter(cb => {
+                        return cb.closest('.student-row').style.display !== 'none';
+                    });
+                    
+                    visibleCheckboxes.forEach(cb => {
                         cb.checked = allChecked;
                     });
 
@@ -206,6 +216,39 @@
                         btnSelectAll.classList.replace('hover:bg-red-100', 'hover:bg-blue-100');
                     }
                 });
+
+                // Logic Filter Berdasarkan Jenis Sesi
+                const sessionTypeSelect = document.getElementById('session_type');
+                const studentRows = document.querySelectorAll('.student-row');
+
+                function filterStudents() {
+                    const selectedType = sessionTypeSelect.value;
+                    
+                    studentRows.forEach(row => {
+                        const types = JSON.parse(row.dataset.sessionTypes || '[]');
+                        
+                        if (types.includes(selectedType)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                            // Uncheck jika disembunyikan
+                            const cb = row.querySelector('.student-checkbox');
+                            if (cb) cb.checked = false;
+                        }
+                    });
+
+                    // Reset tombol "Pilih Semua" saat filter berubah
+                    allChecked = false;
+                    btnSelectText.textContent = "Pilih Semua Murid";
+                    btnSelectAll.classList.replace('bg-red-50', 'bg-blue-50');
+                    btnSelectAll.classList.replace('text-red-600', 'text-blue-600');
+                    btnSelectAll.classList.replace('hover:bg-red-100', 'hover:bg-blue-100');
+                }
+
+                sessionTypeSelect.addEventListener('change', filterStudents);
+                
+                // Jalankan filter saat halaman dimuat
+                filterStudents();
             });
         </script>
     @endif

@@ -36,7 +36,7 @@
                             // Hitung total tagihan menggunakan helper model
                             $totalBilling = $student->calculateTotalBillingAmount();
                             $packagePrice = $student->package ? $student->package->getPriceForLocation($student->location_id) : 0;
-                            $showRegFee = !$student->registration_fee_paid;
+                            $showRegFee = $student->shouldPayRegistrationFee();
                             $categorySlug = $student->swimmingClass->category->slug ?? 'belajar';
                         @endphp
 

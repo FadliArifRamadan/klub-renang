@@ -667,7 +667,7 @@
                 allCategories: <?php echo json_encode($classCategories, 15, 512) ?>,
                 allPackages: <?php echo json_encode($packages, 15, 512) ?>,
                 allSchedules: <?php echo json_encode($schedules, 15, 512) ?>,
-                hasExistingChild: <?php echo json_encode($hasExistingChild, 15, 512) ?>,
+
 
                 // Selected values
                 selectedCategoryId: '<?php echo e(old('_category', '')); ?>',
@@ -719,7 +719,7 @@
                 },
 
                 get showRegistrationFee() {
-                    return !this.hasExistingChild;
+                    return true; // Biaya pendaftaran per-anak, selalu dikenakan untuk pendaftaran baru
                 },
 
                 get calculatedPackagePrice() {

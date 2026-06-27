@@ -75,9 +75,10 @@ class PaymentController extends Controller
                 'coach_id' => $request->coach_id,
                 'status'   => 'active',
                 'quota_left' => $package ? $package->sessions : 0,
-                'registration_fee_paid' => true, // Pembayaran awal disetujui berarti biaya registrasi lunas
+                'registration_fee_paid' => true,
                 'package_activated_at' => $packageActivatedAt,
                 'package_expires_at' => $packageExpiresAt,
+                'became_inactive_at' => null,
                 'suspended_at' => null,
                 'suspension_reason' => null,
             ]);

@@ -241,7 +241,7 @@
                 allCategories: @json($classCategories),
                 allPackages: @json($packages),
                 allSchedules: @json($schedules),
-                hasExistingChild: @json($hasExistingChild),
+
 
                 // Selected values
                 selectedCategoryId: '{{ old('_category', '') }}',
@@ -293,7 +293,7 @@
                 },
 
                 get showRegistrationFee() {
-                    return !this.hasExistingChild;
+                    return true; // Biaya pendaftaran per-anak, selalu dikenakan untuk pendaftaran baru
                 },
 
                 get calculatedPackagePrice() {

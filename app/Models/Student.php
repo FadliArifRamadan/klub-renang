@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['user_id', 'name', 'birth_date', 'gender', 'package_id', 'swimming_class_id', 'location_id', 'secondary_location_id', 'coach_id', 'quota_left', 'registration_fee_paid', 'status', 'package_activated_at', 'package_expires_at', 'suspended_at', 'suspension_reason'])]
+#[Fillable(['user_id', 'name', 'birth_date', 'gender', 'package_id', 'swimming_class_id', 'location_id', 'secondary_location_id', 'coach_id', 'quota_left', 'registration_fee_paid', 'status', 'package_activated_at', 'package_expires_at', 'became_inactive_at', 'suspended_at', 'suspension_reason'])]
 class Student extends Model
 {
     protected function casts(): array
@@ -16,6 +16,7 @@ class Student extends Model
             'birth_date' => 'date',
             'package_activated_at' => 'datetime',
             'package_expires_at' => 'datetime',
+            'became_inactive_at' => 'datetime',
             'suspended_at' => 'datetime',
         ];
     }
@@ -95,7 +96,8 @@ class Student extends Model
 
     /**
      * Otomatis menonaktifkan murid yang masa berlaku paketnya sudah lewat (kedaluwarsa/hangus)
-     * atau kuota sesi latihan sudah habis (quota_left <= 0)
+     * atau kuota sesi latihan sudah habis (quota_left <= 0).
+     * Juga mencatat kapan murid menjadi inactive (untuk aturan biaya daftar ulang 3 bulan).
      */
     public static function checkAndExpirePackages()
     {
@@ -103,12 +105,18 @@ class Student extends Model
         self::where('status', 'active')
             ->whereNotNull('package_expires_at')
             ->where('package_expires_at', '<', now())
-            ->update(['status' => 'inactive']);
+            ->update([
+                'status' => 'inactive',
+                'became_inactive_at' => now(),
+            ]);
 
         // 2. Cek kuota sesi habis
         self::where('status', 'active')
             ->where('quota_left', '<=', 0)
-            ->update(['status' => 'inactive']);
+            ->update([
+                'status' => 'inactive',
+                'became_inactive_at' => now(),
+            ]);
     }
 
     /**
@@ -149,9 +157,33 @@ class Student extends Model
     }
 
     /**
+     * Menentukan apakah murid harus membayar biaya pendaftaran Rp 30.000.
+     *
+     * Aturan:
+     * - Pendaftaran pertama kali → BAYAR
+     * - Daftar ulang dalam ≤ 3 bulan setelah inactive → GRATIS
+     * - Daftar ulang setelah > 3 bulan inactive → BAYAR lagi
+     */
+    public function shouldPayRegistrationFee(): bool
+    {
+        // Belum pernah bayar = pendaftaran pertama → harus bayar
+        if (!$this->registration_fee_paid) {
+            return true;
+        }
+
+        // Sudah pernah bayar, cek apakah sudah > 3 bulan sejak inactive
+        if ($this->became_inactive_at) {
+            return $this->became_inactive_at->diffInMonths(now()) >= 3;
+        }
+
+        // Masih aktif atau baru saja inactive → tidak perlu bayar
+        return false;
+    }
+
+    /**
      * Menghitung total tagihan untuk pendaftaran/perpanjangan murid saat ini,
      * termasuk harga paket (dinamis berdasarkan lokasi jika tipe belajar)
-     * dan biaya pendaftaran Rp 30.000 jika belum pernah dibayarkan seumur hidup.
+     * dan biaya pendaftaran Rp 30.000 berdasarkan aturan 3 bulan.
      */
     public function calculateTotalBillingAmount(): int
     {
@@ -160,7 +192,7 @@ class Student extends Model
         if ($package) {
             $amount = $package->getPriceForLocation($this->location_id);
         }
-        if (!$this->registration_fee_paid) {
+        if ($this->shouldPayRegistrationFee()) {
             $amount += 30000;
         }
         return $amount;

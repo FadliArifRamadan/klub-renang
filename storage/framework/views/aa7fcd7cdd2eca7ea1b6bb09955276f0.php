@@ -64,37 +64,83 @@
                                         </div>
 
                                         
+                                        
                                         <?php if (isset($component)) { $__componentOriginal9f64f32e90b9102968f2bc548315018c = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal9f64f32e90b9102968f2bc548315018c = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modal','data' => ['name' => 'renew-student-'.e($expStudent->id).'','maxWidth' => 'lg','focusable' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modal','data' => ['name' => 'renew-student-'.e($expStudent->id).'','maxWidth' => '2xl','focusable' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('modal'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['name' => 'renew-student-'.e($expStudent->id).'','maxWidth' => 'lg','focusable' => true]); ?>
+<?php $component->withAttributes(['name' => 'renew-student-'.e($expStudent->id).'','maxWidth' => '2xl','focusable' => true]); ?>
                                             <form method="POST" action="<?php echo e(route('parent.students.renew', $expStudent->id)); ?>" enctype="multipart/form-data" class="p-6 text-left"
-                                                x-data="{ 
-                                                    packageId: '<?php echo e($expStudent->package_id); ?>',
+                                                x-data="{
+                                                    allPackages: <?php echo e($packages->toJson()); ?>,
+                                                    allSchedules: <?php echo e($schedules->toJson()); ?>,
+                                                    classId: '<?php echo e($expStudent->swimming_class_id); ?>',
                                                     locationId: '<?php echo e($expStudent->location_id); ?>',
-                                                    packages: <?php echo e($packages->toJson()); ?>,
-                                                    getPrice() {
-                                                        const pkg = this.packages.find(p => p.id == this.packageId);
+                                                    secondaryLocationId: '<?php echo e($expStudent->secondary_location_id); ?>',
+                                                    packageId: '<?php echo e($expStudent->package_id); ?>',
+                                                    selectedScheduleIds: <?php echo e($expStudent->schedules->pluck('id')->map(fn($id) => (string)$id)->toJson()); ?>,
+                                                    shouldPayRegFee: <?php echo e($expStudent->shouldPayRegistrationFee() ? 'true' : 'false'); ?>,
+
+                                                    get filteredPackages() {
+                                                        if (!this.classId) return [];
+                                                        return this.allPackages.filter(p => p.swimming_class_id == this.classId);
+                                                    },
+                                                    get filteredSchedules() {
+                                                        if (!this.classId) return [];
+                                                        let schedules = this.allSchedules.filter(s => s.swimming_class_id == this.classId);
+                                                        if (this.locationId) {
+                                                            const locIds = [this.locationId];
+                                                            if (this.secondaryLocationId) locIds.push(this.secondaryLocationId);
+                                                            schedules = schedules.filter(s => locIds.includes(String(s.location_id)));
+                                                        }
+                                                        return schedules;
+                                                    },
+                                                    get showSecondaryLocation() {
+                                                        if (!this.packageId) return false;
+                                                        const pkg = this.allPackages.find(p => p.id == this.packageId);
+                                                        return pkg && pkg.sessions >= 8 && pkg.is_location_based;
+                                                    },
+                                                    get calculatedPrice() {
+                                                        const pkg = this.allPackages.find(p => p.id == this.packageId);
                                                         if (!pkg) return 0;
-                                                        if (pkg.is_location_based && pkg.location_prices) {
-                                                            const lp = pkg.location_prices.find(l => l.location_id == this.locationId);
+                                                        if (pkg.is_location_based && this.locationId) {
+                                                            const lp = (pkg.location_prices || []).find(l => l.location_id == this.locationId);
                                                             return lp ? lp.price : 0;
                                                         }
-                                                        return pkg.price ?? 0;
+                                                        return pkg.price || 0;
                                                     },
-                                                    formatPrice(price) {
-                                                        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(price);
-                                                    }
+                                                    get totalAmount() {
+                                                        let total = this.calculatedPrice;
+                                                        if (this.shouldPayRegFee) total += 30000;
+                                                        return total;
+                                                    },
+                                                    onLocationChange() {
+                                                        this.selectedScheduleIds = [];
+                                                        this.secondaryLocationId = '';
+                                                    },
+                                                    onPackageChange() {
+                                                        if (!this.showSecondaryLocation) this.secondaryLocationId = '';
+                                                    },
+                                                    toggleSchedule(schedId) {
+                                                        const id = String(schedId);
+                                                        const idx = this.selectedScheduleIds.indexOf(id);
+                                                        if (idx > -1) this.selectedScheduleIds.splice(idx, 1);
+                                                        else this.selectedScheduleIds.push(id);
+                                                    },
+                                                    formatPrice(val) {
+                                                        return 'Rp ' + Number(val).toLocaleString('id-ID');
+                                                    },
+                                                    getDayName(d) {
+                                                        return ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'][d] || '-';
+                                                    },
+                                                    formatTime(t) { return t ? t.substring(0,5) : ''; }
                                                 }">
                                                 <?php echo csrf_field(); ?>
-
-                                                
                                                 <input type="hidden" name="swimming_class_id" value="<?php echo e($expStudent->swimming_class_id); ?>">
 
                                                 <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -183,18 +229,18 @@
                                                     </select>
                                                 </div>
 
-                                                <!-- Tempat Latihan -->
+                                                <!-- Tempat Latihan Utama -->
                                                 <div class="mb-4">
                                                     <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'location-'.e($expStudent->id).'','value' => 'Kolam Latihan']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'location-'.e($expStudent->id).'','value' => 'Pilih Tempat Latihan Utama']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input-label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'location-'.e($expStudent->id).'','value' => 'Kolam Latihan']); ?>
+<?php $component->withAttributes(['for' => 'location-'.e($expStudent->id).'','value' => 'Pilih Tempat Latihan Utama']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
@@ -205,29 +251,27 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                                                    <select id="location-<?php echo e($expStudent->id); ?>" name="location_id" x-model="locationId" required
+                                                    <select id="location-<?php echo e($expStudent->id); ?>" name="location_id" x-model="locationId" @change="onLocationChange()" required
                                                         class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                                        <option value="">-- Pilih Kolam Renang --</option>
                                                         <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $loc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($loc->id); ?>" <?php echo e($expStudent->location_id == $loc->id ? 'selected' : ''); ?>>
-                                                                <?php echo e($loc->name); ?>
-
-                                                            </option>
+                                                            <option value="<?php echo e($loc->id); ?>"><?php echo e($loc->name); ?></option>
                                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </select>
                                                 </div>
 
-                                                <!-- Paket Latihan -->
+                                                <!-- Paket Kursus (filtered by class) -->
                                                 <div class="mb-4">
                                                     <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'package-'.e($expStudent->id).'','value' => 'Paket Kursus']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'package-'.e($expStudent->id).'','value' => 'Pilih Paket Kursus']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input-label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'package-'.e($expStudent->id).'','value' => 'Paket Kursus']); ?>
+<?php $component->withAttributes(['for' => 'package-'.e($expStudent->id).'','value' => 'Pilih Paket Kursus']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
@@ -238,25 +282,126 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                                                    <select id="package-<?php echo e($expStudent->id); ?>" name="package_id" x-model="packageId" required
+                                                    <select id="package-<?php echo e($expStudent->id); ?>" name="package_id" x-model="packageId" @change="onPackageChange()" required
                                                         class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                        <?php $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pkg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($pkg->id); ?>">
-                                                                <?php echo e($pkg->name); ?> (<?php echo e($pkg->sessions); ?> Sesi)
-                                                            </option>
-                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="">-- Pilih Paket Latihan --</option>
+                                                        <template x-for="pkg in filteredPackages" :key="pkg.id">
+                                                            <option :value="pkg.id" :selected="pkg.id == packageId" x-text="pkg.name + ' — ' + formatPrice(pkg.is_location_based ? ((pkg.location_prices || []).find(l => l.location_id == locationId)?.price || 0) : (pkg.price || 0)) + ' (' + pkg.sessions + 'x Pertemuan)'"></option>
+                                                        </template>
                                                     </select>
                                                 </div>
 
-                                                <!-- Info Pembayaran & Rekening -->
+                                                <!-- Lokasi Kedua (opsional, paket >= 8 sesi) -->
+                                                <div class="mb-4" x-show="showSecondaryLocation" x-transition>
+                                                    <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['value' => 'Pilih Tempat Latihan Kedua (Opsional, Paket 8 Sesi)']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-label'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['value' => 'Pilih Tempat Latihan Kedua (Opsional, Paket 8 Sesi)']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+                                                    <select name="secondary_location_id" x-model="secondaryLocationId"
+                                                        class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                                        <option value="">-- Tidak Perlu / Sama Dengan Lokasi Utama --</option>
+                                                        <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $loc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option value="<?php echo e($loc->id); ?>" x-bind:disabled="locationId == '<?php echo e($loc->id); ?>'"><?php echo e($loc->name); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    </select>
+                                                    <small class="text-gray-400 mt-1 block">*Untuk paket 8 pertemuan, Anda bisa memilih 2 lokasi berbeda.</small>
+                                                </div>
+
+                                                <!-- Jadwal Latihan -->
+                                                <div class="mb-4" x-show="filteredSchedules.length > 0" x-transition>
+                                                    <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['value' => 'Pilih Jadwal Latihan']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-label'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['value' => 'Pilih Jadwal Latihan']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+                                                    <p class="text-xs text-gray-400 mb-2">Centang jadwal latihan yang diinginkan.</p>
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                                                        <template x-for="sched in filteredSchedules" :key="sched.id">
+                                                            <label class="flex items-center gap-2.5 p-3 border rounded-lg cursor-pointer transition-all duration-100 text-sm"
+                                                                :class="selectedScheduleIds.includes(String(sched.id)) ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-gray-300'">
+                                                                <input type="checkbox" name="schedule_ids[]" :value="sched.id"
+                                                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                                    @change="toggleSchedule(sched.id)"
+                                                                    :checked="selectedScheduleIds.includes(String(sched.id))" />
+                                                                <div>
+                                                                    <span class="font-semibold text-gray-700" x-text="getDayName(sched.day_of_week)"></span>
+                                                                    <span class="text-gray-500" x-text="formatTime(sched.start_time) + ' - ' + formatTime(sched.end_time)"></span>
+                                                                    <span class="text-[10px] ml-1 px-1.5 py-0.5 rounded-full font-bold"
+                                                                        :class="sched.session_type === 'swim' ? 'bg-cyan-100 text-cyan-700' : 'bg-orange-100 text-orange-700'"
+                                                                        x-text="sched.session_type === 'swim' ? 'Renang' : 'Dryland'"></span>
+                                                                    <span class="block text-[10px] text-gray-400" x-text="sched.location?.name || ''"></span>
+                                                                </div>
+                                                            </label>
+                                                        </template>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-4 bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-lg text-xs"
+                                                    x-show="filteredSchedules.length === 0 && locationId" x-transition>
+                                                    <i class="fa-solid fa-circle-exclamation mr-1"></i>
+                                                    <strong>Tidak Ada Jadwal:</strong> Belum ada jadwal latihan yang tersedia untuk kelas dan lokasi terpilih.
+                                                </div>
+
+                                                <!-- Ringkasan Pembayaran -->
+                                                <div class="mb-4" x-show="packageId" x-transition>
+                                                    <div class="bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-100 rounded-xl p-4 shadow-sm">
+                                                        <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                                                            <i class="fa-solid fa-calculator text-blue-500"></i> Ringkasan Pembayaran
+                                                        </h4>
+                                                        <div class="space-y-2 text-sm">
+                                                            <div class="flex justify-between">
+                                                                <span class="text-gray-500">Paket Kursus</span>
+                                                                <span class="font-semibold text-gray-800" x-text="formatPrice(calculatedPrice)"></span>
+                                                            </div>
+                                                            <div class="flex justify-between" x-show="shouldPayRegFee">
+                                                                <span class="text-gray-500">Biaya Pendaftaran <span class="text-[10px]">(> 3 bulan tidak aktif)</span></span>
+                                                                <span class="font-semibold text-gray-800">Rp 30.000</span>
+                                                            </div>
+                                                            <hr class="border-blue-200 !my-3" />
+                                                            <div class="flex justify-between text-base">
+                                                                <span class="font-bold text-gray-800">Total Bayar</span>
+                                                                <span class="font-extrabold text-blue-600 text-lg" x-text="formatPrice(totalAmount)"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Info Rekening -->
                                                 <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-4 text-xs text-blue-800">
                                                     <p class="font-bold text-sm mb-1.5"><i class="fa-solid fa-circle-info mr-1"></i> Informasi Pembayaran</p>
                                                     <p>Silakan transfer nominal ke rekening berikut:</p>
                                                     <p class="font-extrabold text-gray-900 mt-1">Bank BCA: 123-4567-890 (a.n. Klub Renang)</p>
-                                                    <div class="mt-2 pt-2 border-t border-blue-200/50 flex justify-between items-center">
-                                                        <span class="font-semibold">Nominal Transfer:</span>
-                                                        <span class="text-sm font-black text-blue-700" x-text="formatPrice(getPrice())"></span>
-                                                    </div>
                                                 </div>
 
                                                 <!-- Bukti Transfer -->
@@ -316,7 +461,8 @@
 <?php unset($__componentOriginal3b0e04e43cf890250cc4d85cff4d94af); ?>
 <?php endif; ?>
                                                     <button type="submit"
-                                                        class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs uppercase tracking-widest rounded-md shadow-sm transition">
+                                                        x-bind:disabled="!packageId || selectedScheduleIds.length === 0"
+                                                        class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-xs uppercase tracking-widest rounded-md shadow-sm transition">
                                                         Kirim Pendaftaran Ulang
                                                     </button>
                                                 </div>

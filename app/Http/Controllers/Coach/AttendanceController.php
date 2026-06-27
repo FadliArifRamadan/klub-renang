@@ -33,7 +33,7 @@ class AttendanceController extends Controller
         // Ambil murid aktif yang dilatih oleh coach ini
         $students = Student::where('coach_id', Auth::id())
             ->where('status', 'active')
-            ->with(['location', 'package'])
+            ->with(['location', 'package', 'schedules'])
             ->oldest('name')
             ->get();
 
@@ -82,7 +82,10 @@ class AttendanceController extends Controller
                             // Jika kuota habis setelah dikurangi, otomatis nonaktifkan murid
                             $student->refresh();
                             if ($student->quota_left <= 0) {
-                                $student->update(['status' => 'inactive']);
+                                $student->update([
+                                    'status' => 'inactive',
+                                    'became_inactive_at' => now(),
+                                ]);
                             }
                         }
                     }

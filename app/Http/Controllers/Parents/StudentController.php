@@ -48,18 +48,12 @@ class StudentController extends Controller
         // Mengambil user yang memiliki role 'coach' untuk preferensi pelatih
         $coaches = User::where('role', 'coach')->oldest()->get();
 
-        // Cek apakah user sudah pernah membayar biaya registrasi untuk anak sebelumnya
-        $hasExistingChild = Student::where('user_id', Auth::id())
-            ->where('registration_fee_paid', true)
-            ->exists();
-
         return view('parent.students.create', compact(
             'classCategories',
             'locations',
             'packages',
             'schedules',
-            'coaches',
-            'hasExistingChild'
+            'coaches'
         ));
     }
 
@@ -86,12 +80,7 @@ class StudentController extends Controller
         // AMBIL DATA PAKET UNTUK MENDAPATKAN JUMLAH SESI LATIHAN
         $package = Package::findOrFail($request->package_id);
 
-        // Cek apakah user sudah pernah membayar biaya registrasi
-        $alreadyPaidRegFee = Student::where('user_id', Auth::id())
-            ->where('registration_fee_paid', true)
-            ->exists();
-
-        $student = DB::transaction(function () use ($request, $package, $alreadyPaidRegFee) {
+        $student = DB::transaction(function () use ($request, $package) {
             $student = Student::create([
                 'user_id' => Auth::id(),
                 'name' => $request->name,
@@ -103,7 +92,7 @@ class StudentController extends Controller
                 'package_id' => $request->package_id,
                 'coach_id' => $request->coach_id,
                 'quota_left' => $package->sessions,
-                'registration_fee_paid' => $alreadyPaidRegFee,
+                'registration_fee_paid' => false, // Pendaftaran baru selalu bayar biaya daftar
                 'status' => 'pending',
             ]);
 
@@ -172,7 +161,12 @@ class StudentController extends Controller
                 );
             }
 
-            // 2. Hitung total tagihan termasuk biaya registrasi jika belum pernah dibayar
+            // 2. Terapkan aturan 3 bulan: jika inactive > 3 bulan, kenakan biaya daftar lagi
+            if ($student->shouldPayRegistrationFee()) {
+                $student->update(['registration_fee_paid' => false]);
+            }
+
+            // 3. Hitung total tagihan termasuk biaya registrasi jika perlu
             $amount = $student->calculateTotalBillingAmount();
 
             // 3. Simpan data ke tabel payments
