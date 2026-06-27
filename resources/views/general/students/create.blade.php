@@ -200,7 +200,7 @@
                                     <span class="text-gray-500">Paket Kursus</span>
                                     <span class="font-semibold text-gray-800" x-text="formatPrice(calculatedPackagePrice)"></span>
                                 </div>
-                                <div class="flex justify-between">
+                                 <div class="flex justify-between" x-show="showRegistrationFee">
                                     <span class="text-gray-500">Biaya Pendaftaran <span class="text-[10px]">(sekali seumur hidup)</span></span>
                                     <span class="font-semibold text-gray-800">Rp 30.000</span>
                                 </div>
@@ -282,6 +282,12 @@
                     return pkg && pkg.sessions >= 8 && pkg.is_location_based;
                 },
 
+                get showRegistrationFee() {
+                    if (!this.selectedCategoryId) return false;
+                    const cat = this.allCategories.find(c => c.id == this.selectedCategoryId);
+                    return cat && cat.slug === 'belajar';
+                },
+
                 get calculatedPackagePrice() {
                     if (!this.selectedPackageId) return 0;
                     const pkg = this.allPackages.find(p => p.id == this.selectedPackageId);
@@ -289,7 +295,9 @@
                 },
 
                 get totalAmount() {
-                    return this.calculatedPackagePrice + 30000; // General user selalu bayar reg fee (pendaftaran pertama)
+                    let total = this.calculatedPackagePrice;
+                    if (this.showRegistrationFee) total += 30000;
+                    return total;
                 },
 
                 // Methods

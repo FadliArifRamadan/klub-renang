@@ -719,7 +719,9 @@
                 },
 
                 get showRegistrationFee() {
-                    return true; // Biaya pendaftaran per-anak, selalu dikenakan untuk pendaftaran baru
+                    if (!this.selectedCategoryId) return false;
+                    const cat = this.allCategories.find(c => c.id == this.selectedCategoryId);
+                    return cat && cat.slug === 'belajar';
                 },
 
                 get calculatedPackagePrice() {

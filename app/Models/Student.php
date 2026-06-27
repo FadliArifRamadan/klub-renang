@@ -166,6 +166,15 @@ class Student extends Model
      */
     public function shouldPayRegistrationFee(): bool
     {
+        // Biaya pendaftaran hanya berlaku untuk kategori 'belajar'
+        $swimmingClass = $this->swimmingClass;
+        if ($swimmingClass) {
+            $category = $swimmingClass->category;
+            if ($category && $category->slug !== 'belajar') {
+                return false;
+            }
+        }
+
         // Belum pernah bayar = pendaftaran pertama → harus bayar
         if (!$this->registration_fee_paid) {
             return true;
