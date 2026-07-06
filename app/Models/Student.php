@@ -275,9 +275,10 @@ class Student extends Model
         $package = $this->package;
         if (!$package) return 0;
 
-        // Jika paket tidak membatasi sesi darat secara spesifik
+        // Jika paket tidak membatasi sesi darat secara spesifik (atau diset null)
+        // Maka asumsikan paket tersebut murni kelas renang tanpa sesi darat.
         if (is_null($package->dryland_sessions)) {
-            return $this->quota_left;
+            return 0; 
         }
 
         return max(0, $package->dryland_sessions - $this->dryland_attendances_count);
