@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
      <?php $__env->slot('header', null, []); ?> 
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             <?php echo e(__('Pengajuan Pindah Jadwal')); ?>
 
         </h2>
@@ -38,53 +38,53 @@
                 </div>
             <?php endif; ?>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-gray-100 pb-6">
+            <div class="bg-white dark:bg-boxdark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-strokedark">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-gray-100 dark:border-strokedark pb-6">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900">Daftar Pengajuan Perubahan Jadwal</h3>
-                        <p class="text-sm text-gray-500 mt-1">Review dan kelola permohonan pemindahan jadwal latihan mingguan yang diajukan oleh Orang Tua atau Murid Mandiri.</p>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Daftar Pengajuan Perubahan Jadwal</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Review dan kelola permohonan pemindahan jadwal latihan mingguan yang diajukan oleh Orang Tua atau Murid Mandiri.</p>
                     </div>
                 </div>
 
                 
-                <div class="flex border-b border-gray-200 mb-6 overflow-x-auto">
+                <div class="flex border-b border-gray-200 dark:border-strokedark mb-6 overflow-x-auto">
                     <?php
                         $pendingCount = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
                         $approvedCount = \App\Models\ScheduleChangeRequest::where('status', 'approved')->count();
                         $rejectedCount = \App\Models\ScheduleChangeRequest::where('status', 'rejected')->count();
                     ?>
                     <a href="<?php echo e(route('admin.schedule-requests.index', ['status' => 'pending'])); ?>" 
-                       class="py-3 px-5 border-b-2 font-semibold text-sm whitespace-nowrap transition flex items-center gap-2 <?php echo e($status === 'pending' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'); ?>">
+                       class="py-3 px-5 border-b-2 font-semibold text-sm whitespace-nowrap transition flex items-center gap-2 <?php echo e($status === 'pending' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300'); ?>">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                         Pending
-                        <span class="px-2 py-0.5 text-xs rounded-full <?php echo e($status === 'pending' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'); ?>">
+                        <span class="px-2 py-0.5 text-xs rounded-full <?php echo e($status === 'pending' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600 dark:text-gray-300'); ?>">
                             <?php echo e($pendingCount); ?>
 
                         </span>
                     </a>
                     <a href="<?php echo e(route('admin.schedule-requests.index', ['status' => 'approved'])); ?>" 
-                       class="py-3 px-5 border-b-2 font-semibold text-sm whitespace-nowrap transition flex items-center gap-2 <?php echo e($status === 'approved' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'); ?>">
+                       class="py-3 px-5 border-b-2 font-semibold text-sm whitespace-nowrap transition flex items-center gap-2 <?php echo e($status === 'approved' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300'); ?>">
                         <i class="fa-solid fa-circle-check"></i>
                         Disetujui
-                        <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                        <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600 dark:text-gray-300">
                             <?php echo e($approvedCount); ?>
 
                         </span>
                     </a>
                     <a href="<?php echo e(route('admin.schedule-requests.index', ['status' => 'rejected'])); ?>" 
-                       class="py-3 px-5 border-b-2 font-semibold text-sm whitespace-nowrap transition flex items-center gap-2 <?php echo e($status === 'rejected' ? 'border-rose-600 text-rose-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'); ?>">
+                       class="py-3 px-5 border-b-2 font-semibold text-sm whitespace-nowrap transition flex items-center gap-2 <?php echo e($status === 'rejected' ? 'border-rose-600 text-rose-600' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300'); ?>">
                         <i class="fa-solid fa-circle-xmark"></i>
                         Ditolak
-                        <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                        <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600 dark:text-gray-300">
                             <?php echo e($rejectedCount); ?>
 
                         </span>
                     </a>
                 </div>
 
-                <div class="relative overflow-x-auto border border-gray-100 sm:rounded-xl">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-100">
+                <div class="relative overflow-x-auto border border-gray-100 dark:border-strokedark sm:rounded-xl">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-meta-4 border-b border-gray-100 dark:border-strokedark">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-center w-12">No</th>
                                 <th scope="col" class="px-4 py-3">Tanggal & Murid</th>
@@ -97,8 +97,8 @@
                         </thead>
                         <tbody>
                             <?php $__empty_1 = true; $__currentLoopData = $requests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $req): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr class="bg-white border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
-                                    <td class="px-4 py-4 text-center font-medium text-gray-900">
+                                <tr class="bg-white dark:bg-boxdark border-b border-gray-100 dark:border-strokedark hover:bg-gray-50 dark:bg-meta-4/50 transition-colors">
+                                    <td class="px-4 py-4 text-center font-medium text-gray-900 dark:text-white">
                                         <?php echo e(($requests->currentPage() - 1) * $requests->perPage() + $index + 1); ?>
 
                                     </td>
@@ -108,8 +108,8 @@
                                             <?php echo e($req->created_at->translatedFormat('d M Y, H:i')); ?>
 
                                         </div>
-                                        <div class="font-bold text-gray-900"><?php echo e($req->student->name); ?></div>
-                                        <div class="text-[11px] text-gray-500 flex items-center gap-1.5 mt-0.5">
+                                        <div class="font-bold text-gray-900 dark:text-white"><?php echo e($req->student->name); ?></div>
+                                        <div class="text-[11px] text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mt-0.5">
                                             <span class="px-1.5 py-0.5 rounded-full <?php echo e(($req->student->swimmingClass->category->slug ?? '') === 'prestasi' ? 'bg-purple-50 text-purple-700 border border-purple-100' : 'bg-blue-50 text-blue-700 border border-blue-100'); ?>">
                                                 <?php echo e($req->student->swimmingClass->name ?? '-'); ?>
 
@@ -117,7 +117,7 @@
                                         </div>
                                     </td>
                                     <td class="px-4 py-4">
-                                        <div class="font-semibold text-gray-800"><?php echo e($req->user->name); ?></div>
+                                        <div class="font-semibold text-gray-800 dark:text-gray-100"><?php echo e($req->user->name); ?></div>
                                         <div class="text-[10px] text-gray-400 mt-0.5">
                                             <?php echo e($req->user->role === 'parent' ? 'Orang Tua (Parent)' : 'Mandiri (General)'); ?>
 
@@ -126,15 +126,15 @@
                                     <td class="px-4 py-4">
                                         <div class="space-y-1.5">
                                             <?php $__empty_2 = true; $__currentLoopData = $req->old_schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $oldSched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
-                                                <div class="p-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[11px]">
-                                                    <div class="font-bold text-gray-700 flex items-center justify-between">
+                                                <div class="p-1.5 bg-gray-50 dark:bg-meta-4 border border-gray-200 dark:border-strokedark rounded-lg text-[11px]">
+                                                    <div class="font-bold text-gray-700 dark:text-gray-200 flex items-center justify-between">
                                                         <span><?php echo e($oldSched->day_name); ?>, <?php echo e($oldSched->time_range); ?></span>
                                                         <span class="px-1 py-0.2 rounded text-[9px] <?php echo e($oldSched->session_type === 'dryland' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'); ?>">
                                                             <?php echo e($oldSched->session_type === 'dryland' ? 'Darat' : 'Air'); ?>
 
                                                         </span>
                                                     </div>
-                                                    <div class="text-gray-500 text-[10px] mt-0.5 flex items-center gap-1">
+                                                    <div class="text-gray-500 dark:text-gray-400 text-[10px] mt-0.5 flex items-center gap-1">
                                                         <i class="fa-solid fa-location-dot text-[9px]"></i>
                                                         <?php echo e($oldSched->location->name ?? '-'); ?>
 
@@ -169,7 +169,7 @@
                                     </td>
 
                                     <td class="px-4 py-4">
-                                        <div class="text-xs text-gray-700 bg-gray-50/60 p-2.5 rounded-lg border border-gray-100 max-w-[200px] break-words whitespace-pre-line italic">
+                                        <div class="text-xs text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-meta-4/60 p-2.5 rounded-lg border border-gray-100 dark:border-strokedark max-w-[200px] break-words whitespace-pre-line italic">
                                             "<?php echo e($req->reason); ?>"
                                         </div>
                                     </td>
@@ -186,7 +186,7 @@
                                                 <button type="button" 
                                                         x-data=""
                                                         x-on:click="$dispatch('open-modal', 'reject-request-<?php echo e($req->id); ?>')"
-                                                        class="w-full py-1.5 px-3 text-xs font-bold text-rose-600 bg-white border border-rose-200 hover:bg-rose-50 rounded-lg transition flex items-center justify-center gap-1.5">
+                                                        class="w-full py-1.5 px-3 text-xs font-bold text-rose-600 bg-white dark:bg-boxdark border border-rose-200 hover:bg-rose-50 rounded-lg transition flex items-center justify-center gap-1.5">
                                                     <i class="fa-solid fa-xmark"></i> Tolak
                                                 </button>
                                             </div>
@@ -204,10 +204,10 @@
 <?php $component->withAttributes(['name' => 'approve-request-'.e($req->id).'','maxWidth' => 'md','focusable' => true]); ?>
                                                 <form method="POST" action="<?php echo e(route('admin.schedule-requests.approve', $req->id)); ?>" class="p-6 text-left">
                                                     <?php echo csrf_field(); ?>
-                                                    <h3 class="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 text-emerald-600">
+                                                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-emerald-600">
                                                         <i class="fa-solid fa-circle-check text-lg"></i> Setujui Pengajuan Jadwal
                                                     </h3>
-                                                    <p class="text-xs text-gray-600 mb-4 leading-relaxed">
+                                                    <p class="text-xs text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
                                                         Apakah Anda yakin ingin menyetujui pengajuan pindah jadwal murid <strong><?php echo e($req->student->name); ?></strong>? Jadwal (dan lokasi latihan jika relevan) murid akan terupdate secara otomatis.
                                                     </p>
 
@@ -262,15 +262,15 @@
 <?php $component->withAttributes(['name' => 'reject-request-'.e($req->id).'','maxWidth' => 'md','focusable' => true]); ?>
                                                 <form method="POST" action="<?php echo e(route('admin.schedule-requests.reject', $req->id)); ?>" class="p-6 text-left">
                                                     <?php echo csrf_field(); ?>
-                                                    <h3 class="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 text-rose-600">
+                                                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-rose-600">
                                                         <i class="fa-solid fa-circle-exclamation text-lg"></i> Tolak Pengajuan Jadwal
                                                     </h3>
-                                                    <p class="text-xs text-gray-500 mb-4">
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
                                                         Masukkan alasan penolakan untuk pengajuan jadwal murid <strong><?php echo e($req->student->name); ?></strong>. Alasan ini akan dikirimkan langsung ke pengguna pembuat pengajuan.
                                                     </p>
 
                                                     <div class="mb-4">
-                                                        <label for="rejection_reason-<?php echo e($req->id); ?>" class="text-xs font-bold text-gray-700 block mb-1">
+                                                        <label for="rejection_reason-<?php echo e($req->id); ?>" class="text-xs font-bold text-gray-700 dark:text-gray-200 block mb-1">
                                                             Alasan Penolakan <span class="text-red-500">*</span>
                                                         </label>
                                                         <textarea id="rejection_reason-<?php echo e($req->id); ?>" name="rejection_reason" rows="3" required

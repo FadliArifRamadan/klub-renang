@@ -1,6 +1,6 @@
 <x-app-layout title="Admin - Kelola Pengguna">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             {{ __('Kelola Akun Pengguna') }}
         </h2>
     </x-slot>
@@ -28,14 +28,14 @@
                 </div>
             @endif
 
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div class="bg-white dark:bg-boxdark p-6 rounded-3xl shadow-sm border border-slate-100">
                 
                 {{-- Bagian Atas: Filter Tab Role + Form Pencarian --}}
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     {{-- Tab Filter Role --}}
                     <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit">
                         <a href="{{ route('admin.users.index', array_filter(['search' => $search])) }}" 
-                           class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($role) ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
+                           class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($role) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
                             Semua
                         </a>
                         <a href="{{ route('admin.users.index', array_filter(['role' => 'admin', 'search' => $search])) }}" 
@@ -76,7 +76,7 @@
 
                 {{-- Tabel Data Pengguna --}}
                 <div class="relative overflow-x-auto border border-slate-150 rounded-2xl shadow-sm">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-150">
                             <tr>
                                 <th scope="col" class="px-4 py-3.5 text-center w-12">No</th>
@@ -91,7 +91,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($users as $index => $user)
-                                <tr class="bg-white hover:bg-slate-50/50 transition-colors">
+                                <tr class="bg-white dark:bg-boxdark hover:bg-slate-50/50 transition-colors">
                                     <td class="px-4 py-4 text-center font-semibold text-slate-800">
                                         {{ ($users->currentPage() - 1) * $users->perPage() + $index + 1 }}
                                     </td>
@@ -129,7 +129,7 @@
                                     <td class="px-6 py-4 text-slate-600 font-semibold">{{ $user->phone }}</td>
                                     <td class="px-6 py-4 text-xs text-slate-400 font-medium">{{ $user->created_at->format('d M Y') }}</td>
                                     <td class="px-4 py-4 text-center">
-                                        <div class="inline-flex rounded-xl shadow-sm border border-slate-200 bg-white" role="group">
+                                        <div class="inline-flex rounded-xl shadow-sm border border-slate-200 bg-white dark:bg-boxdark" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-user-{{ $user->id }}')"
                                                 class="px-3 py-2 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-colors rounded-l-xl border-r border-slate-150">
@@ -182,7 +182,7 @@
                                                     <div>
                                                         <x-input-label for="role-{{ $user->id }}" value="Role Akun" class="font-bold text-xs" />
                                                         <select id="role-{{ $user->id }}" name="role" x-model="userRole" required
-                                                                class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white text-sm">
+                                                                class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white dark:bg-boxdark text-sm">
                                                             <option value="admin">Admin</option>
                                                             <option value="coach">Pelatih (Coach)</option>
                                                             <option value="parent">Orang Tua</option>
@@ -225,7 +225,7 @@
                                                                 file:text-xs file:font-bold
                                                                 file:bg-blue-50 file:text-blue-700
                                                                 hover:file:bg-blue-100
-                                                                border border-slate-200 rounded-lg cursor-pointer bg-white" />
+                                                                border border-slate-200 rounded-lg cursor-pointer bg-white dark:bg-boxdark" />
                                                         <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
                                                     </div>
                                                 </div>
@@ -365,7 +365,7 @@
                 <div>
                     <x-input-label for="create-role" value="Role Akun" class="font-bold text-xs" />
                     <select id="create-role" name="role" x-model="userRole" required
-                            class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white text-sm">
+                            class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white dark:bg-boxdark text-sm">
                         <option value="parent">Orang Tua</option>
                         <option value="general">Umum</option>
                         <option value="coach">Pelatih (Coach)</option>
@@ -395,7 +395,7 @@
                             file:text-xs file:font-bold
                             file:bg-blue-50 file:text-blue-700
                             hover:file:bg-blue-100
-                            border border-slate-200 rounded-lg cursor-pointer bg-white" />
+                            border border-slate-200 rounded-lg cursor-pointer bg-white dark:bg-boxdark" />
                     <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
                 </div>
 

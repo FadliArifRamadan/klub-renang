@@ -1,6 +1,6 @@
 <x-app-layout title="Admin - Kelola Kelas">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             {{ __('Kelola Kelas Renang') }}
         </h2>
     </x-slot>
@@ -26,11 +26,11 @@
                 </div>
             @endif
 
-            <div class="bg-white p-6 rounded-lg shadow sm:rounded-lg">
+            <div class="bg-white dark:bg-boxdark p-6 rounded-lg shadow sm:rounded-lg">
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900">Daftar Kelas Renang</h3>
-                        <p class="text-sm text-gray-500 mt-1">Mengelola kelompok umur kelas renang, baik untuk kelas belajar maupun kelas prestasi.</p>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Daftar Kelas Renang</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Mengelola kelompok umur kelas renang, baik untuk kelas belajar maupun kelas prestasi.</p>
                     </div>
                     <x-primary-button type="button" x-data="" x-on:click="$dispatch('open-modal', 'create-class-modal')">
                         <i class="fa-solid fa-plus mr-2"></i> Tambah Kelas Baru
@@ -38,8 +38,8 @@
                 </div>
 
                 <div class="relative overflow-x-auto border sm:rounded-lg">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-meta-4 border-b">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-center w-12">No</th>
                                 <th scope="col" class="px-6 py-3">Nama Kelas</th>
@@ -52,11 +52,11 @@
                         </thead>
                         <tbody>
                             @forelse($swimmingClasses as $index => $class)
-                                <tr class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-4 py-4 text-center font-medium text-gray-900">
+                                <tr class="bg-white dark:bg-boxdark border-b hover:bg-gray-50 dark:bg-meta-4">
+                                    <td class="px-4 py-4 text-center font-medium text-gray-900 dark:text-white">
                                         {{ ($swimmingClasses->currentPage() - 1) * $swimmingClasses->perPage() + $index + 1 }}
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-gray-800">
+                                    <td class="px-6 py-4 font-bold text-gray-800 dark:text-gray-100">
                                         {{ $class->name }}
                                     </td>
                                     <td class="px-6 py-4">
@@ -72,7 +72,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                        <span class="bg-gray-100 text-gray-800 dark:text-gray-100 text-xs font-semibold px-2.5 py-0.5 rounded">
                                             {{ $class->max_quota }} Murid / Kelas
                                         </span>
                                     </td>
@@ -87,13 +87,13 @@
                                         <div class="inline-flex rounded-md shadow-sm" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-class-{{ $class->id }}')"
-                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white border border-gray-200 rounded-l-lg hover:bg-amber-50">
+                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white dark:bg-boxdark border border-gray-200 dark:border-strokedark rounded-l-lg hover:bg-amber-50">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
 
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'confirm-class-deletion-{{ $class->id }}')"
-                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white border-y border-r border-gray-200 rounded-r-lg hover:bg-red-50">
+                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white dark:bg-boxdark border-y border-r border-gray-200 dark:border-strokedark rounded-r-lg hover:bg-red-50">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>
@@ -104,7 +104,7 @@
                                                 @csrf
                                                 @method('PUT')
 
-                                                <h3 class="text-lg font-medium text-gray-900 mb-4 font-bold">Edit Kelas Renang</h3>
+                                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 font-bold">Edit Kelas Renang</h3>
 
                                                 <div>
                                                     <x-input-label for="name-{{ $class->id }}" value="Nama Kelas" />
@@ -184,13 +184,13 @@
 
                                                 <div class="flex items-center justify-start space-x-3 text-red-600 mb-4">
                                                     <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                                                    <h2 class="text-lg font-medium text-gray-900 font-bold">
+                                                    <h2 class="text-lg font-medium text-gray-900 dark:text-white font-bold">
                                                         Apakah Anda yakin ingin menghapus kelas ini?
                                                     </h2>
                                                 </div>
 
-                                                <p class="text-sm text-gray-600">
-                                                    Kelas <span class="font-bold text-gray-900">"{{ $class->name }}"</span>
+                                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                                    Kelas <span class="font-bold text-gray-900 dark:text-white">"{{ $class->name }}"</span>
                                                     akan dihapus permanen dari sistem. Tindakan ini hanya diperbolehkan jika tidak ada murid atau paket yang aktif menggunakan kelas ini.
                                                 </p>
 
@@ -228,7 +228,7 @@
         <form method="POST" action="{{ route('admin.swimming-classes.store') }}" class="p-6 text-left">
             @csrf
 
-            <h3 class="text-lg font-medium text-gray-900 mb-4 font-bold">Tambah Kelas Baru</h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 font-bold">Tambah Kelas Baru</h3>
 
             <div>
                 <x-input-label for="create-name" value="Nama Kelas" />
@@ -255,7 +255,7 @@
                     <option value="dewasa" @selected(old('progress_form_type') == 'dewasa')>Dewasa (Basic Skills Only)</option>
                     <option value="prestasi" @selected(old('progress_form_type') == 'prestasi')>Prestasi (Fisik, Sistem Energi, PBT)</option>
                 </select>
-                <p class="text-xs text-gray-500 mt-1">Menentukan metrik penilaian apa yang akan muncul saat pelatih mencatat perkembangan murid di kelas ini.</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Menentukan metrik penilaian apa yang akan muncul saat pelatih mencatat perkembangan murid di kelas ini.</p>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mt-4">

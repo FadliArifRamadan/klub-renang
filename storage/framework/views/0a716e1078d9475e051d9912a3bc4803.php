@@ -19,95 +19,89 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8 border border-gray-100">
-                <h1 class="text-gray-900 text-3xl font-bold tracking-tight">
+            <div class="bg-white dark:bg-white/[0.03] overflow-hidden sm:rounded-2xl p-6 md:p-8 mb-8 border border-gray-200 dark:border-gray-800 relative z-10 before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-br before:from-brand-50 before:to-transparent dark:before:from-brand-900/10">
+                <h1 class="text-gray-800 dark:text-white/90 text-2xl md:text-3xl font-bold tracking-tight mb-2">
                     Dashboard, <?php echo e(Auth::user()->name); ?>!
                 </h1>
-                <p class="text-gray-600 mt-2 text-sm max-w-3xl leading-relaxed">
-                    Selamat datang di panel kontrol Black Diamond. Kelola verifikasi pembayaran, data murid, pelatih,
-                    kolam
-                    latihan, dan paket program secara terpusat dan efisien.
+                <p class="text-gray-500 dark:text-gray-400 text-sm max-w-3xl leading-relaxed">
+                    Selamat datang di panel kontrol Black Diamond. Kelola verifikasi pembayaran, data murid, pelatih, kolam latihan, dan paket program secara terpusat dan efisien.
                 </p>
             </div>
 
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
                 <!-- Card 1: Total Murid -->
                 <a href="<?php echo e(route('admin.students.index')); ?>"
-                    class="group bg-white overflow-hidden shadow-sm hover:shadow-md sm:rounded-xl p-6 border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-100 transition-colors">
-                            <i class="fa-solid fa-users text-2xl w-8 text-center"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Murid</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-0.5"><?php echo e($totalStudents); ?> Murid</p>
-                        </div>
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
+                    <div class="flex items-center justify-center w-12 h-12 bg-blue-50 text-blue-600 rounded-xl dark:bg-blue-900/30 dark:text-blue-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                        <i class="fa-solid fa-users text-xl"></i>
                     </div>
-                    <div class="text-gray-300 group-hover:text-blue-500 transition-colors">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    <div class="flex items-end justify-between mt-5">
+                        <div>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total Murid</span>
+                            <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90"><?php echo e($totalStudents); ?> Murid</h4>
+                        </div>
+                        <div class="text-gray-300 group-hover:text-blue-500 dark:text-gray-600 dark:group-hover:text-blue-400 transition-colors">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </div>
                     </div>
                 </a>
 
                 <!-- Card 2: Total Coach -->
                 <a href="<?php echo e(route('admin.users.index', ['role' => 'coach'])); ?>"
-                    class="group bg-white overflow-hidden shadow-sm hover:shadow-md sm:rounded-xl p-6 border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="p-3 bg-emerald-50 text-emerald-600 rounded-lg group-hover:bg-emerald-100 transition-colors">
-                            <i class="fa-solid fa-user-tie text-2xl w-8 text-center"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Coach</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-0.5"><?php echo e($totalCoaches); ?> Pelatih</p>
-                        </div>
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
+                    <div class="flex items-center justify-center w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl dark:bg-emerald-900/30 dark:text-emerald-400 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/50 transition-colors">
+                        <i class="fa-solid fa-user-tie text-xl"></i>
                     </div>
-                    <div class="text-gray-300 group-hover:text-emerald-500 transition-colors">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    <div class="flex items-end justify-between mt-5">
+                        <div>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total Coach</span>
+                            <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90"><?php echo e($totalCoaches); ?> Pelatih</h4>
+                        </div>
+                        <div class="text-gray-300 group-hover:text-emerald-500 dark:text-gray-600 dark:group-hover:text-emerald-400 transition-colors">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </div>
                     </div>
                 </a>
 
                 <!-- Card 3: Total Tempat Latihan -->
                 <a href="<?php echo e(route('admin.locations.index')); ?>"
-                    class="group bg-white overflow-hidden shadow-sm hover:shadow-md sm:rounded-xl p-6 border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="p-3 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-100 transition-colors">
-                            <i class="fa-solid fa-location-dot text-2xl w-8 text-center"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tempat Latihan</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-0.5"><?php echo e($totalLocations); ?> Lokasi</p>
-                        </div>
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
+                    <div class="flex items-center justify-center w-12 h-12 bg-amber-50 text-amber-600 rounded-xl dark:bg-amber-900/30 dark:text-amber-400 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/50 transition-colors">
+                        <i class="fa-solid fa-location-dot text-xl"></i>
                     </div>
-                    <div class="text-gray-300 group-hover:text-amber-500 transition-colors">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    <div class="flex items-end justify-between mt-5">
+                        <div>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Tempat Latihan</span>
+                            <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90"><?php echo e($totalLocations); ?> Lokasi</h4>
+                        </div>
+                        <div class="text-gray-300 group-hover:text-amber-500 dark:text-gray-600 dark:group-hover:text-amber-400 transition-colors">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </div>
                     </div>
                 </a>
 
                 <!-- Card 4: Pending Payments -->
                 <a href="<?php echo e(route('admin.payments.index')); ?>"
-                    class="group bg-white overflow-hidden shadow-sm hover:shadow-md sm:rounded-xl p-6 border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="p-3 bg-rose-50 text-rose-600 rounded-lg group-hover:bg-rose-100 transition-colors <?php echo e($pendingPayments > 0 ? 'animate-pulse' : ''); ?>">
-                            <i class="fa-solid fa-wallet text-2xl w-8 text-center"></i>
-                        </div>
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
+                    <div class="flex items-center justify-center w-12 h-12 bg-rose-50 text-rose-600 rounded-xl dark:bg-rose-900/30 dark:text-rose-400 group-hover:bg-rose-100 dark:group-hover:bg-rose-900/50 transition-colors <?php echo e($pendingPayments > 0 ? 'animate-pulse' : ''); ?>">
+                        <i class="fa-solid fa-wallet text-xl"></i>
+                    </div>
+                    <div class="flex items-end justify-between mt-5">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Verifikasi Bayar</p>
-                            <div class="flex items-center gap-1.5">
-                                <p class="text-2xl font-bold text-gray-900 mt-0.5"><?php echo e($pendingPayments); ?> Pending</p>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Verifikasi Bayar</span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90"><?php echo e($pendingPayments); ?> Pending</h4>
                                 <?php if($pendingPayments > 0): ?>
-                                    <span
-                                        class="inline-flex items-center bg-rose-100 text-rose-850 text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-rose-200">
+                                    <span class="inline-flex items-center bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full dark:bg-rose-900/30 dark:text-rose-400">
                                         Perlu Aksi
                                     </span>
                                 <?php endif; ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-rose-500 transition-colors">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                        <div class="text-gray-300 group-hover:text-rose-500 dark:text-gray-600 dark:group-hover:text-rose-400 transition-colors">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </div>
                     </div>
                 </a>
 
@@ -116,50 +110,46 @@
                     $pendingScheds = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
                 ?>
                 <a href="<?php echo e(route('admin.schedule-requests.index')); ?>"
-                    class="group bg-white overflow-hidden shadow-sm hover:shadow-md sm:rounded-xl p-6 border border-gray-100 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="p-3 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100 transition-colors <?php echo e($pendingScheds > 0 ? 'animate-pulse' : ''); ?>">
-                            <i class="fa-solid fa-calendar-check text-2xl w-8 text-center"></i>
-                        </div>
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl dark:bg-indigo-900/30 dark:text-indigo-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 transition-colors <?php echo e($pendingScheds > 0 ? 'animate-pulse' : ''); ?>">
+                        <i class="fa-solid fa-calendar-check text-xl"></i>
+                    </div>
+                    <div class="flex items-end justify-between mt-5">
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pengajuan Jadwal</p>
-                            <div class="flex items-center gap-1.5">
-                                <p class="text-2xl font-bold text-gray-900 mt-0.5"><?php echo e($pendingScheds); ?> Pending</p>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Pengajuan Jadwal</span>
+                            <div class="flex items-center gap-2 mt-1">
+                                <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90"><?php echo e($pendingScheds); ?> Pending</h4>
                                 <?php if($pendingScheds > 0): ?>
-                                    <span
-                                        class="inline-flex items-center bg-indigo-100 text-indigo-850 text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-indigo-200">
+                                    <span class="inline-flex items-center bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full dark:bg-indigo-900/30 dark:text-indigo-400">
                                         Perlu Aksi
                                     </span>
                                 <?php endif; ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-indigo-500 transition-colors">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                        <div class="text-gray-300 group-hover:text-indigo-500 dark:text-gray-600 dark:group-hover:text-indigo-400 transition-colors">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </div>
                     </div>
                 </a>
             </div>
 
 
             
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 p-6 flex flex-col">
-                <div
-                    class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-6 gap-4">
+            <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 flex flex-col mb-8 shadow-theme-sm">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 dark:border-gray-800 pb-5 mb-6 gap-4">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-line text-blue-600"></i>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white/90 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-brand-500"></i>
                             Grafik Perkembangan Fisik Murid
                         </h3>
-                        <p class="text-xs text-gray-500">Pilih murid di samping untuk memantau performa latihan dan
-                            indikator fisiknya.</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Pilih murid di samping untuk memantau performa latihan dan indikator fisiknya.</p>
                     </div>
 
                     
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                         <div class="w-full sm:w-72">
                             <select id="chart_student_id"
-                                class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50 p-2.5">
+                                class="w-full text-sm rounded-lg border-gray-200 bg-gray-50 dark:bg-gray-900 dark:border-gray-700 text-gray-800 dark:text-white/90 shadow-theme-xs focus:border-brand-300 focus:ring focus:ring-brand-500/10 p-2.5">
                                 <option value="" disabled selected>-- Pilih Murid Kursus --</option>
                                 <?php $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option value="<?php echo e($student->id); ?>">
@@ -170,7 +160,7 @@
                         </div>
                         <div class="w-full sm:w-40">
                             <select id="chart_year_filter"
-                                class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50 p-2.5"
+                                class="w-full text-sm rounded-lg border-gray-200 bg-gray-50 dark:bg-gray-900 dark:border-gray-700 text-gray-800 dark:text-white/90 shadow-theme-xs focus:border-brand-300 focus:ring focus:ring-brand-500/10 p-2.5 disabled:opacity-50"
                                 disabled>
                                 <option value="" disabled selected>-- Tahun --</option>
                             </select>
@@ -180,50 +170,48 @@
 
                 
                 <div id="chart-empty-state"
-                    class="flex-1 flex flex-col items-center justify-center text-center py-16 px-4 text-gray-400">
-                    <i class="fa-solid fa-chart-column text-6xl mb-4 text-gray-200"></i>
-                    <p class="font-medium text-gray-600">Silakan pilih murid pada dropdown untuk menampilkan grafik</p>
-                    <p class="text-xs text-gray-400 mt-1 max-w-sm">Grafik perkembangan akan memvisualisasikan data
-                        kekuatan, daya tahan, kelenturan, kecepatan, dan kelincahan murid.</p>
+                    class="flex-1 flex flex-col items-center justify-center text-center py-16 px-4">
+                    <i class="fa-solid fa-chart-column text-6xl mb-4 text-gray-300 dark:text-gray-700"></i>
+                    <p class="font-medium text-gray-800 dark:text-white/90 text-lg">Silakan pilih murid pada dropdown untuk menampilkan grafik</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-sm">Grafik perkembangan akan memvisualisasikan data kekuatan, daya tahan, kelenturan, kecepatan, dan kelincahan murid.</p>
                 </div>
 
                 
                 <div id="chart-no-data-state"
-                    class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4 text-gray-400">
-                    <i class="fa-solid fa-folder-open text-6xl mb-4 text-gray-200"></i>
-                    <p class="font-medium text-gray-600">Belum ada riwayat perkembangan murid ini</p>
-                    <p class="text-xs text-gray-400 mt-1 max-w-sm" id="no-data-subtext">Hubungi Coach pendamping untuk
-                        menginput data perkembangan fisik pertama.</p>
+                    class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4">
+                    <i class="fa-solid fa-folder-open text-6xl mb-4 text-gray-300 dark:text-gray-700"></i>
+                    <p class="font-medium text-gray-800 dark:text-white/90 text-lg">Belum ada riwayat perkembangan murid ini</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-sm" id="no-data-subtext">Hubungi Coach pendamping untuk menginput data perkembangan fisik pertama.</p>
                 </div>
 
                 
                 <div id="chart-year-empty-state"
-                    class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4 text-gray-400">
-                    <i class="fa-regular fa-calendar-xmark text-6xl mb-4 text-gray-200"></i>
-                    <p class="font-medium text-gray-600" id="year-empty-title">Belum ada data latihan di tahun ini</p>
-                    <p class="text-xs text-gray-400 mt-1 max-w-sm" id="year-empty-subtext">Pilih tahun lain atau tunggu hingga Coach menginput data perkembangan.</p>
+                    class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4">
+                    <i class="fa-regular fa-calendar-xmark text-6xl mb-4 text-gray-300 dark:text-gray-700"></i>
+                    <p class="font-medium text-gray-800 dark:text-white/90 text-lg" id="year-empty-title">Belum ada data latihan di tahun ini</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-sm" id="year-empty-subtext">Pilih tahun lain atau tunggu hingga Coach menginput data perkembangan.</p>
                 </div>
 
                 
                 <div id="chart-container" class="hidden flex-1 flex-col">
                         
-                        <div id="prestasi-charts-container" class="hidden flex-col space-y-8 w-full mt-4">
+                        <div id="prestasi-charts-container" class="hidden flex-col space-y-6 w-full mt-2">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                    <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Kondisi Fisik</h4>
+                                <div class="bg-gray-50 dark:bg-gray-800/50 p-5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                    <h4 class="text-sm font-bold text-center text-gray-800 dark:text-white/90 mb-4">Kondisi Fisik</h4>
                                     <div class="relative w-full h-[250px]">
                                         <canvas id="radarChart"></canvas>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                    <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Sistem Energi</h4>
+                                <div class="bg-gray-50 dark:bg-gray-800/50 p-5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                    <h4 class="text-sm font-bold text-center text-gray-800 dark:text-white/90 mb-4">Sistem Energi</h4>
                                     <div class="relative w-full h-[250px]">
                                         <canvas id="barChart"></canvas>
                                     </div>
                                 </div>
                             </div>
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Personal Best Time</h4>
+                            <div class="bg-gray-50 dark:bg-gray-800/50 p-5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <h4 class="text-sm font-bold text-center text-gray-800 dark:text-white/90 mb-4">Personal Best Time</h4>
                                 <div class="relative w-full h-[300px]">
                                     <canvas id="lineChartPBT"></canvas>
                                 </div>
@@ -232,27 +220,27 @@
 
                         
                         <div id="freetext-container" class="hidden mt-4 mb-6">
-                            <div style="display: flex; height: 420px; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; background: #fff;">
+                            <div class="flex h-[420px] border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
                                 
-                                <div style="width: 200px; min-width: 200px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column;">
-                                    <div style="padding: 12px; border-bottom: 1px solid #e2e8f0; background: rgba(241,245,249,0.8);">
-                                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                <div class="w-52 min-w-[208px] bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+                                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-100/50 dark:bg-gray-800/80">
+                                        <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                                             <i class="fa-regular fa-calendar-days"></i> Menu Bulan
                                         </h4>
                                     </div>
-                                    <div id="freetext-month-list" style="flex: 1; overflow-y: auto; padding: 8px;" class="space-y-1">
+                                    <div id="freetext-month-list" class="flex-1 overflow-y-auto p-2 space-y-1 no-scrollbar">
                                         
                                     </div>
                                 </div>
                                 
-                                <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
-                                    <div id="freetext-detail-panel" style="flex: 1; overflow-y: auto; padding: 20px;">
-                                        <div id="freetext-detail-empty" class="flex flex-col items-center justify-center h-full text-gray-400">
-                                            <i class="fa-regular fa-hand-pointer text-4xl mb-3 text-gray-200"></i>
-                                            <p class="text-sm font-medium text-gray-500">Pilih bulan di samping kiri</p>
-                                            <p class="text-xs text-gray-400 mt-1">Detail catatan perkembangan akan ditampilkan di sini.</p>
+                                <div class="flex-1 flex flex-col min-w-0 bg-white dark:bg-gray-900">
+                                    <div id="freetext-detail-panel" class="flex-1 overflow-y-auto p-6 no-scrollbar">
+                                        <div id="freetext-detail-empty" class="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                                            <i class="fa-regular fa-hand-pointer text-4xl mb-3 text-gray-300 dark:text-gray-600"></i>
+                                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Pilih bulan di samping kiri</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">Detail catatan perkembangan akan ditampilkan di sini.</p>
                                         </div>
-                                        <div id="freetext-detail-content" class="hidden">
+                                        <div id="freetext-detail-content" class="hidden text-gray-800 dark:text-white/90">
                                             
                                         </div>
                                     </div>
@@ -261,27 +249,32 @@
                         </div>
 
                     
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
-                        <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
-                            <h4
-                                class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+                        <div class="md:col-span-2 bg-brand-50/50 dark:bg-brand-900/10 border border-brand-100 dark:border-brand-900/30 rounded-xl p-5">
+                            <h4 class="text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                                 <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
                             </h4>
-                            <p id="latest-note" class="text-sm text-gray-600 italic">"Tidak ada catatan pada evaluasi
-                                terakhir."</p>
-                            <div id="latest-note-date" class="text-[10px] text-gray-400 mt-2 font-semibold">Diinput
-                                pada: -</div>
+                            <p id="latest-note" class="text-sm text-gray-700 dark:text-gray-300 italic">"Tidak ada catatan pada evaluasi terakhir."</p>
+                            <div id="latest-note-date" class="text-[10px] text-gray-500 dark:text-gray-400 mt-2 font-medium">Diinput pada: -</div>
                         </div>
 
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
-                            <h4
-                                class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-5 flex flex-col justify-center">
+                            <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                                 <i class="fa-solid fa-circle-info"></i> Info Latihan Murid
                             </h4>
-                            <div class="space-y-1.5 text-xs text-gray-600">
-                                <div>Pelatih: <span id="student-coach" class="font-bold text-gray-800">-</span></div>
-                                <div>Lokasi: <span id="student-location" class="font-bold text-gray-800">-</span></div>
-                                <div>Sisa Kuota: <span id="student-quota" class="font-bold text-blue-600">-</span></div>
+                            <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                <div class="flex justify-between">
+                                    <span>Pelatih:</span> 
+                                    <span id="student-coach" class="font-bold text-gray-800 dark:text-white/90">-</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Lokasi:</span> 
+                                    <span id="student-location" class="font-bold text-gray-800 dark:text-white/90">-</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Sisa Kuota:</span> 
+                                    <span id="student-quota" class="font-bold text-brand-600 dark:text-brand-400">-</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -577,13 +570,13 @@
 
                         function showMonthDetail(report, btnEl) {
                             monthList.querySelectorAll('button').forEach(b => {
-                                b.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
-                                b.classList.add('bg-white', 'text-slate-700', 'hover:bg-indigo-50');
+                                b.classList.remove('bg-indigo-600', 'text-white', 'shadow-md', 'dark:bg-indigo-500');
+                                b.classList.add('bg-white', 'text-slate-700', 'hover:bg-indigo-50', 'dark:bg-gray-800', 'dark:text-white/90', 'dark:hover:bg-gray-700');
                                 b.querySelector('.month-dot')?.classList.remove('bg-white');
                                 b.querySelector('.month-dot')?.classList.add('bg-indigo-400');
                             });
-                            btnEl.classList.remove('bg-white', 'text-slate-700', 'hover:bg-indigo-50');
-                            btnEl.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
+                            btnEl.classList.remove('bg-white', 'text-slate-700', 'hover:bg-indigo-50', 'dark:bg-gray-800', 'dark:text-white/90', 'dark:hover:bg-gray-700');
+                            btnEl.classList.add('bg-indigo-600', 'text-white', 'shadow-md', 'dark:bg-indigo-500');
                             btnEl.querySelector('.month-dot')?.classList.remove('bg-indigo-400');
                             btnEl.querySelector('.month-dot')?.classList.add('bg-white');
 
@@ -597,7 +590,7 @@
                             if (report.metrics) {
                                 for (const [category, items] of Object.entries(report.metrics)) {
                                     metricsHtml += `<div class="mb-4">
-                                        <h5 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-1.5 mb-3 flex items-center gap-1.5">
+                                        <h5 class="text-sm font-bold text-slate-800 dark:text-white/90 border-b border-slate-200 dark:border-gray-700 pb-1.5 mb-3 flex items-center gap-1.5">
                                             <i class="fa-solid fa-layer-group text-indigo-500 text-xs"></i> ${category}
                                         </h5>
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
@@ -608,8 +601,8 @@
                                         else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
                                         else if (val === 'Belum Berkembang' || val === 'Belum Bisa' || val === 'Belum Memulai') badgeColor = 'bg-red-100 text-red-700';
 
-                                        metricsHtml += `<div class="text-xs flex justify-between items-center p-2.5 bg-slate-50 rounded-lg border border-slate-100">
-                                            <span class="font-medium text-slate-600">${key}</span>
+                                        metricsHtml += `<div class="text-xs flex justify-between items-center p-2.5 bg-slate-50 dark:bg-gray-800 rounded-lg border border-slate-100 dark:border-gray-700">
+                                            <span class="font-medium text-slate-600 dark:text-gray-300">${key}</span>
                                             <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
                                         </div>`;
                                     }
@@ -620,20 +613,20 @@
                             detailContent.innerHTML = `
                                 <div class="flex items-center gap-2 mb-5">
                                     <div class="w-1 h-6 bg-indigo-500 rounded-full"></div>
-                                    <h4 class="text-base font-bold text-slate-800">Bulan: ${dateStr}</h4>
+                                    <h4 class="text-base font-bold text-slate-800 dark:text-white/90">Bulan: ${dateStr}</h4>
                                 </div>
                                 <div class="mb-5">
                                     ${metricsHtml || '<p class="text-sm text-gray-400 italic">Tidak ada data metrik untuk bulan ini.</p>'}
                                 </div>
                                 ${report.notes ? `
-                                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
-                                    <p class="text-xs font-bold text-indigo-800 mb-1.5 flex items-center gap-1">
+                                <div class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 p-4 rounded-xl">
+                                    <p class="text-xs font-bold text-indigo-800 dark:text-indigo-400 mb-1.5 flex items-center gap-1">
                                         <i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:
                                     </p>
-                                    <p class="text-sm text-slate-700 italic leading-relaxed">${report.notes}</p>
+                                    <p class="text-sm text-slate-700 dark:text-gray-300 italic leading-relaxed">${report.notes}</p>
                                 </div>` : `
-                                <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl">
-                                    <p class="text-xs text-slate-400 italic">Tidak ada catatan dari pelatih pada bulan ini.</p>
+                                <div class="bg-slate-50 dark:bg-gray-800 border border-slate-100 dark:border-gray-700 p-4 rounded-xl">
+                                    <p class="text-xs text-slate-400 dark:text-gray-500 italic">Tidak ada catatan dari pelatih pada bulan ini.</p>
                                 </div>`}
                             `;
                         }
@@ -644,7 +637,7 @@
 
                             const btn = document.createElement('button');
                             btn.type = 'button';
-                            btn.className = 'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm font-semibold transition-all duration-150 bg-white text-slate-700 hover:bg-indigo-50 border border-transparent';
+                            btn.className = 'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm font-semibold transition-all duration-150 bg-white text-slate-700 hover:bg-indigo-50 dark:bg-gray-800 dark:text-white/90 dark:hover:bg-gray-700 border border-transparent';
                             btn.innerHTML = `
                                 <span class="month-dot w-2 h-2 rounded-full bg-indigo-400 shrink-0"></span>
                                 <span class="truncate">${monthName}</span>

@@ -1,6 +1,6 @@
 <x-app-layout title="Admin - Kelola Jadwal">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             {{ __('Kelola Jadwal Latihan') }}
         </h2>
     </x-slot>
@@ -26,11 +26,11 @@
                 </div>
             @endif
 
-            <div class="bg-white p-6 rounded-lg shadow sm:rounded-lg">
+            <div class="bg-white dark:bg-boxdark p-6 rounded-lg shadow sm:rounded-lg">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900">Jadwal Sesi Latihan Mingguan</h3>
-                        <p class="text-sm text-gray-500 mt-1">Mengatur jadwal hari, waktu, lokasi kolam, dan jenis sesi (latihan renang/darat) untuk setiap kelas.</p>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Jadwal Sesi Latihan Mingguan</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Mengatur jadwal hari, waktu, lokasi kolam, dan jenis sesi (latihan renang/darat) untuk setiap kelas.</p>
                     </div>
                     
                     <div class="flex flex-col sm:flex-row items-end sm:items-center gap-3">
@@ -43,7 +43,7 @@
                 {{-- Tab Filter Lokasi --}}
                 <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit mb-6">
                     <a href="{{ route('admin.schedules.index') }}" 
-                        class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($locationId) ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
+                        class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($locationId) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
                         Semua
                     </a>
                     @foreach($locations as $loc)
@@ -55,8 +55,8 @@
                 </div>
 
                 <div class="relative overflow-x-auto border sm:rounded-lg">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-meta-4 border-b">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-center w-12">No</th>
                                 <th scope="col" class="px-6 py-3">Hari</th>
@@ -70,21 +70,21 @@
                         </thead>
                         <tbody>
                             @forelse($schedules as $index => $sched)
-                                <tr class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-4 py-4 text-center font-medium text-gray-900">
+                                <tr class="bg-white dark:bg-boxdark border-b hover:bg-gray-50 dark:bg-meta-4">
+                                    <td class="px-4 py-4 text-center font-medium text-gray-900 dark:text-white">
                                         {{ ($schedules->currentPage() - 1) * $schedules->perPage() + $index + 1 }}
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-gray-800">
+                                    <td class="px-6 py-4 font-bold text-gray-800 dark:text-gray-100">
                                         {{ $sched->day_name }}
                                     </td>
                                     <td class="px-6 py-4 font-semibold text-slate-700">
                                         {{ $sched->time_range }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="text-gray-900 font-semibold">{{ $sched->swimmingClass->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ $sched->swimmingClass->category->name }}</div>
+                                        <div class="text-gray-900 dark:text-white font-semibold">{{ $sched->swimmingClass->name }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $sched->swimmingClass->category->name }}</div>
                                     </td>
-                                    <td class="px-6 py-4 text-gray-800">
+                                    <td class="px-6 py-4 text-gray-800 dark:text-gray-100">
                                         {{ $sched->location->name }}
                                     </td>
                                     <td class="px-6 py-4 text-center">
@@ -109,13 +109,13 @@
                                         <div class="inline-flex rounded-md shadow-sm" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-schedule-{{ $sched->id }}')"
-                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white border border-gray-200 rounded-l-lg hover:bg-amber-50">
+                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white dark:bg-boxdark border border-gray-200 dark:border-strokedark rounded-l-lg hover:bg-amber-50">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
 
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'confirm-schedule-deletion-{{ $sched->id }}')"
-                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white border-y border-r border-gray-200 rounded-r-lg hover:bg-red-50">
+                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white dark:bg-boxdark border-y border-r border-gray-200 dark:border-strokedark rounded-r-lg hover:bg-red-50">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>
@@ -126,7 +126,7 @@
                                                 @csrf
                                                 @method('PUT')
 
-                                                <h3 class="text-lg font-medium text-gray-900 mb-4 font-bold">Edit Jadwal Latihan</h3>
+                                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 font-bold">Edit Jadwal Latihan</h3>
 
                                                 <div>
                                                     <x-input-label for="class-{{ $sched->id }}" value="Kelas Renang" />
@@ -213,13 +213,13 @@
 
                                                 <div class="flex items-center justify-start space-x-3 text-red-600 mb-4">
                                                     <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                                                    <h2 class="text-lg font-medium text-gray-900 font-bold">
+                                                    <h2 class="text-lg font-medium text-gray-900 dark:text-white font-bold">
                                                         Apakah Anda yakin ingin menghapus jadwal ini?
                                                     </h2>
                                                 </div>
 
-                                                <p class="text-sm text-gray-600">
-                                                    Jadwal latihan <span class="font-bold text-gray-900">"{{ $sched->day_name }} {{ $sched->time_range }} di {{ $sched->location->name }}"</span>
+                                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                                    Jadwal latihan <span class="font-bold text-gray-900 dark:text-white">"{{ $sched->day_name }} {{ $sched->time_range }} di {{ $sched->location->name }}"</span>
                                                     akan dihapus permanen. Murid yang terdaftar pada slot jadwal ini tidak akan bisa terhubung lagi.
                                                 </p>
 
@@ -257,7 +257,7 @@
         <form method="POST" action="{{ route('admin.schedules.store') }}" class="p-6 text-left">
             @csrf
 
-            <h3 class="text-lg font-medium text-gray-900 mb-4 font-bold">Tambah Jadwal Baru</h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 font-bold">Tambah Jadwal Baru</h3>
 
             <div>
                 <x-input-label for="create-class" value="Kelas Renang" />

@@ -79,6 +79,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/schedule-requests', [\App\Http\Controllers\Admin\ScheduleRequestController::class, 'index'])->name('schedule-requests.index');
         Route::post('/schedule-requests/approve/{id}', [\App\Http\Controllers\Admin\ScheduleRequestController::class, 'approve'])->name('schedule-requests.approve');
         Route::post('/schedule-requests/reject/{id}', [\App\Http\Controllers\Admin\ScheduleRequestController::class, 'reject'])->name('schedule-requests.reject');
+
+        // Riwayat Absensi Seluruh Coach
+        Route::get('/attendances', [\App\Http\Controllers\Admin\AttendanceController::class, 'index'])->name('attendances.index');
     });
 
     // 2. KELOMPOK ROUTE COACH

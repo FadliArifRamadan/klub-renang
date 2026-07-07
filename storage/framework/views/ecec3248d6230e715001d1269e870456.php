@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
      <?php $__env->slot('header', null, []); ?> 
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             <?php echo e(__('Kelola Akun Pengguna')); ?>
 
         </h2>
@@ -40,14 +40,14 @@
                 </div>
             <?php endif; ?>
 
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <div class="bg-white dark:bg-boxdark p-6 rounded-3xl shadow-sm border border-slate-100">
                 
                 
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     
                     <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit">
                         <a href="<?php echo e(route('admin.users.index', array_filter(['search' => $search]))); ?>" 
-                           class="px-4 py-2 text-xs font-bold rounded-xl transition-all <?php echo e(empty($role) ? 'bg-white text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800'); ?>">
+                           class="px-4 py-2 text-xs font-bold rounded-xl transition-all <?php echo e(empty($role) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800'); ?>">
                             Semua
                         </a>
                         <a href="<?php echo e(route('admin.users.index', array_filter(['role' => 'admin', 'search' => $search]))); ?>" 
@@ -106,7 +106,7 @@
 
                 
                 <div class="relative overflow-x-auto border border-slate-150 rounded-2xl shadow-sm">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-150">
                             <tr>
                                 <th scope="col" class="px-4 py-3.5 text-center w-12">No</th>
@@ -121,7 +121,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr class="bg-white hover:bg-slate-50/50 transition-colors">
+                                <tr class="bg-white dark:bg-boxdark hover:bg-slate-50/50 transition-colors">
                                     <td class="px-4 py-4 text-center font-semibold text-slate-800">
                                         <?php echo e(($users->currentPage() - 1) * $users->perPage() + $index + 1); ?>
 
@@ -161,7 +161,7 @@
                                     <td class="px-6 py-4 text-slate-600 font-semibold"><?php echo e($user->phone); ?></td>
                                     <td class="px-6 py-4 text-xs text-slate-400 font-medium"><?php echo e($user->created_at->format('d M Y')); ?></td>
                                     <td class="px-4 py-4 text-center">
-                                        <div class="inline-flex rounded-xl shadow-sm border border-slate-200 bg-white" role="group">
+                                        <div class="inline-flex rounded-xl shadow-sm border border-slate-200 bg-white dark:bg-boxdark" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-user-<?php echo e($user->id); ?>')"
                                                 class="px-3 py-2 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-colors rounded-l-xl border-r border-slate-150">
@@ -353,7 +353,7 @@
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
                                                         <select id="role-<?php echo e($user->id); ?>" name="role" x-model="userRole" required
-                                                                class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white text-sm">
+                                                                class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white dark:bg-boxdark text-sm">
                                                             <option value="admin">Admin</option>
                                                             <option value="coach">Pelatih (Coach)</option>
                                                             <option value="parent">Orang Tua</option>
@@ -433,7 +433,7 @@
                                                                 file:text-xs file:font-bold
                                                                 file:bg-blue-50 file:text-blue-700
                                                                 hover:file:bg-blue-100
-                                                                border border-slate-200 rounded-lg cursor-pointer bg-white" />
+                                                                border border-slate-200 rounded-lg cursor-pointer bg-white dark:bg-boxdark" />
                                                         <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
                                                     </div>
                                                 </div>
@@ -815,7 +815,7 @@
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
                     <select id="create-role" name="role" x-model="userRole" required
-                            class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white text-sm">
+                            class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white dark:bg-boxdark text-sm">
                         <option value="parent">Orang Tua</option>
                         <option value="general">Umum</option>
                         <option value="coach">Pelatih (Coach)</option>
@@ -883,7 +883,7 @@
                             file:text-xs file:font-bold
                             file:bg-blue-50 file:text-blue-700
                             hover:file:bg-blue-100
-                            border border-slate-200 rounded-lg cursor-pointer bg-white" />
+                            border border-slate-200 rounded-lg cursor-pointer bg-white dark:bg-boxdark" />
                     <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
                 </div>
 

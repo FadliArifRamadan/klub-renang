@@ -1,163 +1,500 @@
-<!-- Background backdrop for mobile/tablet when sidebar is open -->
-<div x-show="sidebarOpen" class="fixed inset-0 z-30 bg-gray-650/50 lg:hidden" @click="sidebarOpen = false"
-    x-transition:enter="transition-opacity ease-out duration-300" x-transition:enter-start="opacity-0"
-    x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-in duration-200"
-    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="display: none;"></div>
-
-<!-- Sidebar container -->
-<div class="fixed inset-y-0 left-0 z-40 flex flex-col w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r transition-transform duration-300 ease-in-out transform lg:translate-x-0 lg:static lg:inset-auto"
-    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
-    <div class="flex items-center justify-between px-2 mb-6">
-        <img src="{{ asset('images/black_diamond_1.png') }}" alt="Black Diamond Logo">
-        <button @click="sidebarOpen = false"
-            class="p-2 text-gray-500 rounded-md lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-            <svg class="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
+<aside
+    class="fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 lg:translate-x-0"
+    :class="{
+        'w-[290px]': sidebarExpanded || mobileSidebarOpen || sidebarHovered,
+        'w-[90px]': !sidebarExpanded && !mobileSidebarOpen && !sidebarHovered,
+        'translate-x-0': mobileSidebarOpen,
+        '-translate-x-full': !mobileSidebarOpen
+    }"
+    @mouseover="!sidebarExpanded && (sidebarHovered = true)" @mouseleave="sidebarHovered = false">
+    <div class="py-8 flex"
+        :class="{
+            'lg:justify-center': !sidebarExpanded && !sidebarHovered,
+            'justify-start': sidebarExpanded ||
+                sidebarHovered || mobileSidebarOpen
+        }">
+        <a href="{{ route('login') }}">
+            <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                <div class="flex items-center gap-3">
+                    <img src="{{ asset('images/black_diamond_1.png') }}" alt="Logo">
+                </div>
+            </template>
+            <template x-if="!sidebarExpanded && !sidebarHovered && !mobileSidebarOpen">
+                <img src="{{ asset('images/black_diamond.png') }}" alt="Logo" class="w-10 mx-auto">
+            </template>
+        </a>
     </div>
 
-    <div class="flex flex-col justify-between flex-1 mt-6">
-        <nav class="space-y-1">
-            {{-- Dashboard (semua role) --}}
-            <x-sidebar-nav-link :href="route(Auth::user()->role . '.dashboard')" :active="request()->routeIs(Auth::user()->role . '.dashboard')">
-                <i class="fa-solid fa-gauge-high w-5 text-center"></i>
-                <span class="font-medium">Dashboard</span>
-            </x-sidebar-nav-link>
+    <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+        <nav class="mb-6">
+            <div class="flex flex-col gap-4">
 
-            {{-- ADMIN --}}
-            @if (Auth::user()->role === 'admin')
-                <x-sidebar-nav-link :href="route('admin.payments.index')" :active="request()->routeIs('admin.payments.index')">
-                    <i class="fa-solid fa-wallet w-5 text-center"></i>
-                    <span class="font-medium">Verifikasi Pembayaran</span>
-                </x-sidebar-nav-link>
+                <!-- DASHBOARD SECTION -->
+                <div>
+                    <h2 class="mb-4 text-xs uppercase flex leading-[20px] text-gray-400"
+                        :class="{ 'lg:justify-center': !sidebarExpanded && !sidebarHovered }">
+                        <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                            <span>Menu Utama</span>
+                        </template>
+                        <template x-if="!sidebarExpanded && !sidebarHovered && !mobileSidebarOpen">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </template>
+                    </h2>
 
-                <x-sidebar-nav-link :href="route('admin.schedule-requests.index')" :active="request()->routeIs('admin.schedule-requests.index')">
-                    <i class="fa-solid fa-calendar-check w-5 text-center"></i>
-                    <span class="font-medium flex-1">Pengajuan Jadwal</span>
-                    @php
-                        $pendingSchedCount = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
-                    @endphp
-                    @if($pendingSchedCount > 0)
-                        <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                            {{ $pendingSchedCount }}
-                        </span>
-                    @endif
-                </x-sidebar-nav-link>
+                    <ul class="flex flex-col gap-2">
+                        <li>
+                            <a href="{{ route(Auth::user()->role . '.dashboard') }}"
+                                class="menu-item group {{ request()->routeIs(Auth::user()->role . '.dashboard') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                :class="{
+                                    'lg:justify-center': !sidebarExpanded && !
+                                        sidebarHovered,
+                                    'lg:justify-start': sidebarExpanded || sidebarHovered
+                                }">
+                                <span
+                                    class="menu-item-icon-size {{ request()->routeIs(Auth::user()->role . '.dashboard') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                    <i class="fa-solid fa-gauge-high text-xl w-6 text-center"></i>
+                                </span>
+                                <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                    <span class="menu-item-text">Dashboard</span>
+                                </template>
+                            </a>
+                        </li>
 
-                <x-sidebar-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.index')">
-                    <i class="fa-solid fa-users w-5 text-center"></i>
-                    <span class="font-medium">Kelola Murid</span>
-                </x-sidebar-nav-link>
+                        <!-- ADMIN -->
+                        @if (Auth::user()->role === 'admin')
+                            <li>
+                                <a href="{{ route('admin.payments.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.payments.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.payments.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-wallet text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Verifikasi Pembayaran</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.schedule-requests.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.schedule-requests.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.schedule-requests.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-calendar-check text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text flex-1">Pengajuan Jadwal</span>
+                                    </template>
+                                    @php
+                                        $pendingSchedCount = \App\Models\ScheduleChangeRequest::where(
+                                            'status',
+                                            'pending',
+                                        )->count();
+                                    @endphp
+                                    @if ($pendingSchedCount > 0)
+                                        <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                            <span
+                                                class="bg-brand-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-auto">
+                                                {{ $pendingSchedCount }}
+                                            </span>
+                                        </template>
+                                    @endif
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.students.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.students.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.students.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-users text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Kelola Murid</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.attendances.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.attendances.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.attendances.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Riwayat Absensi</span>
+                                    </template>
+                                </a>
+                            </li>
+                        @endif
 
-                <hr class="my-4 border-gray-200" />
-                <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Data Master</p>
+                        <!-- COACH -->
+                        @if (Auth::user()->role === 'coach')
+                            <li>
+                                <a href="{{ route('coach.students.index') }}"
+                                    class="menu-item group {{ request()->routeIs('coach.students.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('coach.students.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-address-book text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Data Murid Saya</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('coach.attendances.create') }}"
+                                    class="menu-item group {{ request()->routeIs('coach.attendances.create') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('coach.attendances.create') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-calendar-check text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Input Absensi</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('coach.attendances.index') }}"
+                                    class="menu-item group {{ request()->routeIs('coach.attendances.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('coach.attendances.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Riwayat Absensi</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('coach.progress.index') }}"
+                                    class="menu-item group {{ request()->routeIs('coach.progress.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('coach.progress.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-chart-line text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Catat Perkembangan</span>
+                                    </template>
+                                </a>
+                            </li>
+                        @endif
 
-                <x-sidebar-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
-                    <i class="fa-solid fa-users-gear w-5 text-center"></i>
-                    <span class="font-medium">Kelola Pengguna</span>
-                </x-sidebar-nav-link>
+                        <!-- PARENT -->
+                        @if (Auth::user()->role === 'parent')
+                            <li>
+                                <a href="{{ route('parent.students.create') }}"
+                                    class="menu-item group {{ request()->routeIs('parent.students.create') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('parent.students.create') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-child text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Daftarkan Anak</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('parent.students.index') }}"
+                                    class="menu-item group {{ request()->routeIs('parent.students.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('parent.students.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-children text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Data Anak Saya</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('parent.payments.index') }}"
+                                    class="menu-item group {{ request()->routeIs('parent.payments.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('parent.payments.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-credit-card text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Menu Pembayaran</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('parent.attendances.index') }}"
+                                    class="menu-item group {{ request()->routeIs('parent.attendances.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('parent.attendances.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Riwayat Absensi</span>
+                                    </template>
+                                </a>
+                            </li>
+                        @endif
 
-                <x-sidebar-nav-link :href="route('admin.swimming-classes.index')" :active="request()->routeIs('admin.swimming-classes.index')">
-                    <i class="fa-solid fa-water w-5 text-center"></i>
-                    <span class="font-medium">Kelola Kelas</span>
-                </x-sidebar-nav-link>
+                        <!-- GENERAL -->
+                        @if (Auth::user()->role === 'general')
+                            <li>
+                                <a href="{{ route('general.students.create') }}"
+                                    class="menu-item group {{ request()->routeIs('general.students.create') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('general.students.create') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-user-plus text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Daftar Paket Saya</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('general.students.index') }}"
+                                    class="menu-item group {{ request()->routeIs('general.students.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('general.students.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-address-card text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Data Kursus Saya</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('general.payments.index') }}"
+                                    class="menu-item group {{ request()->routeIs('general.payments.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('general.payments.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-money-bill-wave text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Menu Pembayaran</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('general.attendances.index') }}"
+                                    class="menu-item group {{ request()->routeIs('general.attendances.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('general.attendances.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Riwayat Absensi</span>
+                                    </template>
+                                </a>
+                            </li>
+                        @endif
 
-                <x-sidebar-nav-link :href="route('admin.packages.index')" :active="request()->routeIs('admin.packages.index')">
-                    <i class="fa-solid fa-box w-5 text-center"></i>
-                    <span class="font-medium">Kelola Paket</span>
-                </x-sidebar-nav-link>
+                    </ul>
+                </div>
 
-                <x-sidebar-nav-link :href="route('admin.schedules.index')" :active="request()->routeIs('admin.schedules.index')">
-                    <i class="fa-solid fa-calendar-days w-5 text-center"></i>
-                    <span class="font-medium">Kelola Jadwal</span>
-                </x-sidebar-nav-link>
+                <!-- ADMIN MASTER DATA -->
+                @if (Auth::user()->role === 'admin')
+                    <div>
+                        <h2 class="mb-4 mt-4 text-xs uppercase flex leading-[20px] text-gray-400"
+                            :class="{ 'lg:justify-center': !sidebarExpanded && !sidebarHovered }">
+                            <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                <span>Data Master</span>
+                            </template>
+                            <template x-if="!sidebarExpanded && !sidebarHovered && !mobileSidebarOpen">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </template>
+                        </h2>
 
-                <x-sidebar-nav-link :href="route('admin.locations.index')" :active="request()->routeIs('admin.locations.index')">
-                    <i class="fa-solid fa-location-dot w-5 text-center"></i>
-                    <span class="font-medium">Tempat Latihan</span>
-                </x-sidebar-nav-link>
-            @endif
+                        <ul class="flex flex-col gap-2">
+                            <li>
+                                <a href="{{ route('admin.users.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.users.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.users.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-users-gear text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Kelola Pengguna</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.swimming-classes.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.swimming-classes.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.swimming-classes.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-water text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Kelola Kelas</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.packages.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.packages.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.packages.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-box text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Kelola Paket</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.schedules.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.schedules.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.schedules.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-calendar-days text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Kelola Jadwal</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.locations.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.locations.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.locations.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-location-dot text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Tempat Latihan</span>
+                                    </template>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
 
-            {{-- COACH --}}
-            @if (Auth::user()->role === 'coach')
-                <x-sidebar-nav-link :href="route('coach.students.index')" :active="request()->routeIs('coach.students.index')">
-                    <i class="fa-solid fa-address-book w-5 text-center"></i>
-                    <span class="font-medium">Data Murid Saya</span>
-                </x-sidebar-nav-link>
+                <!-- LOGOUT -->
+                <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <ul class="flex flex-col gap-2">
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                @csrf
+                                <button type="submit"
+                                    class="menu-item group menu-item-inactive w-full text-red-500 dark:text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-300">
+                                        <i class="fa-solid fa-right-from-bracket text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Keluar</span>
+                                    </template>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
 
-                <x-sidebar-nav-link :href="route('coach.attendances.create')" :active="request()->routeIs('coach.attendances.create')">
-                    <i class="fa-solid fa-calendar-check w-5 text-center"></i>
-                    <span class="font-medium">Input Absensi</span>
-                </x-sidebar-nav-link>
-
-                <x-sidebar-nav-link :href="route('coach.attendances.index')" :active="request()->routeIs('coach.attendances.index')">
-                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
-                    <span class="font-medium">Riwayat Absensi</span>
-                </x-sidebar-nav-link>
-
-                <x-sidebar-nav-link :href="route('coach.progress.index')" :active="request()->routeIs('coach.progress.index')">
-                    <i class="fa-solid fa-chart-line w-5 text-center"></i>
-                    <span class="font-medium">Catat Perkembangan</span>
-                </x-sidebar-nav-link>
-            @endif
-
-            {{-- PARENT (ORANG TUA) --}}
-            @if (Auth::user()->role === 'parent')
-                <x-sidebar-nav-link :href="route('parent.students.create')" :active="request()->routeIs('parent.students.create')">
-                    <i class="fa-solid fa-child w-5 text-center"></i>
-                    <span class="font-medium">Daftarkan Anak</span>
-                </x-sidebar-nav-link>
-
-                <x-sidebar-nav-link :href="route('parent.students.index')" :active="request()->routeIs('parent.students.index')">
-                    <i class="fa-solid fa-children w-5 text-center"></i>
-                    <span class="font-medium">Data Anak Saya</span>
-                </x-sidebar-nav-link>
-
-                <x-sidebar-nav-link :href="route('parent.payments.index')" :active="request()->routeIs('parent.payments.index')">
-                    <i class="fa-solid fa-credit-card w-5 text-center"></i>
-                    <span class="font-medium">Menu Pembayaran</span>
-                </x-sidebar-nav-link>
-
-                <x-sidebar-nav-link :href="route('parent.attendances.index')" :active="request()->routeIs('parent.attendances.index')">
-                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
-                    <span class="font-medium">Riwayat Absensi</span>
-                </x-sidebar-nav-link>
-            @endif
-
-            {{-- GENERAL (UMUM) --}}
-            @if (Auth::user()->role === 'general')
-                <x-sidebar-nav-link :href="route('general.students.create')" :active="request()->routeIs('general.students.create')">
-                    <i class="fa-solid fa-user-plus w-5 text-center"></i>
-                    <span class="font-medium">Daftar Paket Saya</span>
-                </x-sidebar-nav-link>
-
-                <x-sidebar-nav-link :href="route('general.students.index')" :active="request()->routeIs('general.students.index')">
-                    <i class="fa-solid fa-address-card w-5 text-center"></i>
-                    <span class="font-medium">Data Kursus Saya</span>
-                </x-sidebar-nav-link>
-
-                <x-sidebar-nav-link :href="route('general.payments.index')" :active="request()->routeIs('general.payments.index')">
-                    <i class="fa-solid fa-money-bill-wave w-5 text-center"></i>
-                    <span class="font-medium">Menu Pembayaran</span>
-                </x-sidebar-nav-link>
-
-                <x-sidebar-nav-link :href="route('general.attendances.index')" :active="request()->routeIs('general.attendances.index')">
-                    <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
-                    <span class="font-medium">Riwayat Absensi</span>
-                </x-sidebar-nav-link>
-            @endif
+            </div>
         </nav>
-
-        <div class="mt-auto pt-4 border-t border-gray-200">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit"
-                    class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 rounded-lg hover:bg-red-50 transition-colors duration-150">
-                    <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
-                    <span class="font-medium">Keluar</span>
-                </button>
-            </form>
-        </div>
     </div>
-</div>
+</aside>

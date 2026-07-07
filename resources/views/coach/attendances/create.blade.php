@@ -31,10 +31,16 @@
                             <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fa-solid fa-calendar text-gray-400 mr-1.5"></i>Tanggal Latihan
                             </label>
-                            <input type="date" name="date" id="date" value="{{ old('date', date('Y-m-d')) }}"
-                                max="{{ date('Y-m-d') }}"
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900"
-                                required>
+                            <div class="relative">
+                                <input type="date" name="date" id="date" value="{{ old('date', date('Y-m-d')) }}"
+                                    max="{{ date('Y-m-d') }}"
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 pr-10 cursor-pointer"
+                                    required>
+                                <button type="button" onclick="document.getElementById('date').showPicker()"
+                                    class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-blue-600 transition-colors">
+                                    <i class="fa-solid fa-calendar-days text-lg"></i>
+                                </button>
+                            </div>
                             @error('date')
                                 <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
                             @enderror
@@ -101,13 +107,20 @@
                                     @foreach ($students as $student)
                                         @php
                                             $quotaEmpty = $student->quota_left <= 0;
-                                            $sessionTypes = $student->schedules->pluck('session_type')->unique()->toArray();
-                                            // Jika murid belum punya jadwal, tampilkan di kedua jenis sesi (fallback)
-                                            if (empty($sessionTypes)) {
-                                                $sessionTypes = ['swim', 'dryland'];
+                                            // Kumpulkan hari-hari yang ada jadwalnya (apapun tipe sesinya)
+                                            $scheduleDays = $student->schedules->pluck('day_of_week')->unique()->values()->toArray();
+                                            // Cek apakah paket punya alokasi swim / dryland
+                                            $hasSwim = $student->package && !is_null($student->package->swim_sessions) && $student->package->swim_sessions > 0;
+                                            $hasDryland = $student->package && !is_null($student->package->dryland_sessions) && $student->package->dryland_sessions > 0;
+                                            // Jika paket tidak punya pembagian swim/dryland (campur), anggap punya keduanya
+                                            if ($student->package && is_null($student->package->swim_sessions)) {
+                                                $hasSwim = true;
+                                                $hasDryland = true;
                                             }
                                         @endphp
-                                        <tr data-session-types="{{ json_encode($sessionTypes) }}"
+                                        <tr data-schedule-days="{{ json_encode($scheduleDays) }}"
+                                            data-has-swim="{{ $hasSwim ? '1' : '0' }}"
+                                            data-has-dryland="{{ $hasDryland ? '1' : '0' }}"
                                             data-swim-left="{{ $student->swim_sessions_left }}"
                                             data-dryland-left="{{ $student->dryland_sessions_left }}"
                                             class="student-row bg-white border-b hover:bg-gray-50 transition-colors duration-150 {{ $quotaEmpty ? 'bg-red-50/30' : '' }}">
@@ -174,6 +187,13 @@
                                             </td>
                                         </tr>
                                     @endforeach
+                                    <tr id="empty-state-row" style="display: none;">
+                                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 bg-gray-50/50">
+                                            <i class="fa-solid fa-calendar-xmark text-3xl mb-3 text-gray-400"></i>
+                                            <p class="font-medium text-gray-600">Tidak ada jadwal murid pada tanggal dan sesi ini.</p>
+                                            <p class="text-xs mt-1 text-gray-400">Silakan pilih tanggal atau jenis sesi yang lain.</p>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -229,18 +249,41 @@
                     }
                 });
 
-                // Logic Filter Berdasarkan Jenis Sesi
+                // Logic Filter Berdasarkan Jenis Sesi dan Tanggal (Hari)
                 const sessionTypeSelect = document.getElementById('session_type');
+                const dateInput = document.getElementById('date');
                 const studentRows = document.querySelectorAll('.student-row');
+
+                function getPhpDayOfWeek(dateString) {
+                    // PHP model: 0=Senin, 1=Selasa, 2=Rabu, 3=Kamis, 4=Jumat, 5=Sabtu, 6=Minggu
+                    // JS getDay(): 0=Sunday, 1=Monday, ..., 6=Saturday
+                    const parts = dateString.split('-');
+                    const date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                    if (isNaN(date.getTime())) return -1;
+                    const jsDay = date.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+                    // Convert to PHP: Mon=0, Tue=1, ..., Sun=6
+                    return jsDay === 0 ? 6 : jsDay - 1;
+                }
 
                 function filterStudents() {
                     const selectedType = sessionTypeSelect.value;
+                    const selectedDate = dateInput.value;
+                    const selectedDow = getPhpDayOfWeek(selectedDate);
                     
                     studentRows.forEach(row => {
-                        const types = JSON.parse(row.dataset.sessionTypes || '[]');
+                        const scheduleDays = JSON.parse(row.dataset.scheduleDays || '[]');
+                        const hasSwim = row.dataset.hasSwim === '1';
+                        const hasDryland = row.dataset.hasDryland === '1';
                         const cb = row.querySelector('.student-checkbox');
                         
-                        if (types.includes(selectedType)) {
+                        // Fleksibel per paket:
+                        // 1. Murid punya jadwal (apapun tipenya) di hari yang dipilih
+                        // 2. Paket murid punya alokasi untuk sesi yang dipilih
+                        const hasScheduleOnDay = selectedDow >= 0 && scheduleDays.includes(selectedDow);
+                        const packageHasSession = selectedType === 'swim' ? hasSwim : hasDryland;
+                        const isMatch = hasScheduleOnDay && packageHasSession;
+                        
+                        if (isMatch) {
                             row.style.display = '';
                             
                             // Cek kuota sesi spesifik
@@ -294,6 +337,15 @@
                         }
                     });
 
+                    // Tampilkan atau sembunyikan empty state jika semua baris disembunyikan
+                    const emptyStateRow = document.getElementById('empty-state-row');
+                    const visibleRows = Array.from(studentRows).filter(r => r.style.display !== 'none');
+                    if (visibleRows.length === 0) {
+                        if(emptyStateRow) emptyStateRow.style.display = '';
+                    } else {
+                        if(emptyStateRow) emptyStateRow.style.display = 'none';
+                    }
+
                     // Reset tombol "Pilih Semua" saat filter berubah
                     allChecked = false;
                     btnSelectText.textContent = "Pilih Semua Murid";
@@ -303,6 +355,7 @@
                 }
 
                 sessionTypeSelect.addEventListener('change', filterStudents);
+                dateInput.addEventListener('change', filterStudents);
                 
                 // Jalankan filter saat halaman dimuat
                 filterStudents();

@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
      <?php $__env->slot('header', null, []); ?> 
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             <?php echo e(__('Kelola Paket Latihan Renang')); ?>
 
         </h2>
@@ -28,11 +28,11 @@
                 </div>
             <?php endif; ?>
 
-            <div class="bg-white p-6 rounded-lg shadow sm:rounded-lg">
+            <div class="bg-white dark:bg-boxdark p-6 rounded-lg shadow sm:rounded-lg">
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900">Daftar Paket Latihan</h3>
-                        <p class="text-sm text-gray-500 mt-1">Mengelola paket, harga (lokasi/flat), dan detail kelas renang.</p>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Daftar Paket Latihan</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Mengelola paket, harga (lokasi/flat), dan detail kelas renang.</p>
                     </div>
                     <?php if (isset($component)) { $__componentOriginald411d1792bd6cc877d687758b753742c = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald411d1792bd6cc877d687758b753742c = $attributes; } ?>
@@ -58,8 +58,8 @@
                 </div>
 
                 <div class="relative overflow-x-auto border sm:rounded-lg">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-meta-4 border-b">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-center w-12">No</th>
                                 <th scope="col" class="px-6 py-3">Nama Paket</th>
@@ -73,18 +73,18 @@
                         </thead>
                         <tbody>
                             <?php $__empty_1 = true; $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-4 py-4 text-center font-medium text-gray-900">
+                                <tr class="bg-white dark:bg-boxdark border-b hover:bg-gray-50 dark:bg-meta-4">
+                                    <td class="px-4 py-4 text-center font-medium text-gray-900 dark:text-white">
                                         <?php echo e(($packages->currentPage() - 1) * $packages->perPage() + $index + 1); ?>
 
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-gray-800">
+                                    <td class="px-6 py-4 font-bold text-gray-800 dark:text-gray-100">
                                         <?php echo e($package->name); ?>
 
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="text-gray-900 font-semibold"><?php echo e($package->swimmingClass->name ?? '-'); ?></div>
-                                        <div class="text-xs text-gray-500"><?php echo e($package->swimmingClass->category->name ?? '-'); ?></div>
+                                        <div class="text-gray-900 dark:text-white font-semibold"><?php echo e($package->swimmingClass->name ?? '-'); ?></div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400"><?php echo e($package->swimmingClass->category->name ?? '-'); ?></div>
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <?php switch($package->package_type):
@@ -101,7 +101,7 @@
                                                 <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">Prestasi (Bulanan)</span>
                                                 <?php break; ?>
                                             <?php default: ?>
-                                                <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded"><?php echo e($package->package_type); ?></span>
+                                                <span class="bg-gray-100 text-gray-800 dark:text-gray-100 text-xs font-semibold px-2.5 py-0.5 rounded"><?php echo e($package->package_type); ?></span>
                                         <?php endswitch; ?>
                                     </td>
                                     <td class="px-6 py-4 text-right">
@@ -109,7 +109,7 @@
                                             <div class="text-xs font-semibold text-amber-600">Bervariasi per Lokasi:</div>
                                             <div class="space-y-0.5 mt-1">
                                                 <?php $__currentLoopData = $package->locationPrices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $locPrice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <div class="text-[11px] text-gray-500">
+                                                    <div class="text-[11px] text-gray-500 dark:text-gray-400">
                                                         <?php echo e($locPrice->location->name); ?>: <span class="font-bold text-slate-700">Rp <?php echo e(number_format($locPrice->price, 0, ',', '.')); ?></span>
                                                     </div>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -119,9 +119,9 @@
                                         <?php endif; ?>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <div class="font-semibold text-gray-800"><?php echo e($package->sessions); ?>x Sesi</div>
+                                        <div class="font-semibold text-gray-800 dark:text-gray-100"><?php echo e($package->sessions); ?>x Sesi</div>
                                         <?php if($package->package_type == 'monthly_prestasi'): ?>
-                                            <div class="text-[10px] text-gray-500">
+                                            <div class="text-[10px] text-gray-500 dark:text-gray-400">
                                                 Renang: <?php echo e($package->swim_sessions); ?>x | Darat: <?php echo e($package->dryland_sessions); ?>x
                                             </div>
                                         <?php endif; ?>
@@ -135,13 +135,13 @@
                                         <div class="inline-flex rounded-md shadow-sm" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-package-<?php echo e($package->id); ?>')"
-                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white border border-gray-200 rounded-l-lg hover:bg-amber-50">
+                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white dark:bg-boxdark border border-gray-200 dark:border-strokedark rounded-l-lg hover:bg-amber-50">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
 
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'confirm-package-deletion-<?php echo e($package->id); ?>')"
-                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white border-y border-r border-gray-200 rounded-r-lg hover:bg-red-50">
+                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white dark:bg-boxdark border-y border-r border-gray-200 dark:border-strokedark rounded-r-lg hover:bg-red-50">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>
@@ -173,7 +173,7 @@
                                                 <?php echo csrf_field(); ?>
                                                 <?php echo method_field('PUT'); ?>
 
-                                                <h3 class="text-lg font-medium text-gray-900 mb-4 font-bold">Edit Paket Latihan</h3>
+                                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 font-bold">Edit Paket Latihan</h3>
 
                                                 <div>
                                                     <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -279,7 +279,7 @@
 
                                                 <div class="mt-4 flex items-center">
                                                     <input id="is_location_based-<?php echo e($package->id); ?>" type="checkbox" name="is_location_based" value="1" x-model="isLocationBased" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                                                    <label for="is_location_based-<?php echo e($package->id); ?>" class="ms-2 text-sm text-gray-600 font-bold">Harga Bergantung Lokasi</label>
+                                                    <label for="is_location_based-<?php echo e($package->id); ?>" class="ms-2 text-sm text-gray-600 dark:text-gray-300 font-bold">Harga Bergantung Lokasi</label>
                                                 </div>
 
                                                 <!-- Single Flat Price -->
@@ -672,13 +672,13 @@
 
                                                 <div class="flex items-center justify-start space-x-3 text-red-600 mb-4">
                                                     <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                                                    <h2 class="text-lg font-medium text-gray-900 font-bold">
+                                                    <h2 class="text-lg font-medium text-gray-900 dark:text-white font-bold">
                                                         Apakah Anda yakin ingin menghapus paket ini?
                                                     </h2>
                                                 </div>
 
-                                                <p class="text-sm text-gray-600">
-                                                    Paket <span class="font-bold text-gray-900">"<?php echo e($package->name); ?>"</span>
+                                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                                    Paket <span class="font-bold text-gray-900 dark:text-white">"<?php echo e($package->name); ?>"</span>
                                                     akan dihapus permanen. Murid baru tidak akan bisa memilih paket ini lagi.
                                                 </p>
 
@@ -783,7 +783,7 @@
             }">
             <?php echo csrf_field(); ?>
 
-            <h3 class="text-lg font-medium text-gray-900 mb-4 font-bold">Tambah Paket Baru</h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 font-bold">Tambah Paket Baru</h3>
 
             <div>
                 <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -890,7 +890,7 @@
 
             <div class="mt-4 flex items-center">
                 <input id="create-is-location-based" type="checkbox" name="is_location_based" value="1" x-model="isLocationBased" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                <label for="create-is-location-based" class="ms-2 text-sm text-gray-600 font-bold">Harga Bergantung Lokasi</label>
+                <label for="create-is-location-based" class="ms-2 text-sm text-gray-600 dark:text-gray-300 font-bold">Harga Bergantung Lokasi</label>
             </div>
 
             <!-- Single Flat Price -->

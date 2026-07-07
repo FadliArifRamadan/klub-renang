@@ -8,8 +8,8 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
-                <div class="p-6 text-gray-900">
+            <div class="bg-white dark:bg-boxdark overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 dark:border-strokedark">
+                <div class="p-6 text-gray-900 dark:text-white">
 
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                         <div>
@@ -23,47 +23,43 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                        <table class="w-full text-sm text-left text-gray-500">
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-strokedark shadow-sm">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                             <thead
-                                class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200 text-center">
+                                class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-meta-4 border-b border-gray-200 dark:border-strokedark text-center">
                                 <tr>
-                                    <th class="px-6 py-3 text-center w-12">No</th>
-                                    <th class="px-6 py-3 text-left">Nama Anak</th>
-                                    <th class="px-6 py-3">Gender</th>
-                                    <th class="px-6 py-3 text-left">Kelas & Paket</th>
-                                    <th class="px-6 py-3 text-left">Jadwal Latihan</th>
-                                    <th class="px-6 py-3">Coach / Pelatih</th>
-                                    <th class="px-6 py-3 text-center">Progress Absensi</th>
-                                    <th class="px-6 py-3 text-center">Batas Waktu</th>
-                                    <th class="px-6 py-3">Status Akun</th>
-                                    <th class="px-6 py-3">Tanggal Daftar</th>
-                                    <th class="px-6 py-3">Aksi</th>
+                                    <th class="px-4 py-3 text-center w-12">No</th>
+                                    <th class="px-4 py-3 text-left">Nama Anak</th>
+                                    <th class="px-4 py-3 text-left">Kelas & Paket</th>
+                                    <th class="px-4 py-3 text-left min-w-[150px]">Jadwal Latihan</th>
+                                    <th class="px-4 py-3">Coach / Pelatih</th>
+                                    <th class="px-4 py-3 text-center min-w-[120px]">Absensi</th>
+                                    <th class="px-4 py-3 text-center">Status & Masa Aktif</th>
+                                    <th class="px-4 py-3">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100">
+                            <tbody class="divide-y divide-gray-100 dark:divide-strokedark">
                                 @forelse($students as $student)
-                                    <tr class="hover:bg-gray-50/70 transition duration-150">
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-meta-4 transition duration-150">
 
-                                        <td class="px-6 py-4 text-center text-gray-600">
+                                        <td class="px-4 py-4 text-center text-gray-600 dark:text-gray-400">
                                             {{ $loop->iteration + ($students->currentPage() - 1) * $students->perPage() }}
                                         </td>
 
-                                        <td class="px-6 py-4 font-bold text-gray-900 text-left">
+                                        <td class="px-4 py-4 font-bold text-gray-900 dark:text-white text-left">
                                             {{ $student->name }}
-                                        </td>
-
-                                        <td class="px-6 py-4 text-center text-gray-600">
-                                            {{ $student->gender_label }}
-                                        </td>
-
-                                        <td class="px-6 py-4 text-left">
-                                            <div class="font-semibold text-gray-950">{{ $student->swimmingClass->name ?? 'Belum Pilih Kelas' }}</div>
-                                            <div class="text-[11px] text-gray-500 font-medium">{{ $student->swimmingClass->category->name ?? '-' }}</div>
-                                            <div class="text-xs text-gray-600 mt-1">
-                                                Paket: <span class="font-medium text-gray-800">{{ $student->package->name ?? '-' }}</span>
+                                            <div class="text-xs font-normal text-gray-500 dark:text-gray-400 mt-0.5">
+                                                {{ $student->gender_label }}
                                             </div>
-                                            <div class="text-[11px] text-blue-600 font-bold mt-0.5">
+                                        </td>
+
+                                        <td class="px-4 py-4 text-left">
+                                            <div class="font-semibold text-gray-950 dark:text-white">{{ $student->swimmingClass->name ?? 'Belum Pilih Kelas' }}</div>
+                                            <div class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">{{ $student->swimmingClass->category->name ?? '-' }}</div>
+                                            <div class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                                                Paket: <span class="font-medium text-gray-800 dark:text-gray-200">{{ $student->package->name ?? '-' }}</span>
+                                            </div>
+                                            <div class="text-[11px] text-blue-600 dark:text-blue-400 font-bold mt-0.5">
                                                 Harga: Rp 
                                                 @if($student->package)
                                                     {{ number_format($student->package->getPriceForLocation($student->location_id), 0, ',', '.') }}
@@ -73,36 +69,36 @@
                                             </div>
                                         </td>
 
-                                        <td class="px-6 py-4 text-left">
+                                        <td class="px-4 py-4 text-left">
                                             @forelse($student->schedules as $sched)
                                                 <div class="mb-1.5 last:mb-0">
-                                                    <span class="inline-flex items-center text-xs font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
+                                                    <span class="inline-flex items-center text-[11px] font-semibold text-slate-800 dark:text-slate-100 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">
                                                         {{ $sched->day_name }} ({{ substr($sched->start_time, 0, 5) }})
                                                     </span>
-                                                    <div class="text-[10px] text-slate-500 font-medium ml-1 mt-0.5">
+                                                    <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium ml-1 mt-0.5 leading-tight">
                                                         <i class="fa-solid fa-map-pin mr-0.5 text-amber-500"></i> {{ $sched->location->name }} 
-                                                        <span class="mx-1">•</span> 
+                                                        <span class="mx-1 text-gray-300 dark:text-gray-600">•</span> 
                                                         @if($sched->session_type == 'dryland')
-                                                            <span class="text-amber-600">Darat</span>
+                                                            <span class="text-amber-600 dark:text-amber-400">Darat</span>
                                                         @else
-                                                            <span class="text-blue-600">Renang</span>
+                                                            <span class="text-blue-600 dark:text-blue-400">Renang</span>
                                                         @endif
                                                     </div>
                                                 </div>
                                             @empty
-                                                <span class="text-xs text-gray-400 italic">Belum Pilih Jadwal</span>
+                                                <span class="text-xs text-gray-400 dark:text-gray-500 italic">Belum Pilih Jadwal</span>
                                             @endforelse
                                         </td>
 
-                                        <td class="px-6 py-4 text-center">
+                                        <td class="px-4 py-4 text-center">
                                             @if ($student->coach)
                                                 <span
-                                                    class="inline-flex items-center bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200">
+                                                    class="inline-flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200 dark:border-blue-800">
                                                     <i class="fa-solid fa-user-tie mr-1.5 text-[10px]"></i>
                                                     {{ $student->coach->name }}
                                                 </span>
                                             @else
-                                                <span class="text-xs text-gray-400 italic">Belum Ditentukan</span>
+                                                <span class="text-xs text-gray-400 dark:text-gray-500 italic">Belum Ditentukan</span>
                                             @endif
                                         </td>
 
@@ -134,10 +130,57 @@
                                             </div>
                                         </td>
 
-                                        <td class="px-6 py-4 text-center">
+                                        <td class="px-4 py-4 text-center">
+                                            <!-- Status Label -->
+                                            <div class="mb-2">
+                                                @if ($student->status == 'active')
+                                                    <span
+                                                        class="bg-green-100 text-green-800 border border-green-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">Aktif</span>
+                                                @elseif($student->status == 'suspended')
+                                                    <span
+                                                        class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
+                                                        <i class="fa-solid fa-circle-pause mr-1 text-[10px]"></i>
+                                                        Membeku
+                                                        ({{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }})
+                                                    </span>
+                                                @elseif($student->status == 'inactive')
+                                                    @if ($student->quota_left <= 0)
+                                                        <span
+                                                            class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
+                                                            <i class="fa-solid fa-circle-exclamation mr-1 text-[10px]"></i>
+                                                            Sesi Habis
+                                                        </span>
+                                                    @else
+                                                        <span
+                                                            class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
+                                                            <i class="fa-solid fa-circle-xmark mr-1 text-[10px]"></i>
+                                                            Masa Aktif Habis
+                                                        </span>
+                                                    @endif
+                                                @elseif($student->status == 'checking')
+                                                    <span
+                                                        class="bg-blue-100 text-blue-800 border border-blue-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm animate-pulse">Mengecek
+                                                        Pembayaran</span>
+                                                @elseif($student->status == 'pending')
+                                                    @if ($student->latestPayment && $student->latestPayment->status == 'rejected')
+                                                        <span
+                                                            class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">Ditolak
+                                                        </span>
+                                                    @else
+                                                        <span
+                                                            class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">Menunggu
+                                                            Pembayaran</span>
+                                                    @endif
+                                                @else
+                                                    <span
+                                                        class="bg-gray-100 text-gray-800 border border-gray-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">{{ $student->status }}</span>
+                                                @endif
+                                            </div>
+
+                                            <!-- Batas Waktu -->
                                             @if ($student->package_expires_at)
-                                                <span class="text-xs font-semibold text-gray-700 block">
-                                                    {{ $student->package_expires_at->format('d M Y') }}
+                                                <span class="text-[11px] font-semibold text-gray-700 dark:text-gray-300 block mb-1">
+                                                    s/d {{ $student->package_expires_at->format('d M Y') }}
                                                 </span>
                                                 @php
                                                     $diffInDays = now()->diffInDays(
@@ -163,61 +206,11 @@
                                                         class="text-[10px] text-amber-600 font-bold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">DI-FREEZE</span>
                                                 @endif
                                             @else
-                                                <span class="text-xs text-gray-400 italic">-</span>
+                                                <span class="text-xs text-gray-400 dark:text-gray-500 italic">-</span>
                                             @endif
                                         </td>
 
-                                        <td class="px-6 py-4 text-center">
-                                            @if ($student->status == 'active')
-                                                <span
-                                                    class="bg-green-100 text-green-800 border border-green-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">Aktif</span>
-                                            @elseif($student->status == 'suspended')
-                                                <span
-                                                    class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
-                                                    <i class="fa-solid fa-circle-pause mr-1 text-[10px]"></i>
-                                                    Membeku
-                                                    ({{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }})
-                                                </span>
-                                            @elseif($student->status == 'inactive')
-                                                @if ($student->quota_left <= 0)
-                                                    <span
-                                                        class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
-                                                        <i class="fa-solid fa-circle-exclamation mr-1 text-[10px]"></i>
-                                                        Sesi Habis
-                                                    </span>
-                                                @else
-                                                    <span
-                                                        class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">
-                                                        <i class="fa-solid fa-circle-xmark mr-1 text-[10px]"></i>
-                                                        Masa Aktif Habis
-                                                    </span>
-                                                @endif
-                                            @elseif($student->status == 'checking')
-                                                <span
-                                                    class="bg-blue-100 text-blue-800 border border-blue-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm animate-pulse">Mengecek
-                                                    Pembayaran</span>
-                                            @elseif($student->status == 'pending')
-                                                @if ($student->latestPayment && $student->latestPayment->status == 'rejected')
-                                                    <span
-                                                        class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">Ditolak
-                                                        (Konfirmasi Ulang)
-                                                    </span>
-                                                @else
-                                                    <span
-                                                        class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">Menunggu
-                                                        Pembayaran</span>
-                                                @endif
-                                            @else
-                                                <span
-                                                    class="bg-gray-100 text-gray-800 border border-gray-300 text-xs px-3 py-1 rounded-full font-bold shadow-sm">{{ $student->status }}</span>
-                                            @endif
-                                        </td>
-
-                                        <td class="px-6 py-4 text-center text-xs text-gray-400">
-                                            {{ $student->created_at->format('d M Y - H:i') }}
-                                        </td>
-
-                                        <td class="px-6 py-4 text-center">
+                                        <td class="px-4 py-4 text-center">
                                             @if ($student->status == 'active')
                                                 <button type="button" x-data=""
                                                     x-on:click="$dispatch('open-modal', 'suspend-student-{{ $student->id }}')"

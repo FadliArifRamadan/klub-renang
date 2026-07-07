@@ -1,6 +1,6 @@
 <x-app-layout title="Admin - Kelola Paket">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             {{ __('Kelola Paket Latihan Renang') }}
         </h2>
     </x-slot>
@@ -17,11 +17,11 @@
                 </div>
             @endif
 
-            <div class="bg-white p-6 rounded-lg shadow sm:rounded-lg">
+            <div class="bg-white dark:bg-boxdark p-6 rounded-lg shadow sm:rounded-lg">
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900">Daftar Paket Latihan</h3>
-                        <p class="text-sm text-gray-500 mt-1">Mengelola paket, harga (lokasi/flat), dan detail kelas renang.</p>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Daftar Paket Latihan</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Mengelola paket, harga (lokasi/flat), dan detail kelas renang.</p>
                     </div>
                     <x-primary-button type="button" x-data="" x-on:click="$dispatch('open-modal', 'create-package-modal')">
                         <i class="fa-solid fa-plus mr-2"></i> Tambah Paket Baru
@@ -29,8 +29,8 @@
                 </div>
 
                 <div class="relative overflow-x-auto border sm:rounded-lg">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-meta-4 border-b">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-center w-12">No</th>
                                 <th scope="col" class="px-6 py-3">Nama Paket</th>
@@ -44,16 +44,16 @@
                         </thead>
                         <tbody>
                             @forelse($packages as $index => $package)
-                                <tr class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-4 py-4 text-center font-medium text-gray-900">
+                                <tr class="bg-white dark:bg-boxdark border-b hover:bg-gray-50 dark:bg-meta-4">
+                                    <td class="px-4 py-4 text-center font-medium text-gray-900 dark:text-white">
                                         {{ ($packages->currentPage() - 1) * $packages->perPage() + $index + 1 }}
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-gray-800">
+                                    <td class="px-6 py-4 font-bold text-gray-800 dark:text-gray-100">
                                         {{ $package->name }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="text-gray-900 font-semibold">{{ $package->swimmingClass->name ?? '-' }}</div>
-                                        <div class="text-xs text-gray-500">{{ $package->swimmingClass->category->name ?? '-' }}</div>
+                                        <div class="text-gray-900 dark:text-white font-semibold">{{ $package->swimmingClass->name ?? '-' }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $package->swimmingClass->category->name ?? '-' }}</div>
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         @switch($package->package_type)
@@ -70,7 +70,7 @@
                                                 <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">Prestasi (Bulanan)</span>
                                                 @break
                                             @default
-                                                <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">{{ $package->package_type }}</span>
+                                                <span class="bg-gray-100 text-gray-800 dark:text-gray-100 text-xs font-semibold px-2.5 py-0.5 rounded">{{ $package->package_type }}</span>
                                         @endswitch
                                     </td>
                                     <td class="px-6 py-4 text-right">
@@ -78,7 +78,7 @@
                                             <div class="text-xs font-semibold text-amber-600">Bervariasi per Lokasi:</div>
                                             <div class="space-y-0.5 mt-1">
                                                 @foreach($package->locationPrices as $locPrice)
-                                                    <div class="text-[11px] text-gray-500">
+                                                    <div class="text-[11px] text-gray-500 dark:text-gray-400">
                                                         {{ $locPrice->location->name }}: <span class="font-bold text-slate-700">Rp {{ number_format($locPrice->price, 0, ',', '.') }}</span>
                                                     </div>
                                                 @endforeach
@@ -88,9 +88,9 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <div class="font-semibold text-gray-800">{{ $package->sessions }}x Sesi</div>
+                                        <div class="font-semibold text-gray-800 dark:text-gray-100">{{ $package->sessions }}x Sesi</div>
                                         @if($package->package_type == 'monthly_prestasi')
-                                            <div class="text-[10px] text-gray-500">
+                                            <div class="text-[10px] text-gray-500 dark:text-gray-400">
                                                 Renang: {{ $package->swim_sessions }}x | Darat: {{ $package->dryland_sessions }}x
                                             </div>
                                         @endif
@@ -104,13 +104,13 @@
                                         <div class="inline-flex rounded-md shadow-sm" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-package-{{ $package->id }}')"
-                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white border border-gray-200 rounded-l-lg hover:bg-amber-50">
+                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white dark:bg-boxdark border border-gray-200 dark:border-strokedark rounded-l-lg hover:bg-amber-50">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
 
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'confirm-package-deletion-{{ $package->id }}')"
-                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white border-y border-r border-gray-200 rounded-r-lg hover:bg-red-50">
+                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white dark:bg-boxdark border-y border-r border-gray-200 dark:border-strokedark rounded-r-lg hover:bg-red-50">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>
@@ -133,7 +133,7 @@
                                                 @csrf
                                                 @method('PUT')
 
-                                                <h3 class="text-lg font-medium text-gray-900 mb-4 font-bold">Edit Paket Latihan</h3>
+                                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 font-bold">Edit Paket Latihan</h3>
 
                                                 <div>
                                                     <x-input-label for="name-{{ $package->id }}" value="Nama Paket" />
@@ -164,7 +164,7 @@
 
                                                 <div class="mt-4 flex items-center">
                                                     <input id="is_location_based-{{ $package->id }}" type="checkbox" name="is_location_based" value="1" x-model="isLocationBased" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                                                    <label for="is_location_based-{{ $package->id }}" class="ms-2 text-sm text-gray-600 font-bold">Harga Bergantung Lokasi</label>
+                                                    <label for="is_location_based-{{ $package->id }}" class="ms-2 text-sm text-gray-600 dark:text-gray-300 font-bold">Harga Bergantung Lokasi</label>
                                                 </div>
 
                                                 <!-- Single Flat Price -->
@@ -244,13 +244,13 @@
 
                                                 <div class="flex items-center justify-start space-x-3 text-red-600 mb-4">
                                                     <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                                                    <h2 class="text-lg font-medium text-gray-900 font-bold">
+                                                    <h2 class="text-lg font-medium text-gray-900 dark:text-white font-bold">
                                                         Apakah Anda yakin ingin menghapus paket ini?
                                                     </h2>
                                                 </div>
 
-                                                <p class="text-sm text-gray-600">
-                                                    Paket <span class="font-bold text-gray-900">"{{ $package->name }}"</span>
+                                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                                    Paket <span class="font-bold text-gray-900 dark:text-white">"{{ $package->name }}"</span>
                                                     akan dihapus permanen. Murid baru tidak akan bisa memilih paket ini lagi.
                                                 </p>
 
@@ -300,7 +300,7 @@
             }">
             @csrf
 
-            <h3 class="text-lg font-medium text-gray-900 mb-4 font-bold">Tambah Paket Baru</h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 font-bold">Tambah Paket Baru</h3>
 
             <div>
                 <x-input-label for="create-name" value="Nama Paket" />
@@ -331,7 +331,7 @@
 
             <div class="mt-4 flex items-center">
                 <input id="create-is-location-based" type="checkbox" name="is_location_based" value="1" x-model="isLocationBased" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                <label for="create-is-location-based" class="ms-2 text-sm text-gray-600 font-bold">Harga Bergantung Lokasi</label>
+                <label for="create-is-location-based" class="ms-2 text-sm text-gray-600 dark:text-gray-300 font-bold">Harga Bergantung Lokasi</label>
             </div>
 
             <!-- Single Flat Price -->
