@@ -357,14 +357,14 @@
 <?php endif; ?>
                                                                 <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'loc_price_'.e($package->id).'_'.e($loc->id).'','class' => 'block mt-1 w-full','type' => 'number','name' => 'location_prices['.e($loc->id).']','value' => ''.e($locPrice ? $locPrice->price : '').'','placeholder' => 'Misal: 450000','xBind:required' => 'isLocationBased']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'loc_price_'.e($package->id).'_'.e($loc->id).'','class' => 'block mt-1 w-full','type' => 'number','name' => 'location_prices['.e($loc->id).']','value' => ''.e($locPrice ? $locPrice->price : '').'','placeholder' => 'Misal: 450000']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'loc_price_'.e($package->id).'_'.e($loc->id).'','class' => 'block mt-1 w-full','type' => 'number','name' => 'location_prices['.e($loc->id).']','value' => ''.e($locPrice ? $locPrice->price : '').'','placeholder' => 'Misal: 450000','x-bind:required' => 'isLocationBased']); ?>
+<?php $component->withAttributes(['id' => 'loc_price_'.e($package->id).'_'.e($loc->id).'','class' => 'block mt-1 w-full','type' => 'number','name' => 'location_prices['.e($loc->id).']','value' => ''.e($locPrice ? $locPrice->price : '').'','placeholder' => 'Misal: 450000']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -965,14 +965,14 @@
 <?php endif; ?>
                             <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'create-loc-price-'.e($loc->id).'','class' => 'block mt-1 w-full','type' => 'number','name' => 'location_prices['.e($loc->id).']','placeholder' => 'Misal: 450000','xBind:required' => 'isLocationBased']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'create-loc-price-'.e($loc->id).'','class' => 'block mt-1 w-full','type' => 'number','name' => 'location_prices['.e($loc->id).']','placeholder' => 'Misal: 450000']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'create-loc-price-'.e($loc->id).'','class' => 'block mt-1 w-full','type' => 'number','name' => 'location_prices['.e($loc->id).']','placeholder' => 'Misal: 450000','x-bind:required' => 'isLocationBased']); ?>
+<?php $component->withAttributes(['id' => 'create-loc-price-'.e($loc->id).'','class' => 'block mt-1 w-full','type' => 'number','name' => 'location_prices['.e($loc->id).']','placeholder' => 'Misal: 450000']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>

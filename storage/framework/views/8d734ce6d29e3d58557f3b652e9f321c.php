@@ -702,7 +702,21 @@
 
                 get filteredPackages() {
                     if (!this.selectedClassId) return [];
-                    return this.allPackages.filter(p => p.swimming_class_id == this.selectedClassId);
+                    let packages = this.allPackages.filter(p => p.swimming_class_id == this.selectedClassId);
+
+                    // Hanya tampilkan paket yang tersedia (punya harga) di lokasi yang dipilih
+                    if (this.selectedLocationId) {
+                        packages = packages.filter(p => {
+                            // Paket flat (tidak bergantung lokasi) selalu tersedia
+                            if (!p.is_location_based) return true;
+                            
+                            // Paket bergantung lokasi: cek apakah ada harga untuk lokasi ini
+                            const locPrice = (p.location_prices || []).find(lp => lp.location_id == this.selectedLocationId);
+                            return locPrice && locPrice.price > 0;
+                        });
+                    }
+
+                    return packages;
                 },
 
                 get filteredSchedules() {

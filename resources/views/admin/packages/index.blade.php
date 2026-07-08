@@ -185,7 +185,7 @@
                                                             <div>
                                                                 <x-input-label for="loc_price_{{ $package->id }}_{{ $loc->id }}" value="Harga di {{ $loc->name }} (Rp)" />
                                                                 <x-text-input id="loc_price_{{ $package->id }}_{{ $loc->id }}" class="block mt-1 w-full" type="number" name="location_prices[{{ $loc->id }}]"
-                                                                    value="{{ $locPrice ? $locPrice->price : '' }}" placeholder="Misal: 450000" x-bind:required="isLocationBased" />
+                                                                    value="{{ $locPrice ? $locPrice->price : '' }}" placeholder="Misal: 450000" />
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -347,7 +347,7 @@
                     @foreach($locations as $loc)
                         <div>
                             <x-input-label for="create-loc-price-{{ $loc->id }}" value="Harga di {{ $loc->name }} (Rp)" />
-                            <x-text-input id="create-loc-price-{{ $loc->id }}" class="block mt-1 w-full" type="number" name="location_prices[{{ $loc->id }}]" placeholder="Misal: 450000" x-bind:required="isLocationBased" />
+                            <x-text-input id="create-loc-price-{{ $loc->id }}" class="block mt-1 w-full" type="number" name="location_prices[{{ $loc->id }}]" placeholder="Misal: 450000" />
                         </div>
                     @endforeach
                 </div>

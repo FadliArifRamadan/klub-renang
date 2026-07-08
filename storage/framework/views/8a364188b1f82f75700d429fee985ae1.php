@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
      <?php $__env->slot('header', null, []); ?> 
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
             <?php echo e(__('Kelola Tempat Latihan Renang')); ?>
 
         </h2>
@@ -29,9 +29,9 @@
                 </div>
             <?php endif; ?>
 
-            <div class="bg-white p-6 rounded-lg shadow sm:rounded-lg">
+            <div class="bg-white dark:bg-boxdark p-6 rounded-lg shadow sm:rounded-lg">
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                    <h3 class="text-lg font-medium text-gray-900">Daftar Tempat Latihan</h3>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Daftar Tempat Latihan</h3>
                     <?php if (isset($component)) { $__componentOriginald411d1792bd6cc877d687758b753742c = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald411d1792bd6cc877d687758b753742c = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.primary-button','data' => ['type' => 'button','xData' => '','xOn:click' => '$dispatch(\'open-modal\', \'create-location-modal\')']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -56,8 +56,8 @@
                 </div>
 
                 <div class="relative overflow-x-auto border sm:rounded-lg">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-meta-4 border-b">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-center w-12">No</th>
                                 <th scope="col" class="px-4 py-3 text-center">Foto</th>
@@ -68,17 +68,17 @@
                         </thead>
                         <tbody>
                             <?php $__empty_1 = true; $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $location): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-4 py-4 text-center font-medium text-gray-900">
+                                <tr class="bg-white dark:bg-boxdark border-b hover:bg-gray-50 dark:bg-meta-4">
+                                    <td class="px-4 py-4 text-center font-medium text-gray-900 dark:text-white">
                                         <?php echo e(($locations->currentPage() - 1) * $locations->perPage() + $index + 1); ?>
 
                                     </td>
                                     <td class="px-4 py-4 text-center">
                                         <?php if($location->image): ?>
                                             <img src="<?php echo e(asset('storage/' . $location->image)); ?>" alt="Foto <?php echo e($location->name); ?>"
-                                                class="w-16 h-12 rounded-md object-cover border-2 border-gray-200 mx-auto">
+                                                class="w-16 h-12 rounded-md object-cover border-2 border-gray-200 dark:border-strokedark mx-auto">
                                         <?php else: ?>
-                                            <div class="w-16 h-12 rounded-md bg-blue-50 flex items-center justify-center mx-auto border-2 border-gray-200">
+                                            <div class="w-16 h-12 rounded-md bg-blue-50 flex items-center justify-center mx-auto border-2 border-gray-200 dark:border-strokedark">
                                                 <i class="fa-solid fa-water text-blue-400 text-lg"></i>
                                             </div>
                                         <?php endif; ?>
@@ -89,13 +89,13 @@
                                         <div class="inline-flex rounded-md shadow-sm" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-location-<?php echo e($location->id); ?>')"
-                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white border border-gray-200 rounded-l-lg hover:bg-amber-50">
+                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white dark:bg-boxdark border border-gray-200 dark:border-strokedark rounded-l-lg hover:bg-amber-50">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
 
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'confirm-location-deletion-<?php echo e($location->id); ?>')"
-                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white border-y border-r border-gray-200 rounded-r-lg hover:bg-red-50">
+                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white dark:bg-boxdark border-y border-r border-gray-200 dark:border-strokedark rounded-r-lg hover:bg-red-50">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>
@@ -115,7 +115,7 @@
                                                 <?php echo csrf_field(); ?>
                                                 <?php echo method_field('PUT'); ?>
 
-                                                <h3 class="text-lg font-medium text-gray-900 mb-4 text-left">Edit Tempat Latihan</h3>
+                                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 text-left">Edit Tempat Latihan</h3>
 
                                                 <div class="text-left">
                                                     <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -210,12 +210,12 @@
                                                     <?php if($location->image): ?>
                                                         <div class="mt-2 mb-3">
                                                             <img src="<?php echo e(asset('storage/' . $location->image)); ?>" alt="Foto <?php echo e($location->name); ?>"
-                                                                class="w-full h-32 rounded-lg object-cover border-2 border-gray-200 shadow-sm">
-                                                            <p class="text-xs text-gray-500 mt-1">Foto saat ini. Pilih file baru untuk mengganti.</p>
+                                                                class="w-full h-32 rounded-lg object-cover border-2 border-gray-200 dark:border-strokedark shadow-sm">
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Foto saat ini. Pilih file baru untuk mengganti.</p>
                                                         </div>
                                                     <?php endif; ?>
                                                     <input type="file" id="image-<?php echo e($location->id); ?>" name="image" accept="image/jpeg,image/png,image/jpg,image/webp"
-                                                        class="block w-full text-sm text-gray-500 mt-1
+                                                        class="block w-full text-sm text-gray-500 dark:text-gray-400 mt-1
                                                             file:mr-4 file:py-2 file:px-4
                                                             file:rounded-md file:border-0
                                                             file:text-sm file:font-semibold
@@ -298,13 +298,13 @@
 
                                                 <div class="flex items-center justify-start space-x-3 text-red-600 mb-4">
                                                     <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                                                    <h2 class="text-lg font-medium text-gray-900">
+                                                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">
                                                         Apakah Anda yakin ingin menghapus tempat ini?
                                                     </h2>
                                                 </div>
 
-                                                <p class="text-sm text-gray-600">
-                                                    Tindakan ini tidak dapat dibatalkan. Data kolam <span class="font-bold text-gray-900">"<?php echo e($location->name); ?>"</span>
+                                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                                    Tindakan ini tidak dapat dibatalkan. Data kolam <span class="font-bold text-gray-900 dark:text-white">"<?php echo e($location->name); ?>"</span>
                                                     akan dihapus secara permanen dari sistem.
                                                 </p>
 
@@ -399,7 +399,7 @@
         <form method="POST" action="<?php echo e(route('admin.locations.store')); ?>" enctype="multipart/form-data" class="p-6">
             <?php echo csrf_field(); ?>
 
-            <h3 class="text-lg font-medium text-gray-900 mb-4 text-left">Tambah Tempat Baru</h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4 text-left">Tambah Tempat Baru</h3>
 
             <div class="text-left">
                 <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -492,7 +492,7 @@
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
                 <input type="file" id="create-image" name="image" accept="image/jpeg,image/png,image/jpg,image/webp"
-                    class="block w-full text-sm text-gray-500 mt-1
+                    class="block w-full text-sm text-gray-500 dark:text-gray-400 mt-1
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-md file:border-0
                         file:text-sm file:font-semibold
