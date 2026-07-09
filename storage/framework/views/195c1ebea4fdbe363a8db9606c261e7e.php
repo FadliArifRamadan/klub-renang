@@ -282,16 +282,20 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                                                        <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
+                                                        <div class="relative mt-1">
+                                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                                <i class="fa-regular fa-clock text-gray-500"></i>
+                                                            </div>
+                                                            <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'start_time-'.e($sched->id).'','class' => 'block mt-1 w-full','type' => 'time','name' => 'start_time','value' => ''.e(substr($sched->start_time, 0, 5)).'','required' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'start_time-'.e($sched->id).'','class' => 'block w-full pr-10','type' => 'time','name' => 'start_time','value' => ''.e(substr($sched->start_time, 0, 5)).'','required' => true,'onclick' => 'this.showPicker()']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'start_time-'.e($sched->id).'','class' => 'block mt-1 w-full','type' => 'time','name' => 'start_time','value' => ''.e(substr($sched->start_time, 0, 5)).'','required' => true]); ?>
+<?php $component->withAttributes(['id' => 'start_time-'.e($sched->id).'','class' => 'block w-full pr-10','type' => 'time','name' => 'start_time','value' => ''.e(substr($sched->start_time, 0, 5)).'','required' => true,'onclick' => 'this.showPicker()']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -302,6 +306,7 @@
 <?php $component = $__componentOriginal18c21970322f9e5c938bc954620c12bb; ?>
 <?php unset($__componentOriginal18c21970322f9e5c938bc954620c12bb); ?>
 <?php endif; ?>
+                                                        </div>
                                                     </div>
                                                     <div>
                                                         <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -324,16 +329,20 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                                                        <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
+                                                        <div class="relative mt-1">
+                                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                                <i class="fa-regular fa-clock text-gray-500"></i>
+                                                            </div>
+                                                            <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'end_time-'.e($sched->id).'','class' => 'block mt-1 w-full','type' => 'time','name' => 'end_time','value' => ''.e(substr($sched->end_time, 0, 5)).'','required' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'end_time-'.e($sched->id).'','class' => 'block w-full pr-10','type' => 'time','name' => 'end_time','value' => ''.e(substr($sched->end_time, 0, 5)).'','required' => true,'onclick' => 'this.showPicker()']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'end_time-'.e($sched->id).'','class' => 'block mt-1 w-full','type' => 'time','name' => 'end_time','value' => ''.e(substr($sched->end_time, 0, 5)).'','required' => true]); ?>
+<?php $component->withAttributes(['id' => 'end_time-'.e($sched->id).'','class' => 'block w-full pr-10','type' => 'time','name' => 'end_time','value' => ''.e(substr($sched->end_time, 0, 5)).'','required' => true,'onclick' => 'this.showPicker()']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -344,6 +353,7 @@
 <?php $component = $__componentOriginal18c21970322f9e5c938bc954620c12bb; ?>
 <?php unset($__componentOriginal18c21970322f9e5c938bc954620c12bb); ?>
 <?php endif; ?>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -731,16 +741,20 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                    <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
+                    <div class="relative mt-1">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fa-regular fa-clock text-gray-500"></i>
+                        </div>
+                        <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'create-start','class' => 'block mt-1 w-full','type' => 'time','name' => 'start_time','value' => old('start_time'),'required' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'create-start','class' => 'block w-full pr-10','type' => 'time','name' => 'start_time','value' => old('start_time'),'required' => true,'onclick' => 'this.showPicker()']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'create-start','class' => 'block mt-1 w-full','type' => 'time','name' => 'start_time','value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(old('start_time')),'required' => true]); ?>
+<?php $component->withAttributes(['id' => 'create-start','class' => 'block w-full pr-10','type' => 'time','name' => 'start_time','value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(old('start_time')),'required' => true,'onclick' => 'this.showPicker()']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -751,6 +765,7 @@
 <?php $component = $__componentOriginal18c21970322f9e5c938bc954620c12bb; ?>
 <?php unset($__componentOriginal18c21970322f9e5c938bc954620c12bb); ?>
 <?php endif; ?>
+                    </div>
                 </div>
                 <div>
                     <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
@@ -773,16 +788,20 @@
 <?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
 <?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
 <?php endif; ?>
-                    <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
+                    <div class="relative mt-1">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fa-regular fa-clock text-gray-500"></i>
+                        </div>
+                        <?php if (isset($component)) { $__componentOriginal18c21970322f9e5c938bc954620c12bb = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal18c21970322f9e5c938bc954620c12bb = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'create-end','class' => 'block mt-1 w-full','type' => 'time','name' => 'end_time','value' => old('end_time'),'required' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.text-input','data' => ['id' => 'create-end','class' => 'block w-full pr-10','type' => 'time','name' => 'end_time','value' => old('end_time'),'required' => true,'onclick' => 'this.showPicker()']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('text-input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'create-end','class' => 'block mt-1 w-full','type' => 'time','name' => 'end_time','value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(old('end_time')),'required' => true]); ?>
+<?php $component->withAttributes(['id' => 'create-end','class' => 'block w-full pr-10','type' => 'time','name' => 'end_time','value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(old('end_time')),'required' => true,'onclick' => 'this.showPicker()']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal18c21970322f9e5c938bc954620c12bb)): ?>
@@ -793,6 +812,7 @@
 <?php $component = $__componentOriginal18c21970322f9e5c938bc954620c12bb; ?>
 <?php unset($__componentOriginal18c21970322f9e5c938bc954620c12bb); ?>
 <?php endif; ?>
+                    </div>
                 </div>
             </div>
 

@@ -51,12 +51,54 @@ class ProgressReportController extends Controller
         // Simpan tanggal sebagai tanggal 1 di bulan yang dipilih
         $reportDate = $request->date . '-01';
 
+        $metrics = $request->metrics;
+
+        // Filter out empty metric values for Kondisi Fisik
+        if (isset($metrics['Kondisi Fisik'])) {
+            $metrics['Kondisi Fisik'] = collect($metrics['Kondisi Fisik'])->filter(function ($value) {
+                return $value !== null && $value !== '';
+            })->toArray();
+            if (empty($metrics['Kondisi Fisik'])) {
+                unset($metrics['Kondisi Fisik']);
+            }
+        }
+
+        // Filter out empty metric values for Sistem Energi
+        if (isset($metrics['Sistem Energi'])) {
+            $metrics['Sistem Energi'] = collect($metrics['Sistem Energi'])->filter(function ($value) {
+                return $value !== null && $value !== '';
+            })->toArray();
+            if (empty($metrics['Sistem Energi'])) {
+                unset($metrics['Sistem Energi']);
+            }
+        }
+
+        // Process Personal Best Time (now dynamic rows)
+        if (isset($metrics['Personal Best Time'])) {
+            $pbtRows = [];
+            foreach ($metrics['Personal Best Time'] as $row) {
+                if (is_array($row) && !empty($row['test_per_bulan'])) {
+                    $pbtRows[] = [
+                        'gaya' => $row['gaya'] ?? 'Gaya Bebas',
+                        'jarak' => $row['jarak'] ?? '50m',
+                        'test_per_bulan' => $row['test_per_bulan'],
+                        'pbt_event' => !empty($row['pbt_event']) ? $row['pbt_event'] : null
+                    ];
+                }
+            }
+            if (!empty($pbtRows)) {
+                $metrics['Personal Best Time'] = $pbtRows;
+            } else {
+                unset($metrics['Personal Best Time']);
+            }
+        }
+
         ProgressReport::create([
             'student_id' => $request->student_id,
             'coach_id' => Auth::id(),
             'report_type' => 'structured',
             'date' => $reportDate,
-            'metrics' => $request->metrics,
+            'metrics' => $metrics,
             'notes' => $request->notes,
         ]);
 

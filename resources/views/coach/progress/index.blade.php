@@ -47,6 +47,7 @@
                             return [$s->id => $mapped];
                         });
                         $options = ['Belum Berkembang', 'Mulai Terlihat', 'Berkembang Baik', 'Sangat Mahir'];
+                        $defaultPbtRows = old('metrics.Personal Best Time') ?: [['gaya' => 'Gaya Bebas', 'jarak' => '50m', 'test_per_bulan' => '', 'pbt_event' => '']];
                     @endphp
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100"
                         x-data="{
@@ -54,6 +55,24 @@
                             categoriesMap: @js($studentCategories),
                             get classType() {
                                 return this.selectedStudentId ? this.categoriesMap[this.selectedStudentId] : null;
+                            },
+                            showKondisiFisik: false,
+                            showSistemEnergi: false,
+                            pbtRows: @js($defaultPbtRows),
+                            distanceMap: {
+                                'Gaya Bebas': ['50m', '100m', '200m', '400m', '800m', '1500m'],
+                                'Gaya Punggung': ['50m', '100m', '200m'],
+                                'Gaya Dada': ['50m', '100m', '200m'],
+                                'Gaya Kupu-kupu': ['50m', '100m', '200m']
+                            },
+                            addPbtRow() {
+                                this.pbtRows.push({ gaya: 'Gaya Bebas', jarak: '50m', test_per_bulan: '', pbt_event: '' });
+                            },
+                            removePbtRow(index) {
+                                this.pbtRows.splice(index, 1);
+                            },
+                            onGayaChange(row) {
+                                row.jarak = this.distanceMap[row.gaya][0];
                             }
                         }">
                         <h3 class="text-lg font-bold text-gray-800 border-b pb-4 mb-6 flex items-center gap-2">
@@ -321,47 +340,140 @@
 
                             <!-- Form Prestasi -->
                             <template x-if="classType === 'prestasi'">
-                                <div class="space-y-4">
-                                    <h4 class="font-bold text-blue-600 mb-2">Kondisi Fisik</h4>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Endurance</label>
-                                        <input type="number" name="metrics[Kondisi Fisik][Endurance]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Fleksibilitas</label>
-                                        <input type="number" name="metrics[Kondisi Fisik][Fleksibilitas]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Strength (Kekuatan)</label>
-                                        <input type="number" name="metrics[Kondisi Fisik][Strength]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Speed (Kecepatan)</label>
-                                        <input type="number" name="metrics[Kondisi Fisik][Speed]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Agility (Kelincahan)</label>
-                                        <input type="number" name="metrics[Kondisi Fisik][Agility]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                 <div class="space-y-4">
+                                    {{-- Personal Best Time - WAJIB diisi setiap bulan --}}
+                                    <h4 class="font-bold text-blue-600 mb-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-stopwatch"></i> Personal Best Time
+                                        <span class="text-xs font-normal text-red-500">*Wajib diisi minimal satu nomor</span>
+                                    </h4>
+
+                                    <div class="space-y-3">
+                                        <template x-for="(row, index) in pbtRows" :key="index">
+                                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg relative space-y-3">
+                                                <!-- Header Baris + Tombol Hapus -->
+                                                <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                                                    <span class="text-xs font-bold text-slate-700" x-text="'Nomor Tes #' + (index + 1)"></span>
+                                                    <template x-if="index > 0">
+                                                        <button type="button" @click="removePbtRow(index)"
+                                                            class="text-xs text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition-colors duration-150">
+                                                            <i class="fa-solid fa-trash-can"></i> Hapus Nomor Ini
+                                                        </button>
+                                                    </template>
+                                                </div>
+
+                                                <!-- Grid Input: 1 Baris per input (Vertical Stack) -->
+                                                <div class="space-y-3">
+                                                    <!-- Gaya Renang -->
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Gaya Renang</label>
+                                                        <select :name="'metrics[Personal Best Time][' + index + '][gaya]'" x-model="row.gaya" @change="onGayaChange(row)"
+                                                            class="w-full text-xs rounded-md border-gray-300 py-1.5 focus:ring-blue-500 focus:border-blue-500 text-gray-900">
+                                                            <option value="Gaya Bebas">Gaya Bebas</option>
+                                                            <option value="Gaya Punggung">Gaya Punggung</option>
+                                                            <option value="Gaya Dada">Gaya Dada</option>
+                                                            <option value="Gaya Kupu-kupu">Gaya Kupu-kupu</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <!-- Jarak -->
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Jarak</label>
+                                                        <select :name="'metrics[Personal Best Time][' + index + '][jarak]'" x-model="row.jarak"
+                                                            class="w-full text-xs rounded-md border-gray-300 py-1.5 focus:ring-blue-500 focus:border-blue-500 text-gray-900">
+                                                            <template x-for="dist in distanceMap[row.gaya]" :key="dist">
+                                                                <option :value="dist" x-text="dist"></option>
+                                                            </template>
+                                                        </select>
+                                                    </div>
+
+                                                    <!-- Test per Bulan -->
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Test per Bulan</label>
+                                                        <input type="text" :name="'metrics[Personal Best Time][' + index + '][test_per_bulan]'" x-model="row.test_per_bulan"
+                                                            placeholder="Contoh: 01:25.50" required
+                                                            class="w-full text-xs rounded-md border-gray-300 py-1.5 focus:ring-blue-500 focus:border-blue-500 text-gray-900">
+                                                    </div>
+
+                                                    <!-- PBT Event (Opsional) -->
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-gray-600 mb-1">PBT Event (Opsional)</label>
+                                                        <input type="text" :name="'metrics[Personal Best Time][' + index + '][pbt_event]'" x-model="row.pbt_event"
+                                                            placeholder="Contoh: 01:22.10 (Kejurda)"
+                                                            class="w-full text-xs rounded-md border-gray-300 py-1.5 focus:ring-blue-500 focus:border-blue-500 text-gray-900">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
                                     </div>
 
-                                    <h4 class="font-bold text-blue-600 mb-2 mt-4">Sistem Energi</h4>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Aerobic</label>
-                                        <input type="number" name="metrics[Sistem Energi][Aerobic]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Anaerobic</label>
-                                        <input type="number" name="metrics[Sistem Energi][Anaerobic]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor..." required>
+                                    <!-- Tombol Tambah Baris -->
+                                    <div class="mt-2 mb-4">
+                                        <button type="button" @click="addPbtRow()"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg text-xs transition-all duration-150">
+                                            <i class="fa-solid fa-plus"></i> Tambah Tes Gaya/Jarak Lain
+                                        </button>
                                     </div>
 
-                                    <h4 class="font-bold text-blue-600 mb-2 mt-4">Personal Best Time</h4>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Test per Bulan</label>
-                                        <input type="text" name="metrics[Personal Best Time][Test per Bulan]" class="w-full text-sm rounded-md border-gray-300" placeholder="Contoh: 01:25.50" required>
+                                    <hr class="my-4 border-gray-200">
+
+                                    {{-- Kondisi Fisik - OPSIONAL --}}
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button type="button" @click="showKondisiFisik = !showKondisiFisik"
+                                            class="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 transition-colors duration-150">
+                                            <h4 class="font-bold text-blue-600 flex items-center gap-2 text-sm">
+                                                <i class="fa-solid fa-dumbbell"></i> Kondisi Fisik
+                                                <span class="text-xs font-normal text-gray-400">(Opsional)</span>
+                                            </h4>
+                                            <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
+                                                :class="showKondisiFisik ? 'rotate-180' : ''"></i>
+                                        </button>
+                                        <div x-show="showKondisiFisik" x-collapse class="p-4 space-y-3 bg-white">
+                                            <p class="text-xs text-gray-400 italic mb-2">Kosongkan jika tidak ada penilaian bulan ini.</p>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Endurance</label>
+                                                <input type="number" name="metrics[Kondisi Fisik][Endurance]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Fleksibilitas</label>
+                                                <input type="number" name="metrics[Kondisi Fisik][Fleksibilitas]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Strength (Kekuatan)</label>
+                                                <input type="number" name="metrics[Kondisi Fisik][Strength]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Speed (Kecepatan)</label>
+                                                <input type="number" name="metrics[Kondisi Fisik][Speed]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Agility (Kelincahan)</label>
+                                                <input type="number" name="metrics[Kondisi Fisik][Agility]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">PBT Event (Opsional)</label>
-                                        <input type="text" name="metrics[Personal Best Time][PBT Event]" class="w-full text-sm rounded-md border-gray-300" placeholder="Contoh: 01:22.10 (Kejurda)">
+
+                                    {{-- Sistem Energi - OPSIONAL --}}
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button type="button" @click="showSistemEnergi = !showSistemEnergi"
+                                            class="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 transition-colors duration-150">
+                                            <h4 class="font-bold text-blue-600 flex items-center gap-2 text-sm">
+                                                <i class="fa-solid fa-bolt"></i> Sistem Energi
+                                                <span class="text-xs font-normal text-gray-400">(Opsional)</span>
+                                            </h4>
+                                            <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
+                                                :class="showSistemEnergi ? 'rotate-180' : ''"></i>
+                                        </button>
+                                        <div x-show="showSistemEnergi" x-collapse class="p-4 space-y-3 bg-white">
+                                            <p class="text-xs text-gray-400 italic mb-2">Kosongkan jika tidak ada penilaian bulan ini.</p>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Aerobic</label>
+                                                <input type="number" name="metrics[Sistem Energi][Aerobic]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Anaerobic</label>
+                                                <input type="number" name="metrics[Sistem Energi][Anaerobic]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </template>
@@ -481,20 +593,47 @@
                     let metricsHtml = '';
                     if (report.metrics) {
                         for (const [category, items] of Object.entries(report.metrics)) {
-                            metricsHtml += `<div class="mb-3"><h5 class="text-sm font-bold text-slate-800 border-b pb-1 mb-2">${category}</h5><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
-                            for (const [key, val] of Object.entries(items)) {
-                                let badgeColor = 'bg-slate-100 text-slate-700';
-                                if (val === 'Sangat Mahir') badgeColor = 'bg-green-100 text-green-700';
-                                else if (val === 'Berkembang Baik') badgeColor = 'bg-blue-100 text-blue-700';
-                                else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
-                                else if (val === 'Belum Berkembang') badgeColor = 'bg-red-100 text-red-700';
+                            if (category === 'Personal Best Time') {
+                                metricsHtml += `<div class="mb-3"><h5 class="text-sm font-bold text-slate-800 border-b pb-1 mb-2">${category}</h5><div class="space-y-2">`;
+                                const entries = Array.isArray(items) ? items : [items];
+                                entries.forEach(e => {
+                                    if (e.gaya) {
+                                        metricsHtml += `<div class="text-xs p-2.5 bg-slate-50 border border-slate-100 rounded-lg flex flex-col gap-1">
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-bold text-indigo-700">${e.gaya} (${e.jarak})</span>
+                                                <span class="px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-700">Test: ${e.test_per_bulan}</span>
+                                            </div>
+                                            ${e.pbt_event ? `<div class="text-[10px] text-gray-500"><i class="fa-solid fa-medal text-amber-500 mr-1"></i>Event: ${e.pbt_event}</div>` : ''}
+                                        </div>`;
+                                    } else {
+                                        // Old format fallback
+                                        metricsHtml += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+                                        for (const [key, val] of Object.entries(e)) {
+                                            metricsHtml += `<div class="text-xs flex justify-between items-center p-2 bg-slate-50 rounded">
+                                                <span class="font-medium text-slate-600">${key}</span>
+                                                <span class="px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-700">${val}</span>
+                                            </div>`;
+                                        }
+                                        metricsHtml += `</div>`;
+                                    }
+                                });
+                                metricsHtml += `</div></div>`;
+                            } else {
+                                metricsHtml += `<div class="mb-3"><h5 class="text-sm font-bold text-slate-800 border-b pb-1 mb-2">${category}</h5><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+                                for (const [key, val] of Object.entries(items)) {
+                                    let badgeColor = 'bg-slate-100 text-slate-700';
+                                    if (val === 'Sangat Mahir') badgeColor = 'bg-green-100 text-green-700';
+                                    else if (val === 'Berkembang Baik') badgeColor = 'bg-blue-100 text-blue-700';
+                                    else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
+                                    else if (val === 'Belum Berkembang') badgeColor = 'bg-red-100 text-red-700';
 
-                                metricsHtml += `<div class="text-xs flex justify-between items-center p-2 bg-slate-50 rounded">
-                                    <span class="font-medium text-slate-600">${key}</span>
-                                    <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
-                                </div>`;
+                                    metricsHtml += `<div class="text-xs flex justify-between items-center p-2 bg-slate-50 rounded">
+                                        <span class="font-medium text-slate-600">${key}</span>
+                                        <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
+                                    </div>`;
+                                }
+                                metricsHtml += `</div></div>`;
                             }
-                            metricsHtml += `</div></div>`;
                         }
                     }
 

@@ -28,8 +28,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div>
                             <x-input-label for="birth_date" value="Tanggal Lahir" />
-                            <x-text-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date"
-                                :value="old('birth_date')" required />
+                            <div class="relative mt-1">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fa-regular fa-calendar text-gray-500"></i>
+                                </div>
+                                <x-text-input id="birth_date" class="block w-full pr-10" type="date" name="birth_date"
+                                    :value="old('birth_date')" required onclick="this.showPicker()" />
+                            </div>
                             <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
                         </div>
 

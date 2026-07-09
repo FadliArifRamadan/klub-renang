@@ -162,13 +162,23 @@
                                                 <div class="grid grid-cols-2 gap-4 mt-4">
                                                     <div>
                                                         <x-input-label for="start_time-{{ $sched->id }}" value="Jam Mulai" />
-                                                        <x-text-input id="start_time-{{ $sched->id }}" class="block mt-1 w-full" type="time" name="start_time"
-                                                            value="{{ substr($sched->start_time, 0, 5) }}" required />
+                                                        <div class="relative mt-1">
+                                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                                <i class="fa-regular fa-clock text-gray-500"></i>
+                                                            </div>
+                                                            <x-text-input id="start_time-{{ $sched->id }}" class="block w-full pr-10" type="time" name="start_time"
+                                                                value="{{ substr($sched->start_time, 0, 5) }}" required onclick="this.showPicker()" />
+                                                        </div>
                                                     </div>
                                                     <div>
                                                         <x-input-label for="end_time-{{ $sched->id }}" value="Jam Selesai" />
-                                                        <x-text-input id="end_time-{{ $sched->id }}" class="block mt-1 w-full" type="time" name="end_time"
-                                                            value="{{ substr($sched->end_time, 0, 5) }}" required />
+                                                        <div class="relative mt-1">
+                                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                                <i class="fa-regular fa-clock text-gray-500"></i>
+                                                            </div>
+                                                            <x-text-input id="end_time-{{ $sched->id }}" class="block w-full pr-10" type="time" name="end_time"
+                                                                value="{{ substr($sched->end_time, 0, 5) }}" required onclick="this.showPicker()" />
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -296,11 +306,21 @@
             <div class="grid grid-cols-2 gap-4 mt-4">
                 <div>
                     <x-input-label for="create-start" value="Jam Mulai" />
-                    <x-text-input id="create-start" class="block mt-1 w-full" type="time" name="start_time" :value="old('start_time')" required />
+                    <div class="relative mt-1">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fa-regular fa-clock text-gray-500"></i>
+                        </div>
+                        <x-text-input id="create-start" class="block w-full pr-10" type="time" name="start_time" :value="old('start_time')" required onclick="this.showPicker()" />
+                    </div>
                 </div>
                 <div>
                     <x-input-label for="create-end" value="Jam Selesai" />
-                    <x-text-input id="create-end" class="block mt-1 w-full" type="time" name="end_time" :value="old('end_time')" required />
+                    <div class="relative mt-1">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fa-regular fa-clock text-gray-500"></i>
+                        </div>
+                        <x-text-input id="create-end" class="block w-full pr-10" type="time" name="end_time" :value="old('end_time')" required onclick="this.showPicker()" />
+                    </div>
                 </div>
             </div>
 
