@@ -128,22 +128,41 @@
                                     </template>
                                 </a>
                             </li>
-                            <li>
-                                <a href="<?php echo e(route('admin.attendances.index')); ?>"
-                                    class="menu-item group <?php echo e(request()->routeIs('admin.attendances.index') ? 'menu-item-active' : 'menu-item-inactive'); ?>"
+                            <li x-data="{ open: <?php echo e(request()->routeIs('admin.attendances.*') ? 'true' : 'false'); ?> }">
+                                <a href="#" @click.prevent="open = !open"
+                                    class="menu-item group w-full flex justify-between items-center <?php echo e(request()->routeIs('admin.attendances.*') ? 'menu-item-active' : 'menu-item-inactive'); ?>"
                                     :class="{
-                                        'lg:justify-center': !sidebarExpanded && !
-                                            sidebarHovered,
+                                        'lg:justify-center': !sidebarExpanded && !sidebarHovered,
                                         'lg:justify-start': sidebarExpanded || sidebarHovered
                                     }">
-                                    <span
-                                        class="menu-item-icon-size <?php echo e(request()->routeIs('admin.attendances.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'); ?>">
-                                        <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
-                                    </span>
+                                    <div class="flex items-center">
+                                        <span class="menu-item-icon-size <?php echo e(request()->routeIs('admin.attendances.*') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'); ?>">
+                                            <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
+                                        </span>
+                                        <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                            <span class="menu-item-text ml-3">Riwayat Absensi</span>
+                                        </template>
+                                    </div>
                                     <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                        <span class="menu-item-text">Riwayat Absensi</span>
+                                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{'rotate-180': open}"></i>
                                     </template>
                                 </a>
+                                <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                    <ul x-show="open" x-transition class="mt-2 space-y-1" style="display: none;">
+                                        <li>
+                                            <a href="<?php echo e(route('admin.attendances.belajar')); ?>"
+                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors <?php echo e(request()->routeIs('admin.attendances.belajar') ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-meta-4'); ?>">
+                                                Kelas Belajar
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo e(route('admin.attendances.prestasi')); ?>"
+                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors <?php echo e(request()->routeIs('admin.attendances.prestasi') ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-meta-4'); ?>">
+                                                Kelas Prestasi
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </template>
                             </li>
                         <?php endif; ?>
 
@@ -166,39 +185,41 @@
                                     </template>
                                 </a>
                             </li>
-                            <li>
-                                <a href="<?php echo e(route('coach.attendances.create')); ?>"
-                                    class="menu-item group <?php echo e(request()->routeIs('coach.attendances.create') ? 'menu-item-active' : 'menu-item-inactive'); ?>"
+                            <li x-data="{ open: <?php echo e(request()->routeIs('coach.attendances.*') ? 'true' : 'false'); ?> }">
+                                <a href="#" @click.prevent="open = !open"
+                                    class="menu-item group w-full flex justify-between items-center <?php echo e(request()->routeIs('coach.attendances.*') ? 'menu-item-active' : 'menu-item-inactive'); ?>"
                                     :class="{
-                                        'lg:justify-center': !sidebarExpanded && !
-                                            sidebarHovered,
+                                        'lg:justify-center': !sidebarExpanded && !sidebarHovered,
                                         'lg:justify-start': sidebarExpanded || sidebarHovered
                                     }">
-                                    <span
-                                        class="menu-item-icon-size <?php echo e(request()->routeIs('coach.attendances.create') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'); ?>">
-                                        <i class="fa-solid fa-calendar-check text-xl w-6 text-center"></i>
-                                    </span>
+                                    <div class="flex items-center">
+                                        <span class="menu-item-icon-size <?php echo e(request()->routeIs('coach.attendances.*') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'); ?>">
+                                            <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
+                                        </span>
+                                        <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                            <span class="menu-item-text ml-3">Absensi</span>
+                                        </template>
+                                    </div>
                                     <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                        <span class="menu-item-text">Input Absensi</span>
+                                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{'rotate-180': open}"></i>
                                     </template>
                                 </a>
-                            </li>
-                            <li>
-                                <a href="<?php echo e(route('coach.attendances.index')); ?>"
-                                    class="menu-item group <?php echo e(request()->routeIs('coach.attendances.index') ? 'menu-item-active' : 'menu-item-inactive'); ?>"
-                                    :class="{
-                                        'lg:justify-center': !sidebarExpanded && !
-                                            sidebarHovered,
-                                        'lg:justify-start': sidebarExpanded || sidebarHovered
-                                    }">
-                                    <span
-                                        class="menu-item-icon-size <?php echo e(request()->routeIs('coach.attendances.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'); ?>">
-                                        <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
-                                    </span>
-                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                        <span class="menu-item-text">Riwayat Absensi</span>
-                                    </template>
-                                </a>
+                                <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                    <ul x-show="open" x-transition class="mt-2 space-y-1" style="display: none;">
+                                        <li>
+                                            <a href="<?php echo e(route('coach.attendances.belajar.index')); ?>"
+                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors <?php echo e(request()->routeIs('coach.attendances.belajar.*') ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-meta-4'); ?>">
+                                                Kelas Belajar
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo e(route('coach.attendances.prestasi.index')); ?>"
+                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors <?php echo e(request()->routeIs('coach.attendances.prestasi.*') ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-meta-4'); ?>">
+                                                Kelas Prestasi
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </template>
                             </li>
                             <li>
                                 <a href="<?php echo e(route('coach.progress.index')); ?>"

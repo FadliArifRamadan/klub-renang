@@ -15,10 +15,10 @@ class AttendanceController extends Controller
         $studentIds = Auth::user()->children()->pluck('id');
 
         $attendances = Attendance::whereIn('student_id', $studentIds)
-            ->with(['student', 'coach', 'location'])
-            ->orderByDesc('date')
-            ->orderByDesc('created_at')
-            ->paginate(15);
+            ->with(['student.swimmingClass.category', 'student.package', 'coach', 'location'])
+            ->orderBy('date')
+            ->orderBy('created_at')
+            ->paginate(5);
 
         return view('parent.attendances.index', compact('attendances'));
     }

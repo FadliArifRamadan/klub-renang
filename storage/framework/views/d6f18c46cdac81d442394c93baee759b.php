@@ -1,26 +1,38 @@
-<x-app-layout title="Umum - Data Pendaftaran">
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve(['title' => 'Umum - Data Pendaftaran'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Data Kursus Saya') }}
-        </h2>
-    </x-slot>
+            <?php echo e(__('Data Kursus Saya')); ?>
 
-    @if (session('success'))
+        </h2>
+     <?php $__env->endSlot(); ?>
+
+    <?php if(session('success')): ?>
         <div class="flex p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
             <i class="fa-solid fa-circle-check mt-0.5 mr-2 text-lg"></i>
             <div>
-                <span class="font-bold">Sukses!</span> {{ session('success') }}
+                <span class="font-bold">Sukses!</span> <?php echo e(session('success')); ?>
+
             </div>
         </div>
-    @endif
-    @if (session('error'))
+    <?php endif; ?>
+    <?php if(session('error')): ?>
         <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
             <i class="fa-solid fa-triangle-exclamation mt-0.5 mr-2 text-lg"></i>
             <div>
-                <span class="font-bold">Error!</span> {{ session('error') }}
+                <span class="font-bold">Error!</span> <?php echo e(session('error')); ?>
+
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -39,71 +51,57 @@
                                 <th class="px-6 py-3">Nama Peserta</th>
                                 <th class="px-6 py-3">Gender</th>
                                 <th class="px-6 py-3">Paket Kursus</th>
-                                <th class="px-6 py-3 min-w-[150px]">Jadwal Latihan</th>
+                                <th class="px-6 py-3">Kolam Latihan</th>
                                 <th class="px-6 py-3">Coach / Pelatih</th>
                                 <th class="px-6 py-3">Progress Absensi</th>
                                 <th class="px-6 py-3 text-center">Status Akun</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($students as $student)
+                            <?php $__empty_1 = true; $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <tr class="bg-white border-b hover:bg-gray-50">
                                     <td class="px-6 py-4 font-bold text-gray-900">
-                                        {{ $loop->iteration }}
+                                        <?php echo e($loop->iteration); ?>
+
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ $student->name }}
+                                        <?php echo e($student->name); ?>
+
                                         <div class="text-xs text-gray-400 font-normal">Lahir:
-                                            {{ $student->birth_date?->format('d M Y') }}</div>
+                                            <?php echo e($student->birth_date?->format('d M Y')); ?></div>
                                     </td>
-                                    <td class="px-6 py-4">{{ $student->gender_label }}</td>
+                                    <td class="px-6 py-4"><?php echo e($student->gender_label); ?></td>
                                     <td class="px-6 py-4">
                                         <span
-                                            class="font-medium text-gray-800">{{ $student->package->name ?? 'Tidak Ada Paket' }}</span>
-                                        <div class="text-xs text-gray-400">Total: {{ $student->package->sessions ?? 0 }}
+                                            class="font-medium text-gray-800"><?php echo e($student->package->name ?? 'Tidak Ada Paket'); ?></span>
+                                        <div class="text-xs text-gray-400">Total: <?php echo e($student->package->sessions ?? 0); ?>
+
                                             Sesi</div>
-                                        @if ($student->package_expires_at)
+                                        <?php if($student->package_expires_at): ?>
                                             <div class="text-[10px] text-gray-500 mt-0.5 whitespace-nowrap">
                                                 <i class="fa-solid fa-calendar-day mr-0.5"></i>
-                                                Batas: {{ $student->package_expires_at->format('d M Y') }}
+                                                Batas: <?php echo e($student->package_expires_at->format('d M Y')); ?>
+
                                             </div>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
+                                    <td class="px-6 py-4"><?php echo e($student->location->name ?? 'Belum Dipilih'); ?></td>
                                     <td class="px-6 py-4">
-                                        @forelse($student->schedules as $sched)
-                                            <div class="mb-1.5 last:mb-0">
-                                                <span class="inline-flex items-center text-[11px] font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
-                                                    {{ $sched->day_name }} ({{ substr($sched->start_time, 0, 5) }})
-                                                </span>
-                                                <div class="text-[10px] text-slate-500 font-medium ml-1 mt-0.5 leading-tight">
-                                                    <i class="fa-solid fa-map-pin mr-0.5 text-amber-500"></i> {{ $sched->location->name }} 
-                                                    <span class="mx-1 text-gray-300">•</span> 
-                                                    @if($sched->session_type == 'dryland')
-                                                        <span class="text-amber-600">Darat</span>
-                                                    @else
-                                                        <span class="text-blue-600">Renang</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @empty
-                                            <span class="text-xs text-gray-400 italic">Belum Pilih Jadwal</span>
-                                        @endforelse
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @if ($student->coach)
+                                        <?php if($student->coach): ?>
                                             <div class="flex items-center space-x-2">
                                                 <span
                                                     class="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
                                                     <i class="fa-solid fa-user-tie mr-1.5"></i>
-                                                    {{ $student->coach->name }}
+                                                    <?php echo e($student->coach->name); ?>
+
                                                 </span>
                                             </div>
-                                        @else
+                                        <?php else: ?>
                                             <span class="text-gray-400 italic text-xs">Mencari Rekomendasi Admin</span>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
                                     <td class="px-6 py-4">
-                                        @php
+                                        <?php
                                             $totalSesi = $student->package->sessions ?? 0;
                                             $sesiTerpakai = max(0, $totalSesi - $student->quota_left);
                                             $progressPct =
@@ -113,64 +111,76 @@
                                                 $progressPct >= 50 => 'bg-amber-400',
                                                 default => 'bg-blue-500',
                                             };
-                                        @endphp
+                                        ?>
                                         <div class="flex items-center gap-2">
                                             <div class="flex-1 bg-gray-200 rounded-full h-2 min-w-[70px]">
-                                                <div class="{{ $barColor }} h-2 rounded-full transition-all duration-300"
-                                                    style="width: {{ $progressPct }}%"></div>
+                                                <div class="<?php echo e($barColor); ?> h-2 rounded-full transition-all duration-300"
+                                                    style="width: <?php echo e($progressPct); ?>%"></div>
                                             </div>
                                             <span class="text-xs font-semibold text-gray-700 whitespace-nowrap">
-                                                {{ $sesiTerpakai }}/{{ $totalSesi }}
+                                                <?php echo e($sesiTerpakai); ?>/<?php echo e($totalSesi); ?>
+
                                             </span>
                                         </div>
                                         <div class="text-xs text-gray-400 mt-1">
-                                            Sisa: <span class="font-semibold text-blue-600">{{ $student->quota_left }}
+                                            Sisa: <span class="font-semibold text-blue-600"><?php echo e($student->quota_left); ?>
+
                                                 sesi</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        @php $latestPayment = $student->latestPayment; @endphp
-                                        @if ($student->status === 'active')
+                                        <?php $latestPayment = $student->latestPayment; ?>
+                                        <?php if($student->status === 'active'): ?>
                                             <span
                                                 class="bg-green-100 text-green-800 border border-green-300 text-xs px-3 py-1 rounded-full font-semibold">Aktif</span>
-                                        @elseif($student->status === 'suspended')
+                                        <?php elseif($student->status === 'suspended'): ?>
                                             <span
                                                 class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-semibold">
                                                 <i class="fa-solid fa-circle-pause mr-1"></i>Dibekukan
-                                                ({{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }})
+                                                (<?php echo e($student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin'); ?>)
                                             </span>
-                                        @elseif($student->status === 'inactive')
+                                        <?php elseif($student->status === 'inactive'): ?>
                                             <span
                                                 class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-semibold">
                                                 <i class="fa-solid fa-circle-xmark mr-1"></i>Hangus
                                             </span>
-                                        @elseif($latestPayment && $latestPayment->status === 'pending')
+                                        <?php elseif($latestPayment && $latestPayment->status === 'pending'): ?>
                                             <span
                                                 class="bg-blue-100 text-blue-800 border border-blue-300 text-xs px-3 py-1 rounded-full font-semibold">Sedang
                                                 Diverifikasi</span>
-                                        @elseif($latestPayment && $latestPayment->status === 'rejected')
+                                        <?php elseif($latestPayment && $latestPayment->status === 'rejected'): ?>
                                             <span
                                                 class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-semibold">Ditolak
                                                 (Konfirmasi Ulang)
                                             </span>
-                                        @else
+                                        <?php else: ?>
                                             <span
                                                 class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-semibold">Menunggu
                                                 Pembayaran</span>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
 
                                 </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <tr>
                                     <td colspan="7" class="px-6 py-4 text-center text-gray-400">Anda belum
                                         mendaftarkan kursus apapun.</td>
                                 </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH D:\laragon\www\klub-renang\resources\views/general/students/index.blade.php ENDPATH**/ ?>

@@ -18,10 +18,10 @@ class AttendanceController extends Controller
         $attendances = collect();
         if ($student) {
             $attendances = Attendance::where('student_id', $student->id)
-                ->with(['student', 'coach', 'location'])
-                ->orderByDesc('date')
-                ->orderByDesc('created_at')
-                ->paginate(15);
+                ->with(['student.swimmingClass.category', 'student.package', 'coach', 'location'])
+                ->orderBy('date')
+                ->orderBy('created_at')
+                ->paginate(5);
         }
 
         return view('general.attendances.index', compact('attendances'));

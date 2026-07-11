@@ -75,7 +75,7 @@
             </div>
 
             {{-- Progress Chart Section --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 p-6 flex flex-col">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 p-6 flex flex-col min-w-0">
                 <div
                     class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-6 gap-4">
                     <div>
@@ -92,7 +92,7 @@
                         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                             <div class="w-full sm:w-72">
                                 <select id="chart_student_id"
-                                    class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50 p-2.5">
+                                    class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50 p-2.5 max-w-full truncate">
                                     <option value="" disabled selected>-- Pilih Murid --</option>
                                     @foreach ($students as $student)
                                         <option value="{{ $student->id }}">
@@ -148,28 +148,28 @@
                     </div>
 
                     {{-- Container Grafik & Detail Perkembangan --}}
-                    <div id="chart-container" class="hidden flex-1 flex-col">
+                    <div id="chart-container" class="hidden flex-1 flex-col min-w-0 overflow-hidden">
                         {{-- Container Prestasi (3 Grafik) --}}
-                        <div id="prestasi-charts-container" class="hidden flex-col space-y-8 w-full mt-4">
+                        <div id="prestasi-charts-container" class="hidden flex-col space-y-8 w-full mt-4 min-w-0">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-0">
                                     <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Kondisi Fisik</h4>
                                     <div class="relative w-full h-[250px]">
                                         <canvas id="radarChart"></canvas>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-0">
                                     <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Sistem Energi</h4>
                                     <div class="relative w-full h-[250px]">
                                         <canvas id="barChart"></canvas>
                                     </div>
                                 </div>
                             </div>
-                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-0">
                                  <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
                                      <h4 class="text-sm font-bold text-slate-700 flex items-center gap-1"><i class="fa-solid fa-stopwatch text-indigo-500"></i> Personal Best Time</h4>
                                      <div class="w-full sm:w-60">
-                                         <select id="pbt_filter_selector" class="w-full text-xs rounded-md border-gray-300 shadow-sm text-gray-900 font-semibold bg-white py-1">
+                                         <select id="pbt_filter_selector" class="w-full text-xs rounded-md border-gray-300 shadow-sm text-gray-900 font-semibold bg-white py-1 max-w-full truncate">
                                              <!-- Dynamically populated -->
                                          </select>
                                      </div>
@@ -181,7 +181,7 @@
                         </div>
 
                         {{-- Catatan Kelas Belajar: Layout Vertical Tabs (2 Kolom) --}}
-                        <div id="freetext-container" class="hidden mt-4 mb-6">
+                        <div id="freetext-container" class="hidden mt-4 mb-6 min-w-0">
                             <div style="display: flex; height: 420px; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; background: #fff;">
                                 {{-- Kolom Kiri: Sidebar Menu Bulan --}}
                                 <div style="width: 200px; min-width: 200px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column;">
@@ -216,7 +216,7 @@
                                     class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                                     <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
                                 </h4>
-                                <p id="latest-note" class="text-sm text-gray-600 italic">"Tidak ada catatan pada
+                                <p id="latest-note" class="text-sm text-gray-600 italic break-words whitespace-pre-wrap">"Tidak ada catatan pada
                                     evaluasi
                                     terakhir."</p>
                                 <div id="latest-note-date" class="text-[10px] text-gray-400 mt-2 font-semibold">Diinput

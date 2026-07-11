@@ -1,27 +1,39 @@
-<x-app-layout title="Umum - Menu Pembayaran">
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve(['title' => 'Umum - Menu Pembayaran'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Menu Pembayaran Kursus') }}
+            <?php echo e(__('Menu Pembayaran Kursus')); ?>
+
         </h2>
-    </x-slot>
+     <?php $__env->endSlot(); ?>
 
     <div class="py-12">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
+            <?php if(session('success')): ?>
                 <div
                     class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 font-medium flex items-center">
                     <i class="fa-solid fa-circle-check mr-2 text-lg"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
+                    <?php echo e(session('success')); ?>
 
-            @if (session('error'))
+                </div>
+            <?php endif; ?>
+
+            <?php if(session('error')): ?>
                 <div
                     class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 font-medium flex items-center">
                     <i class="fa-solid fa-circle-xmark mr-2 text-lg"></i>
-                    {{ session('error') }}
+                    <?php echo e(session('error')); ?>
+
                 </div>
-            @endif
+            <?php endif; ?>
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-lg font-medium text-gray-900 mb-6">
@@ -29,105 +41,115 @@
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @forelse($students as $student)
-                        @php
+                    <?php $__empty_1 = true; $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <?php
                             $latestPayment = $student->latestPayment;
                             $totalBilling = $student->calculateTotalBillingAmount();
                             $packagePrice = $student->package ? $student->package->getPriceForLocation($student->location_id) : 0;
                             $showRegFee = $student->shouldPayRegistrationFee();
                             $categorySlug = $student->swimmingClass->category->slug ?? 'belajar';
-                        @endphp
+                        ?>
 
-                        {{-- Sembunyikan card jika murid sudah tidak aktif (sesi habis / hangus) --}}
-                        @if ($student->status === 'inactive')
-                            @continue
-                        @endif
+                        
+                        <?php if($student->status === 'inactive'): ?>
+                            <?php continue; ?>
+                        <?php endif; ?>
 
                         <div class="border rounded-xl p-5 bg-gray-50 shadow-sm relative overflow-hidden">
                             <div class="absolute top-4 right-4">
-                                @if ($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved'))
+                                <?php if($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved')): ?>
                                     <span
                                         class="bg-green-100 text-green-800 border border-green-300 text-xs px-3 py-1 rounded-full font-semibold">Lunas
                                         / Aktif</span>
-                                @elseif($latestPayment && $latestPayment->status == 'pending')
+                                <?php elseif($latestPayment && $latestPayment->status == 'pending'): ?>
                                     <span
                                         class="bg-blue-100 text-blue-800 border border-blue-300 text-xs px-3 py-1 rounded-full font-semibold">Sedang
                                         Diverifikasi</span>
-                                @elseif($latestPayment && $latestPayment->status == 'rejected')
+                                <?php elseif($latestPayment && $latestPayment->status == 'rejected'): ?>
                                     <span
                                         class="bg-red-100 text-red-800 border border-red-300 text-xs px-3 py-1 rounded-full font-semibold">Pembayaran
                                         Ditolak</span>
-                                @else
+                                <?php else: ?>
                                     <span
                                         class="bg-amber-100 text-amber-800 border border-amber-300 text-xs px-3 py-1 rounded-full font-semibold">Belum
                                         Bayar</span>
-                                @endif
+                                <?php endif; ?>
                             </div>
 
-                            <h4 class="text-xl font-bold text-gray-800 mb-1">{{ $student->name }}</h4>
+                            <h4 class="text-xl font-bold text-gray-800 mb-1"><?php echo e($student->name); ?></h4>
                             <p class="text-sm text-gray-500 mb-1">
-                                Kelas: <span class="font-semibold text-gray-700">{{ $student->swimmingClass->name ?? '-' }}</span>
-                                <span class="text-xs px-1.5 py-0.5 rounded-full font-bold {{ $categorySlug === 'prestasi' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700' }}">
-                                    {{ $categorySlug === 'prestasi' ? 'Prestasi' : 'Belajar' }}
+                                Kelas: <span class="font-semibold text-gray-700"><?php echo e($student->swimmingClass->name ?? '-'); ?></span>
+                                <span class="text-xs px-1.5 py-0.5 rounded-full font-bold <?php echo e($categorySlug === 'prestasi' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'); ?>">
+                                    <?php echo e($categorySlug === 'prestasi' ? 'Prestasi' : 'Belajar'); ?>
+
                                 </span>
                             </p>
                             <p class="text-sm text-gray-500 mb-1">Paket: <span
-                                    class="font-semibold text-gray-700">{{ $student->package->name ?? 'Belum Pilih Paket' }}</span>
+                                    class="font-semibold text-gray-700"><?php echo e($student->package->name ?? 'Belum Pilih Paket'); ?></span>
                             </p>
                             <p class="text-sm text-gray-500 mb-4">Lokasi: <span
-                                    class="font-semibold text-gray-700">{{ $student->location->name ?? '-' }}</span>
+                                    class="font-semibold text-gray-700"><?php echo e($student->location->name ?? '-'); ?></span>
                             </p>
 
-                            @if ($latestPayment && $latestPayment->status == 'rejected')
+                            <?php if($latestPayment && $latestPayment->status == 'rejected'): ?>
                                 <div class="mb-4 p-2.5 text-xs text-red-700 bg-red-50 rounded-lg border border-red-200">
                                     <i class="fa-solid fa-triangle-exclamation mr-1"></i> Konfirmasi pembayaran Anda
                                     ditolak Admin. Silakan periksa kembali nominal transfer Anda dan lakukan konfirmasi
                                     ulang di bawah.
                                 </div>
-                            @endif
+                            <?php endif; ?>
 
                             <div class="border-t pt-3 mt-3">
-                                {{-- Rincian tagihan --}}
+                                
                                 <div class="space-y-1 text-xs text-gray-500 mb-3">
                                     <div class="flex justify-between">
                                         <span>Biaya Paket</span>
-                                        <span class="font-semibold text-gray-700">Rp {{ number_format($packagePrice, 0, ',', '.') }}</span>
+                                        <span class="font-semibold text-gray-700">Rp <?php echo e(number_format($packagePrice, 0, ',', '.')); ?></span>
                                     </div>
-                                    @if ($showRegFee)
+                                    <?php if($showRegFee): ?>
                                     <div class="flex justify-between">
                                         <span>Biaya Pendaftaran (sekali)</span>
                                         <span class="font-semibold text-gray-700">Rp 30.000</span>
                                     </div>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
 
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <span class="text-xs text-gray-400 block">Total Tagihan</span>
                                         <span class="text-lg font-extrabold text-blue-600">Rp
-                                            {{ number_format($totalBilling, 0, ',', '.') }}</span>
+                                            <?php echo e(number_format($totalBilling, 0, ',', '.')); ?></span>
                                     </div>
 
-                                    @if ($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved'))
+                                    <?php if($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved')): ?>
                                         <span class="text-green-600 font-bold text-sm"><i
                                                 class="fa-solid fa-circle-check mr-1"></i> Selesai / Aktif</span>
-                                    @elseif($latestPayment && $latestPayment->status == 'pending')
+                                    <?php elseif($latestPayment && $latestPayment->status == 'pending'): ?>
                                         <button disabled
                                             class="px-4 py-2 bg-gray-300 text-gray-500 text-xs font-bold uppercase rounded-lg cursor-not-allowed">
                                             Menunggu Admin
                                         </button>
-                                    @else
+                                    <?php else: ?>
                                         <button type="button" x-data=""
-                                            x-on:click="$dispatch('open-modal', 'upload-receipt-{{ $student->id }}')"
+                                            x-on:click="$dispatch('open-modal', 'upload-receipt-<?php echo e($student->id); ?>')"
                                             class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase rounded-lg shadow transition flex items-center">
                                             <i class="fa-solid fa-upload mr-1.5"></i> Konfirmasi Bayar
                                         </button>
 
-                                        <x-modal name="upload-receipt-{{ $student->id }}" focusable>
+                                        <?php if (isset($component)) { $__componentOriginal9f64f32e90b9102968f2bc548315018c = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9f64f32e90b9102968f2bc548315018c = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.modal','data' => ['name' => 'upload-receipt-'.e($student->id).'','focusable' => true]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('modal'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['name' => 'upload-receipt-'.e($student->id).'','focusable' => true]); ?>
                                             <form method="POST"
-                                                action="{{ route('general.payments.checkout', $student->id) }}"
+                                                action="<?php echo e(route('general.payments.checkout', $student->id)); ?>"
                                                 enctype="multipart/form-data" class="p-6 text-left">
-                                                @csrf
+                                                <?php echo csrf_field(); ?>
 
                                                 <div class="flex items-center justify-start space-x-3 text-blue-600 mb-4">
                                                     <i class="fa-solid fa-file-invoice-dollar text-2xl"></i>
@@ -141,13 +163,13 @@
                                                     <p class="mb-1">Silakan transfer sesuai nominal ke rekening berikut:</p>
                                                     <p class="font-bold text-gray-800">Bank BCA: 123-4567-890 (a.n. Klub Renang)</p>
                                                     <div class="mt-2 space-y-0.5">
-                                                        <p>Biaya Paket: <span class="font-bold text-gray-800">Rp {{ number_format($packagePrice, 0, ',', '.') }}</span></p>
-                                                        @if ($showRegFee)
+                                                        <p>Biaya Paket: <span class="font-bold text-gray-800">Rp <?php echo e(number_format($packagePrice, 0, ',', '.')); ?></span></p>
+                                                        <?php if($showRegFee): ?>
                                                         <p>Biaya Pendaftaran: <span class="font-bold text-gray-800">Rp 30.000</span></p>
-                                                        @endif
+                                                        <?php endif; ?>
                                                         <p class="mt-1 pt-1 border-t">Total Bayar: <span
                                                                 class="font-bold text-blue-600 text-sm">Rp
-                                                                {{ number_format($totalBilling, 0, ',', '.') }}</span>
+                                                                <?php echo e(number_format($totalBilling, 0, ',', '.')); ?></span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -160,9 +182,27 @@
                                                 </div>
 
                                                 <div class="mt-6 flex justify-end space-x-3">
-                                                    <x-secondary-button x-on:click="$dispatch('close')">
+                                                    <?php if (isset($component)) { $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.secondary-button','data' => ['xOn:click' => '$dispatch(\'close\')']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('secondary-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['x-on:click' => '$dispatch(\'close\')']); ?>
                                                         Batal
-                                                    </x-secondary-button>
+                                                     <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af)): ?>
+<?php $attributes = $__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af; ?>
+<?php unset($__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal3b0e04e43cf890250cc4d85cff4d94af)): ?>
+<?php $component = $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af; ?>
+<?php unset($__componentOriginal3b0e04e43cf890250cc4d85cff4d94af); ?>
+<?php endif; ?>
 
                                                     <button type="submit"
                                                         class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition ease-in-out duration-150">
@@ -170,22 +210,37 @@
                                                     </button>
                                                 </div>
                                             </form>
-                                        </x-modal>
-                                    @endif
+                                         <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $attributes = $__attributesOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__attributesOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9f64f32e90b9102968f2bc548315018c)): ?>
+<?php $component = $__componentOriginal9f64f32e90b9102968f2bc548315018c; ?>
+<?php unset($__componentOriginal9f64f32e90b9102968f2bc548315018c); ?>
+<?php endif; ?>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <div class="col-span-2 text-center py-6 text-gray-400 italic">
                             Anda belum memiliki pendaftaran kursus. Silakan daftar terlebih dahulu.
                         </div>
-                    @endforelse
-                </div>
-                
-                <div class="mt-6">
-                    {{ $students->links() }}
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH D:\laragon\www\klub-renang\resources\views/general/payments/index.blade.php ENDPATH**/ ?>

@@ -41,7 +41,7 @@
                                 <th class="px-6 py-3">No</th>
                                 <th class="px-6 py-3">Nama Murid</th>
                                 <th class="px-6 py-3">Paket Kursus</th>
-                                <th class="px-6 py-3">Kolam Latihan</th>
+                                <th class="px-6 py-3">Jadwal Latihan</th>
                                 <th class="px-6 py-3 text-center">Progress Absensi</th>
                                 <th class="px-6 py-3 text-center">Status</th>
                             </tr>
@@ -92,10 +92,26 @@
                                         @endif
                                     </td>
 
-                                    {{-- Lokasi --}}
+                                    {{-- Jadwal Latihan --}}
                                     <td class="px-6 py-4">
-                                        <i class="fa-solid fa-location-dot text-blue-400 mr-1"></i>
-                                        {{ $student->location->name ?? 'Belum Dipilih' }}
+                                        @forelse($student->schedules as $sched)
+                                            <div class="mb-1.5 last:mb-0">
+                                                <span class="inline-flex items-center text-[11px] font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
+                                                    {{ $sched->day_name }} ({{ substr($sched->start_time, 0, 5) }})
+                                                </span>
+                                                <div class="text-[10px] text-slate-500 font-medium ml-1 mt-0.5 leading-tight">
+                                                    <i class="fa-solid fa-map-pin mr-0.5 text-amber-500"></i> {{ $sched->location->name }} 
+                                                    <span class="mx-1 text-gray-300">•</span> 
+                                                    @if($sched->session_type == 'dryland')
+                                                        <span class="text-amber-600">Darat</span>
+                                                    @else
+                                                        <span class="text-blue-600">Renang</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <span class="text-xs text-gray-400 italic">Belum Pilih Jadwal</span>
+                                        @endforelse
                                     </td>
 
                                     {{-- Progress Absensi --}}
@@ -162,6 +178,9 @@
                     </table>
                 </div>
 
+                <div class="mt-4">
+                    {{ $students->links() }}
+                </div>
             </div>
         </div>
     </div>

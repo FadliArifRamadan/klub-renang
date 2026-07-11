@@ -18,7 +18,7 @@ class StudentController extends Controller
         Student::checkAndExpirePackages();
 
         // Ambil semua data murid beserta data coach (pelatih), paket, kelas, dan jadwalnya
-        $students = Student::with(['coach', 'package', 'swimmingClass.category', 'latestPayment', 'schedules.location'])->oldest()->paginate(10);
+        $students = Student::with(['coach', 'package', 'swimmingClass.category', 'latestPayment', 'schedules.location'])->oldest()->paginate(5);
 
         // Ambil semua data Coach untuk modal alokasi pelatih
         $coaches = User::where('role', 'coach')

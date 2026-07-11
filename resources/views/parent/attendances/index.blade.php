@@ -38,16 +38,30 @@
                                             {{ $att->student->name ?? '-' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            @if($att->session_type === 'swim')
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
-                                                    <i class="fa-solid fa-person-swimming mr-1"></i> Berenang
-                                                </span>
-                                            @elseif($att->session_type === 'dryland')
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-300">
-                                                    <i class="fa-solid fa-dumbbell mr-1"></i> Latihan Darat
-                                                </span>
+                                            @php
+                                                $categorySlug = $att->student->swimmingClass->category->slug ?? '';
+                                                $pkgType = $att->student->package->package_type ?? '';
+                                                $labels = [
+                                                    'regular' => 'Reguler',
+                                                    'private' => 'Private',
+                                                    'single_session' => 'Single Session',
+                                                    'monthly_prestasi' => 'Bulanan Prestasi'
+                                                ];
+                                            @endphp
+                                            @if($categorySlug === 'prestasi')
+                                                @if($att->session_type === 'swim')
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
+                                                        <i class="fa-solid fa-person-swimming mr-1"></i> Berenang
+                                                    </span>
+                                                @elseif($att->session_type === 'dryland')
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-300">
+                                                        <i class="fa-solid fa-dumbbell mr-1"></i> Latihan Darat
+                                                    </span>
+                                                @endif
                                             @else
-                                                <span class="text-gray-400">-</span>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300">
+                                                    {{ $labels[$pkgType] ?? 'Reguler' }}
+                                                </span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">

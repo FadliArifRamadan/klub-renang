@@ -12,7 +12,7 @@ class SwimmingClassController extends Controller
     // 1. Tampilkan Semua Kelas & Form Tambah/Edit
     public function index()
     {
-        $swimmingClasses = SwimmingClass::with('category')->oldest()->paginate(10);
+        $swimmingClasses = SwimmingClass::with('category')->oldest()->paginate(5);
         $categories = ClassCategory::all();
 
         return view('admin.swimming_classes.index', compact('swimmingClasses', 'categories'));

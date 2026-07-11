@@ -23,8 +23,8 @@ class PaymentController extends Controller
         $user = Auth::user();
         $students = $user->children()
             ->with(['package.locationPrices', 'latestPayment', 'swimmingClass.category', 'location'])
-            ->latest()
-            ->get();
+            ->oldest()
+            ->paginate(5);
 
         return view('parent.payments.index', compact('students'));
     }

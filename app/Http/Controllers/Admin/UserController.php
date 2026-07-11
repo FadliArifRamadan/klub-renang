@@ -34,7 +34,7 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->oldest('name')->paginate(10)->withQueryString();
+        $users = $query->oldest('name')->paginate(5)->withQueryString();
 
         return view('admin.users.index', compact('users', 'role', 'search'));
     }

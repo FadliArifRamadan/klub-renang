@@ -29,11 +29,13 @@
                         <div>
                             <x-input-label for="birth_date" value="Tanggal Lahir" />
                             <div class="relative mt-1">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <i class="fa-regular fa-calendar text-gray-500"></i>
-                                </div>
-                                <x-text-input id="birth_date" class="block w-full pr-10" type="date" name="birth_date"
-                                    :value="old('birth_date')" required onclick="this.showPicker()" />
+                                <input type="date" id="birth_date" name="birth_date" value="{{ old('birth_date') }}"
+                                    class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm pr-10 cursor-pointer"
+                                    required>
+                                <button type="button" onclick="document.getElementById('birth_date').showPicker()"
+                                    class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-indigo-600 transition-colors">
+                                    <i class="fa-solid fa-calendar-days text-lg"></i>
+                                </button>
                             </div>
                             <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
                         </div>

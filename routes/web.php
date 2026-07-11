@@ -81,7 +81,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/schedule-requests/reject/{id}', [\App\Http\Controllers\Admin\ScheduleRequestController::class, 'reject'])->name('schedule-requests.reject');
 
         // Riwayat Absensi Seluruh Coach
-        Route::get('/attendances', [\App\Http\Controllers\Admin\AttendanceController::class, 'index'])->name('attendances.index');
+        Route::get('/attendances/belajar', [\App\Http\Controllers\Admin\AttendanceController::class, 'belajar'])->name('attendances.belajar');
+        Route::get('/attendances/prestasi', [\App\Http\Controllers\Admin\AttendanceController::class, 'prestasi'])->name('attendances.prestasi');
     });
 
     // 2. KELOMPOK ROUTE COACH
@@ -111,9 +112,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/students', [\App\Http\Controllers\Coach\StudentController::class, 'index'])->name('students.index');
 
         // Absensi Murid
-        Route::get('/attendances', [\App\Http\Controllers\Coach\AttendanceController::class, 'index'])->name('attendances.index');
-        Route::get('/attendances/create', [\App\Http\Controllers\Coach\AttendanceController::class, 'create'])->name('attendances.create');
-        Route::post('/attendances', [\App\Http\Controllers\Coach\AttendanceController::class, 'store'])->name('attendances.store');
+        Route::get('/attendances/belajar', [\App\Http\Controllers\Coach\AttendanceController::class, 'belajarIndex'])->name('attendances.belajar.index');
+        Route::get('/attendances/belajar/create', [\App\Http\Controllers\Coach\AttendanceController::class, 'createBelajar'])->name('attendances.belajar.create');
+        Route::post('/attendances/belajar', [\App\Http\Controllers\Coach\AttendanceController::class, 'storeBelajar'])->name('attendances.belajar.store');
+
+        Route::get('/attendances/prestasi', [\App\Http\Controllers\Coach\AttendanceController::class, 'prestasiIndex'])->name('attendances.prestasi.index');
+        Route::get('/attendances/prestasi/create', [\App\Http\Controllers\Coach\AttendanceController::class, 'createPrestasi'])->name('attendances.prestasi.create');
+        Route::post('/attendances/prestasi', [\App\Http\Controllers\Coach\AttendanceController::class, 'storePrestasi'])->name('attendances.prestasi.store');
 
         // Catat & Pantau Perkembangan Murid
         Route::get('/progress', [\App\Http\Controllers\Coach\ProgressReportController::class, 'index'])->name('progress.index');

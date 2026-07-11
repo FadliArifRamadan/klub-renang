@@ -20,8 +20,8 @@ class StudentController extends Controller
         // Eager load relasi package, location, dan latestPayment untuk menghindari N+1 query
         $students = Student::where('coach_id', Auth::id())
             ->with(['package', 'location', 'latestPayment'])
-            ->oldest('name')
-            ->get();
+            ->oldest()
+            ->paginate(5);
 
         return view('coach.students.index', compact('students'));
     }

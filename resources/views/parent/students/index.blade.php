@@ -37,7 +37,7 @@
                                 <th scope="col" class="px-6 py-3">Nama Anak</th>
                                 <th scope="col" class="px-6 py-3">Gender</th>
                                 <th scope="col" class="px-6 py-3">Paket Kursus</th>
-                                <th scope="col" class="px-6 py-3">Kolam Latihan</th>
+                                <th scope="col" class="px-6 py-3 min-w-[150px]">Jadwal Latihan</th>
                                 <th scope="col" class="px-6 py-3">Coach / Pelatih</th>
                                 <th scope="col" class="px-6 py-3">Progress Absensi</th>
                                 <th scope="col" class="px-6 py-3 text-center">Status Akun</th>
@@ -73,7 +73,24 @@
                                     </td>
 
                                     <td class="px-6 py-4">
-                                        {{ $student->location->name ?? 'Belum Diplot' }}
+                                        @forelse($student->schedules as $sched)
+                                            <div class="mb-1.5 last:mb-0">
+                                                <span class="inline-flex items-center text-[11px] font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
+                                                    {{ $sched->day_name }} ({{ substr($sched->start_time, 0, 5) }})
+                                                </span>
+                                                <div class="text-[10px] text-slate-500 font-medium ml-1 mt-0.5 leading-tight">
+                                                    <i class="fa-solid fa-map-pin mr-0.5 text-amber-500"></i> {{ $sched->location->name }} 
+                                                    <span class="mx-1 text-gray-300">•</span> 
+                                                    @if($sched->session_type == 'dryland')
+                                                        <span class="text-amber-600">Darat</span>
+                                                    @else
+                                                        <span class="text-blue-600">Renang</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <span class="text-xs text-gray-400 italic">Belum Pilih Jadwal</span>
+                                        @endforelse
                                     </td>
 
                                     <td class="px-6 py-4">

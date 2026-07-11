@@ -31,7 +31,7 @@
                  style="display: none;"></div>
         </div>
 
-        <div class="flex-1 transition-all duration-300 ease-in-out"
+        <div class="flex-1 min-w-0 transition-all duration-300 ease-in-out"
              :class="(sidebarExpanded || sidebarHovered) ? 'lg:ml-[290px]' : 'lg:ml-[90px]'">
             
             <?php echo $__env->make('layouts.navigation', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>

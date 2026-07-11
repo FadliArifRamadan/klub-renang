@@ -31,7 +31,7 @@
                  style="display: none;"></div>
         </div>
 
-        <div class="flex-1 transition-all duration-300 ease-in-out"
+        <div class="flex-1 min-w-0 transition-all duration-300 ease-in-out"
              :class="(sidebarExpanded || sidebarHovered) ? 'lg:ml-[290px]' : 'lg:ml-[90px]'">
             
             @include('layouts.navigation')

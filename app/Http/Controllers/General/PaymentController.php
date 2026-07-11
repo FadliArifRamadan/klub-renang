@@ -21,8 +21,8 @@ class PaymentController extends Controller
         // Eager load package dan latestPayment untuk menghilangkan N+1 query
         $students = Student::where('user_id', Auth::id())
             ->with(['package.locationPrices', 'latestPayment', 'swimmingClass.category', 'location'])
-            ->latest()
-            ->get();
+            ->oldest()
+            ->paginate(5);
 
         return view('general.payments.index', compact('students'));
     }

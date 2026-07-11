@@ -29,7 +29,7 @@ class ScheduleRequestController extends Controller
             $query->where('status', $status);
         }
 
-        $requests = $query->latest()->paginate(10)->withQueryString();
+        $requests = $query->oldest()->paginate(5)->withQueryString();
 
         return view('admin.schedule-requests.index', compact('requests', 'status'));
     }

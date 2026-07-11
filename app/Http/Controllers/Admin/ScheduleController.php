@@ -23,7 +23,7 @@ class ScheduleController extends Controller
             $query->where('location_id', $locationId);
         }
         
-        $schedules = $query->paginate(15)->withQueryString();
+        $schedules = $query->paginate(5)->withQueryString();
         $swimmingClasses = SwimmingClass::where('is_active', true)->get();
         $locations = Location::all();
 

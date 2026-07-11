@@ -28,7 +28,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div>
                             <x-input-label for="birth_date" value="Tanggal Lahir" />
-                            <x-text-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date" :value="old('birth_date')" required />
+                            <div class="relative mt-1">
+                                <input type="date" id="birth_date" name="birth_date" value="{{ old('birth_date') }}"
+                                    class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm pr-10 cursor-pointer"
+                                    required>
+                                <button type="button" onclick="document.getElementById('birth_date').showPicker()"
+                                    class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-indigo-600 transition-colors">
+                                    <i class="fa-solid fa-calendar-days text-lg"></i>
+                                </button>
+                            </div>
                             <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
                         </div>
 

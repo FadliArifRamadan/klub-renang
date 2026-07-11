@@ -24,8 +24,8 @@ class PaymentController extends Controller
         // Ambil data payment yang statusnya 'pending' beserta relasi student (eager loaded)
         $payments = Payment::where('status', 'pending')
             ->with(['student.coach', 'student.package'])
-            ->latest()
-            ->get();
+            ->oldest()
+            ->paginate(5);
 
         // Ambil daftar Coach (User dengan role coach) beserta jumlah murid aktif mereka
         $coaches = User::where('role', 'coach')

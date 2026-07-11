@@ -15,7 +15,7 @@ class PackageController extends Controller
     // 1. Menampilkan Semua Data & Form (Tambah/Edit)
     public function index(Request $request)
     {
-        $packages = Package::with(['swimmingClass.category', 'locationPrices.location'])->oldest()->paginate(10);
+        $packages = Package::with(['swimmingClass.category', 'locationPrices.location'])->oldest()->paginate(5);
         $swimmingClasses = SwimmingClass::with('category')->where('is_active', true)->get();
         $locations = Location::oldest()->get();
 
