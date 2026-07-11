@@ -48,7 +48,7 @@
                                 <th scope="col" class="px-6 py-3">Nama Anak</th>
                                 <th scope="col" class="px-6 py-3">Gender</th>
                                 <th scope="col" class="px-6 py-3">Paket Kursus</th>
-                                <th scope="col" class="px-6 py-3">Kolam Latihan</th>
+                                <th scope="col" class="px-6 py-3 min-w-[150px]">Jadwal Latihan</th>
                                 <th scope="col" class="px-6 py-3">Coach / Pelatih</th>
                                 <th scope="col" class="px-6 py-3">Progress Absensi</th>
                                 <th scope="col" class="px-6 py-3 text-center">Status Akun</th>
@@ -89,8 +89,24 @@
                                     </td>
 
                                     <td class="px-6 py-4">
-                                        <?php echo e($student->location->name ?? 'Belum Diplot'); ?>
-
+                                        <?php $__empty_2 = true; $__currentLoopData = $student->schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
+                                            <div class="mb-1.5 last:mb-0">
+                                                <span class="inline-flex items-center text-[11px] font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
+                                                    <?php echo e($sched->day_name); ?> (<?php echo e(substr($sched->start_time, 0, 5)); ?>)
+                                                </span>
+                                                <div class="text-[10px] text-slate-500 font-medium ml-1 mt-0.5 leading-tight">
+                                                    <i class="fa-solid fa-map-pin mr-0.5 text-amber-500"></i> <?php echo e($sched->location->name); ?> 
+                                                    <span class="mx-1 text-gray-300">•</span> 
+                                                    <?php if($sched->session_type == 'dryland'): ?>
+                                                        <span class="text-amber-600">Darat</span>
+                                                    <?php else: ?>
+                                                        <span class="text-blue-600">Renang</span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
+                                            <span class="text-xs text-gray-400 italic">Belum Pilih Jadwal</span>
+                                        <?php endif; ?>
                                     </td>
 
                                     <td class="px-6 py-4">

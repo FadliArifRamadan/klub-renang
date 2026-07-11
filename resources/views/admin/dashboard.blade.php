@@ -429,8 +429,8 @@
                     });
 
                     // Tampilkan/Sembunyikan chart berdasarkan ketersediaan data
-                    const kondisiFisikEl = document.getElementById('radarChart').closest('.bg-slate-50');
-                    const sistemEnergiEl = document.getElementById('barChart').closest('.bg-slate-50');
+                    const kondisiFisikEl = document.getElementById('radarChart').closest('.bg-gray-50, .bg-slate-50, .rounded-xl');
+                    const sistemEnergiEl = document.getElementById('barChart').closest('.bg-gray-50, .bg-slate-50, .rounded-xl');
                     const chartsGridEl = kondisiFisikEl.parentElement; // grid container
 
                     if (hasKondisiFisik) {
@@ -840,6 +840,12 @@
                     renderChartsForYear(selectedYear);
                 }
             });
+
+            // Auto-select murid pertama jika ada
+            @if ($students->isNotEmpty())
+                selectDropdown.value = "{{ $students->first()->id }}";
+                selectDropdown.dispatchEvent(new Event('change'));
+            @endif
         });
     </script>
 </x-app-layout>

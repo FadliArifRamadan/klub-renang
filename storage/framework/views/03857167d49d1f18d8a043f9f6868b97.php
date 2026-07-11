@@ -277,6 +277,10 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="mt-4">
+                    <?php echo e($payments->links()); ?>
+
+                </div>
             </div>
         </div>
     </div>

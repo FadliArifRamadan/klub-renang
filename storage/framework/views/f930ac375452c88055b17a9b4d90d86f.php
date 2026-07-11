@@ -73,17 +73,7 @@ unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    
-                    <div class="flex justify-end gap-3 mb-6">
-                        <button type="button" id="btn-reset"
-                            class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 border rounded-lg font-medium transition-all text-sm flex items-center gap-1.5">
-                            <i class="fa-solid fa-rotate-left"></i> Reset
-                        </button>
-                        <button type="button" id="btn-search"
-                            class="px-5 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold shadow-md transition-all text-sm flex items-center gap-1.5">
-                            <i class="fa-solid fa-magnifying-glass"></i> Cari Jadwal
-                        </button>
-                    </div>
+
 
                     
                     <div class="flex justify-between items-center mb-4">
@@ -288,20 +278,7 @@ unset($__errorArgs, $__bag); ?>
                     btnSelectAll.classList.replace('hover:bg-red-100', 'hover:bg-blue-100');
                 }
 
-                // Remove automatic change listeners, attach to Search button instead
-                const btnSearch = document.getElementById('btn-search');
-                const btnReset = document.getElementById('btn-reset');
-                
-                if (btnSearch) {
-                    btnSearch.addEventListener('click', filterStudents);
-                }
-                
-                if (btnReset) {
-                    btnReset.addEventListener('click', function() {
-                        dateInput.value = '<?php echo e(date('Y-m-d')); ?>';
-                        filterStudents();
-                    });
-                }
+                dateInput.addEventListener('change', filterStudents);
                 
                 // Initial filter on page load
                 filterStudents();

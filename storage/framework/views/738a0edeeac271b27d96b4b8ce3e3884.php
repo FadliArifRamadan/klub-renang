@@ -234,6 +234,11 @@
                         </div>
                     <?php endif; ?>
                 </div>
+                
+                <div class="mt-6">
+                    <?php echo e($students->links()); ?>
+
+                </div>
             </div>
         </div>
     </div>

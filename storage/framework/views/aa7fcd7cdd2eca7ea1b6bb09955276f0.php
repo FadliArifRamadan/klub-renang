@@ -641,7 +641,14 @@
                                 </div>
                             </div>
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Personal Best Time</h4>
+                                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+                                    <h4 class="text-sm font-bold text-slate-700 flex items-center gap-1"><i class="fa-solid fa-stopwatch text-indigo-500"></i> Personal Best Time</h4>
+                                    <div class="w-full sm:w-60">
+                                        <select id="pbt_filter_selector" class="w-full text-xs rounded-md border-gray-300 shadow-sm text-gray-900 font-semibold bg-white py-1">
+                                            <!-- Dynamically populated -->
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="relative w-full h-[300px]">
                                     <canvas id="lineChartPBT"></canvas>
                                 </div>
@@ -819,9 +826,8 @@
                     const freetextContainer = document.getElementById('freetext-container');
                     const prestasiContainer = document.getElementById('prestasi-charts-container');
 
-                    // Cek apakah kelas Prestasi
-                    const latestReportAll = reports[reports.length - 1];
-                    const isPrestasi = latestReportAll && latestReportAll.metrics && ('Kondisi Fisik' in latestReportAll.metrics);
+                    // Cek apakah kelas Prestasi (memiliki Personal Best Time — selalu diisi untuk prestasi)
+                    const isPrestasi = reports.some(r => r.metrics && ('Personal Best Time' in r.metrics));
 
                     if (filteredReports.length === 0) {
                         // Tahun dipilih tapi tidak ada data
@@ -856,7 +862,10 @@
                         const labels = [];
                         const radarData = { Endurance: [], Fleksibilitas: [], Strength: [], Speed: [], Agility: [] };
                         const barData = { Aerobic: [], Anaerobic: [] };
-                        const pbtData = { TestPerBulan: [], PbtEvent: [] };
+
+                        // Cek apakah ada data Kondisi Fisik / Sistem Energi di salah satu report
+                        let hasKondisiFisik = false;
+                        let hasSistemEnergi = false;
 
                         filteredReports.forEach(report => {
                             const d = new Date(report.date);
@@ -864,6 +873,7 @@
 
                             if (report.metrics) {
                                 const kf = report.metrics['Kondisi Fisik'] || {};
+                                if (Object.keys(kf).length > 0) hasKondisiFisik = true;
                                 radarData.Endurance.push(kf['Endurance'] || 0);
                                 radarData.Fleksibilitas.push(kf['Fleksibilitas'] || 0);
                                 radarData.Strength.push(kf['Strength'] || 0);
@@ -871,130 +881,257 @@
                                 radarData.Agility.push(kf['Agility'] || 0);
 
                                 const se = report.metrics['Sistem Energi'] || {};
+                                if (Object.keys(se).length > 0) hasSistemEnergi = true;
                                 barData.Aerobic.push(se['Aerobic'] || 0);
                                 barData.Anaerobic.push(se['Anaerobic'] || 0);
+                            }
+                        });
 
-                                const pbt = report.metrics['Personal Best Time'] || {};
-                                pbtData.TestPerBulan.push(parseTimeToSeconds(pbt['Test per Bulan']));
-                                pbtData.PbtEvent.push({
-                                    val: parseTimeToSeconds(pbt['PBT Event']),
-                                    raw: pbt['PBT Event']
+                        // Tampilkan/Sembunyikan chart berdasarkan ketersediaan data
+                        const kondisiFisikEl = document.getElementById('radarChart').closest('.bg-slate-50');
+                        const sistemEnergiEl = document.getElementById('barChart').closest('.bg-slate-50');
+                        const chartsGridEl = kondisiFisikEl.parentElement; // grid container
+
+                        if (hasKondisiFisik) {
+                            kondisiFisikEl.style.display = '';
+                        } else {
+                            kondisiFisikEl.style.display = 'none';
+                        }
+
+                        if (hasSistemEnergi) {
+                            sistemEnergiEl.style.display = '';
+                        } else {
+                            sistemEnergiEl.style.display = 'none';
+                        }
+
+                        // Sembunyikan seluruh grid baris atas jika kedua chart tidak ada
+                        if (!hasKondisiFisik && !hasSistemEnergi) {
+                            chartsGridEl.style.display = 'none';
+                        } else {
+                            chartsGridEl.style.display = '';
+                        }
+
+                        const len = labels.length;
+
+                        if (hasKondisiFisik) {
+                            // --- 2. Radar Chart (Kondisi Fisik) — maks 2 titik terakhir ---
+                            const latestLabels = ['Endurance', 'Fleksibilitas', 'Strength', 'Speed', 'Agility'];
+                            const latestData = len > 0 ? [
+                                radarData.Endurance[len-1], radarData.Fleksibilitas[len-1],
+                                radarData.Strength[len-1], radarData.Speed[len-1], radarData.Agility[len-1]
+                            ] : [];
+                            const prevData = len > 1 ? [
+                                radarData.Endurance[len-2], radarData.Fleksibilitas[len-2],
+                                radarData.Strength[len-2], radarData.Speed[len-2], radarData.Agility[len-2]
+                            ] : [];
+
+                            const radarDatasets = [{
+                                label: labels[len-1] || 'Terbaru',
+                                data: latestData,
+                                backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                                borderColor: 'rgb(37, 99, 235)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgb(37, 99, 235)'
+                            }];
+                            if (len > 1) {
+                                radarDatasets.push({
+                                    label: labels[len-2] || 'Sebelumnya',
+                                    data: prevData,
+                                    backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                                    borderColor: 'rgb(156, 163, 175)',
+                                    borderWidth: 2,
+                                    pointBackgroundColor: 'rgb(156, 163, 175)'
+                                });
+                            }
+                            radarChartInst = new Chart(document.getElementById('radarChart').getContext('2d'), {
+                                type: 'radar',
+                                data: { labels: latestLabels, datasets: radarDatasets },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: { r: { min: 0, max: 100 } },
+                                    plugins: { legend: { position: 'bottom' } }
+                                }
+                            });
+                        }
+
+                        if (hasSistemEnergi) {
+                            // --- 3. Bar Chart (Sistem Energi) — langsung semua bulan di tahun ini ---
+                            barChartInst = new Chart(document.getElementById('barChart').getContext('2d'), {
+                                type: 'bar',
+                                data: {
+                                    labels: labels,
+                                    datasets: [
+                                        { label: 'Aerobic', data: barData.Aerobic, backgroundColor: 'rgba(16, 185, 129, 0.7)' },
+                                        { label: 'Anaerobic', data: barData.Anaerobic, backgroundColor: 'rgba(239, 68, 68, 0.7)' }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { position: 'bottom' } },
+                                    scales: { y: { beginAtZero: true, max: 100 } }
+                                }
+                            });
+                        }
+
+                        // --- 4. Render Line Chart PBT with selector dropdown ---
+                        const pbtSelector = document.getElementById('pbt_filter_selector');
+                        const pbtCombinations = [];
+
+                        filteredReports.forEach(report => {
+                            if (report.metrics && report.metrics['Personal Best Time']) {
+                                let entries = [];
+                                if (Array.isArray(report.metrics['Personal Best Time'])) {
+                                    entries = report.metrics['Personal Best Time'];
+                                } else {
+                                    entries = [{
+                                        gaya: 'Gaya Bebas',
+                                        jarak: '50m',
+                                        test_per_bulan: report.metrics['Personal Best Time']['Test per Bulan'] || '',
+                                        pbt_event: report.metrics['Personal Best Time']['PBT Event'] || ''
+                                    }];
+                                }
+                                entries.forEach(e => {
+                                    if (e.gaya && e.jarak) {
+                                        const key = `${e.gaya} - ${e.jarak}`;
+                                        if (!pbtCombinations.includes(key)) {
+                                            pbtCombinations.push(key);
+                                        }
+                                    }
                                 });
                             }
                         });
 
-                        const len = labels.length;
+                        const oldSelectedVal = pbtSelector ? pbtSelector.value : '';
 
-                        // --- 2. Radar Chart (Kondisi Fisik) — maks 2 titik terakhir ---
-                        const latestLabels = ['Endurance', 'Fleksibilitas', 'Strength', 'Speed', 'Agility'];
-                        const latestData = len > 0 ? [
-                            radarData.Endurance[len-1], radarData.Fleksibilitas[len-1],
-                            radarData.Strength[len-1], radarData.Speed[len-1], radarData.Agility[len-1]
-                        ] : [];
-                        const prevData = len > 1 ? [
-                            radarData.Endurance[len-2], radarData.Fleksibilitas[len-2],
-                            radarData.Strength[len-2], radarData.Speed[len-2], radarData.Agility[len-2]
-                        ] : [];
+                        if (pbtSelector) {
+                            pbtSelector.innerHTML = '';
+                            if (pbtCombinations.length === 0) {
+                                const opt = document.createElement('option');
+                                opt.value = '';
+                                opt.textContent = 'Tidak ada data PBT';
+                                pbtSelector.appendChild(opt);
+                            } else {
+                                pbtCombinations.forEach(comb => {
+                                    const opt = document.createElement('option');
+                                    opt.value = comb;
+                                    opt.textContent = comb;
+                                    pbtSelector.appendChild(opt);
+                                });
 
-                        const radarDatasets = [{
-                            label: labels[len-1] || 'Terbaru',
-                            data: latestData,
-                            backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                            borderColor: 'rgb(37, 99, 235)',
-                            borderWidth: 2,
-                            pointBackgroundColor: 'rgb(37, 99, 235)'
-                        }];
-                        if (len > 1) {
-                            radarDatasets.push({
-                                label: labels[len-2] || 'Sebelumnya',
-                                data: prevData,
-                                backgroundColor: 'rgba(156, 163, 175, 0.2)',
-                                borderColor: 'rgb(156, 163, 175)',
-                                borderWidth: 2,
-                                pointBackgroundColor: 'rgb(156, 163, 175)'
-                            });
-                        }
-                        radarChartInst = new Chart(document.getElementById('radarChart').getContext('2d'), {
-                            type: 'radar',
-                            data: { labels: latestLabels, datasets: radarDatasets },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: { r: { min: 0, max: 100 } },
-                                plugins: { legend: { position: 'bottom' } }
-                            }
-                        });
-
-                        // --- 3. Bar Chart (Sistem Energi) — langsung semua bulan di tahun ini ---
-                        barChartInst = new Chart(document.getElementById('barChart').getContext('2d'), {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [
-                                    { label: 'Aerobic', data: barData.Aerobic, backgroundColor: 'rgba(16, 185, 129, 0.7)' },
-                                    { label: 'Anaerobic', data: barData.Anaerobic, backgroundColor: 'rgba(239, 68, 68, 0.7)' }
-                                ]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: { legend: { position: 'bottom' } },
-                                scales: { y: { beginAtZero: true, max: 100 } }
-                            }
-                        });
-
-                        // --- 4. Line Chart (Personal Best Time) ---
-                        const pbtDatasets = [
-                            {
-                                label: 'Test per Bulan',
-                                data: pbtData.TestPerBulan,
-                                borderColor: 'rgb(147, 51, 234)',
-                                backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                                tension: 0.3,
-                                fill: true
-                            },
-                            {
-                                label: 'PBT Event',
-                                data: pbtData.PbtEvent.map(e => e.val),
-                                type: 'scatter',
-                                pointBackgroundColor: 'rgb(245, 158, 11)',
-                                pointBorderColor: 'rgb(255, 255, 255)',
-                                pointRadius: 6,
-                                pointHoverRadius: 8
-                            }
-                        ];
-
-                        lineChartPBTInst = new Chart(document.getElementById('lineChartPBT').getContext('2d'), {
-                            type: 'line',
-                            data: { labels: labels, datasets: pbtDatasets },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: { position: 'bottom' },
-                                    tooltip: {
-                                        callbacks: {
-                                            label: function(context) {
-                                                if (context.dataset.label === 'PBT Event') {
-                                                    const rawText = pbtData.PbtEvent[context.dataIndex].raw;
-                                                    return `Event: ${rawText || formatSecondsToTime(context.raw)}`;
-                                                }
-                                                return `Test: ${formatSecondsToTime(context.raw)}`;
-                                            }
-                                        }
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        reverse: true,
-                                        ticks: {
-                                            callback: function(value) { return formatSecondsToTime(value); }
-                                        },
-                                        title: { display: true, text: 'Waktu (MM:SS.ms)' }
-                                    }
+                                if (pbtCombinations.includes(oldSelectedVal)) {
+                                    pbtSelector.value = oldSelectedVal;
+                                } else {
+                                    pbtSelector.value = pbtCombinations[0];
                                 }
                             }
-                        });
+
+                            // Remove old event listener to prevent duplication
+                            pbtSelector.onchange = null;
+                            pbtSelector.addEventListener('change', updateLineChartPBT);
+                        }
+
+                        function updateLineChartPBT() {
+                            if (lineChartPBTInst) {
+                                lineChartPBTInst.destroy();
+                                lineChartPBTInst = null;
+                            }
+
+                            const val = pbtSelector ? pbtSelector.value : '';
+                            if (!val) return;
+
+                            const parts = val.split(' - ');
+                            const selGaya = parts[0];
+                            const selJarak = parts[1];
+
+                            const localLabels = [];
+                            const localPbtData = { TestPerBulan: [], PbtEvent: [] };
+
+                            filteredReports.forEach(report => {
+                                const d = new Date(report.date);
+                                let entry = null;
+
+                                if (report.metrics && report.metrics['Personal Best Time']) {
+                                    let entries = [];
+                                    if (Array.isArray(report.metrics['Personal Best Time'])) {
+                                        entries = report.metrics['Personal Best Time'];
+                                    } else {
+                                        entries = [{
+                                            gaya: 'Gaya Bebas',
+                                            jarak: '50m',
+                                            test_per_bulan: report.metrics['Personal Best Time']['Test per Bulan'] || '',
+                                            pbt_event: report.metrics['Personal Best Time']['PBT Event'] || ''
+                                        }];
+                                    }
+                                    entry = entries.find(e => e.gaya === selGaya && e.jarak === selJarak);
+                                }
+
+                                if (entry && entry.test_per_bulan) {
+                                    localLabels.push(d.toLocaleDateString('id-ID', { month: 'short' }));
+                                    localPbtData.TestPerBulan.push(parseTimeToSeconds(entry.test_per_bulan));
+                                    localPbtData.PbtEvent.push({
+                                        val: parseTimeToSeconds(entry.pbt_event),
+                                        raw: entry.pbt_event
+                                    });
+                                }
+                            });
+
+                            const pbtDatasets = [
+                                {
+                                    label: 'Test per Bulan',
+                                    data: localPbtData.TestPerBulan,
+                                    borderColor: 'rgb(147, 51, 234)',
+                                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                                    tension: 0.3,
+                                    fill: true
+                                },
+                                {
+                                    label: 'PBT Event',
+                                    data: localPbtData.PbtEvent.map(e => e.val),
+                                    type: 'scatter',
+                                    pointBackgroundColor: 'rgb(245, 158, 11)',
+                                    pointBorderColor: 'rgb(255, 255, 255)',
+                                    pointRadius: 6,
+                                    pointHoverRadius: 8
+                                }
+                            ];
+
+                            lineChartPBTInst = new Chart(document.getElementById('lineChartPBT').getContext('2d'), {
+                                type: 'line',
+                                data: { labels: localLabels, datasets: pbtDatasets },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: { position: 'bottom' },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    if (context.dataset.label === 'PBT Event') {
+                                                        const rawText = localPbtData.PbtEvent[context.dataIndex].raw;
+                                                        return `Event: ${rawText || formatSecondsToTime(context.raw)}`;
+                                                    }
+                                                    return `Test: ${formatSecondsToTime(context.raw)}`;
+                                                }
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            reverse: true,
+                                            ticks: {
+                                                callback: function(value) { return formatSecondsToTime(value); }
+                                            },
+                                            title: { display: true, text: 'Waktu (MM:SS.ms)' }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        // Initial render
+                        updateLineChartPBT();
 
                     } else {
                         // KELAS BELAJAR (VERTICAL TABS — 2 Kolom)

@@ -555,7 +555,17 @@
                         <p class="text-xs text-gray-500">Visualisasi perkembangan fisik Anda berdasarkan catatan dari
                             pelatih.</p>
                     </div>
-                    
+                    <?php if($myStudent && $myStudent->progressReports->isNotEmpty()): ?>
+                        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                            <div class="w-full sm:w-40">
+                                <select id="chart_year_filter"
+                                    class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 font-semibold bg-gray-50 p-2.5"
+                                    disabled>
+                                    <option value="" disabled selected>-- Tahun --</option>
+                                </select>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <?php if(!$myStudent): ?>
@@ -576,433 +586,655 @@
                         <i class="fa-solid fa-folder-open text-6xl mb-4 text-gray-200"></i>
                         <p class="font-medium text-gray-600">Belum ada riwayat perkembangan</p>
                         <p class="text-xs text-gray-400 mt-1 max-w-sm">
-                            Hubungi Coach pendamping
-                            <span
-                                class="font-semibold text-gray-600">(<?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?>)</span>
-                            untuk menginput data perkembangan pertama Anda.
-                        </p>
-                    </div>
-                <?php else: ?>
-                    
-                    <?php
-                        $latestReport = $myStudent->progressReports->last();
-                        $isFreetext = $myStudent->progressReports->first()?->report_type === 'freetext';
-                    ?>
-
-                    <?php if($isFreetext): ?>
-                        
-                        <div class="flex flex-col">
-                            <div class="flex items-center gap-2 mb-4">
-                                <span class="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full border border-green-200">Kelas Belajar Renang</span>
-                                <span class="text-xs text-gray-500">Catatan perkembangan dari pelatih</span>
-                            </div>
-                            <?php
-                                $sortedReports = $myStudent->progressReports->sortByDesc('date')->values();
-                            ?>
-                            <div x-data="{ activeMonth: 0 }" style="display: flex; height: 420px; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; background: #fff;">
-                                
-                                <div style="width: 200px; min-width: 200px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column;">
-                                    <div style="padding: 12px; border-bottom: 1px solid #e2e8f0; background: rgba(241,245,249,0.8);">
-                                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <i class="fa-regular fa-calendar-days"></i> Menu Bulan
-                                        </h4>
-                                    </div>
-                                    <div style="flex: 1; overflow-y: auto; padding: 8px;" class="space-y-1">
-                                        <?php $__currentLoopData = $sortedReports; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $idx => $report): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <button type="button" @click="activeMonth = <?php echo e($idx); ?>"
-                                                class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm font-semibold transition-all duration-150 border border-transparent"
-                                                :class="activeMonth === <?php echo e($idx); ?> ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-indigo-50'">
-                                                <span class="w-2 h-2 rounded-full shrink-0" :class="activeMonth === <?php echo e($idx); ?> ? 'bg-white' : 'bg-indigo-400'"></span>
-                                                <span class="truncate"><?php echo e($report->date->translatedFormat('F')); ?></span>
-                                            </button>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </div>
-                                </div>
-                                
-                                <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
-                                    <div style="flex: 1; overflow-y: auto; padding: 20px;">
-                                        <?php $__currentLoopData = $sortedReports; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $idx => $report): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <div x-show="activeMonth === <?php echo e($idx); ?>" x-cloak>
-                                                <div class="flex items-center gap-2 mb-5">
-                                                    <div class="w-1 h-6 bg-indigo-500 rounded-full"></div>
-                                                    <h4 class="text-base font-bold text-slate-800">Bulan: <?php echo e($report->date->translatedFormat('F Y')); ?></h4>
-                                                </div>
-                                                <?php if($report->metrics): ?>
-                                                    <?php $__currentLoopData = $report->metrics; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <div class="mb-4">
-                                                            <h5 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-1.5 mb-3 flex items-center gap-1.5">
-                                                                <i class="fa-solid fa-layer-group text-indigo-500 text-xs"></i> <?php echo e($category); ?>
-
-                                                            </h5>
-                                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                                                <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                    <?php
-                                                                        $badgeColor = 'bg-slate-100 text-slate-700';
-                                                                        if (in_array($val, ['Sangat Mahir', 'Lulus Tahap Ini', 'Sudah Lancar'])) $badgeColor = 'bg-green-100 text-green-700';
-                                                                        elseif (in_array($val, ['Berkembang Baik', 'Mulai Bisa'])) $badgeColor = 'bg-blue-100 text-blue-700';
-                                                                        elseif ($val === 'Mulai Terlihat') $badgeColor = 'bg-amber-100 text-amber-700';
-                                                                        elseif (in_array($val, ['Belum Berkembang', 'Belum Bisa', 'Belum Memulai'])) $badgeColor = 'bg-red-100 text-red-700';
-                                                                    ?>
-                                                                    <div class="text-xs flex justify-between items-center p-2.5 bg-slate-50 rounded-lg border border-slate-100">
-                                                                        <span class="font-medium text-slate-600"><?php echo e($key); ?></span>
-                                                                        <span class="px-2 py-0.5 rounded-full font-bold <?php echo e($badgeColor); ?>"><?php echo e($val); ?></span>
-                                                                    </div>
-                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                            </div>
-                                                        </div>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                <?php else: ?>
-                                                    <p class="text-sm text-gray-400 italic">Tidak ada data metrik untuk bulan ini.</p>
-                                                <?php endif; ?>
-                                                <?php if($report->notes): ?>
-                                                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl mt-4">
-                                                        <p class="text-xs font-bold text-indigo-800 mb-1.5 flex items-center gap-1">
-                                                            <i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:
-                                                        </p>
-                                                        <p class="text-sm text-slate-700 italic leading-relaxed"><?php echo e($report->notes); ?></p>
-                                                    </div>
-                                                <?php else: ?>
-                                                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl mt-4">
-                                                        <p class="text-xs text-slate-400 italic">Tidak ada catatan dari pelatih pada bulan ini.</p>
-                                                    </div>
-                                                <?php endif; ?>
+                                                    Hubungi Coach pendamping
+                                                    <span
+                                                        class="font-semibold text-gray-600">(<?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?>)</span>
+                                                    untuk menginput data perkembangan pertama Anda.
+                                                </p>
                                             </div>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
-                                <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
-                                    <h4 class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
-                                    </h4>
-                                    <p class="text-sm text-gray-600 italic">"<?php echo e($latestReport->notes ?? 'Tidak ada catatan.'); ?>"</p>
-                                    <div class="text-[10px] text-gray-400 mt-2 font-semibold">Diinput pada: <?php echo e($latestReport->date->translatedFormat('d F Y')); ?></div>
-                                </div>
-                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
-                                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
-                                    </h4>
-                                    <div class="space-y-1.5 text-xs text-gray-600">
-                                        <div>Kelas: <span class="font-bold text-gray-800"><?php echo e($myStudent->swimmingClass->name ?? 'Belum Ditentukan'); ?> <?php echo e(isset($myStudent->swimmingClass->category) ? '(' . $myStudent->swimmingClass->category->name . ')' : ''); ?></span></div>
-                                        <div>Pelatih: <span class="font-bold text-gray-800"><?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?></span></div>
-                                        <div>Lokasi: <span class="font-bold text-gray-800"><?php echo e($myStudent->location->name ?? 'Belum Dipilih'); ?><?php if($myStudent->secondaryLocation): ?> & <?php echo e($myStudent->secondaryLocation->name); ?><?php endif; ?></span></div>
-                                        <div>Sisa Kuota: <span class="font-bold text-blue-600"><?php echo e($myStudent->quota_left); ?> sesi</span></div>
-                                        <?php if($myStudent->schedules && $myStudent->schedules->isNotEmpty()): ?>
-                                            <div class="pt-1.5 mt-1.5 border-t border-gray-200">
-                                                <span class="font-bold text-gray-500 block mb-1">Jadwal Aktif:</span>
-                                                <div class="space-y-1">
-                                                    <?php $__currentLoopData = $myStudent->schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <?php
-                                                            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-                                                            $dayName = $days[$sched->day_of_week] ?? 'Hari Tidak Valid';
-                                                            $timeRange = substr($sched->start_time, 0, 5) . ' - ' . substr($sched->end_time, 0, 5);
-                                                            $type = $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
-                                                        ?>
-                                                        <div class="bg-white border border-gray-100 rounded p-1.5 text-[11px] font-semibold text-gray-700 shadow-sm flex flex-col gap-0.5">
-                                                            <div class="flex justify-between items-center">
-                                                                <span class="text-blue-700 font-bold"><?php echo e($dayName); ?>, <?php echo e($timeRange); ?></span>
-                                                                <span class="px-1 py-0.2 text-[9px] bg-blue-50 text-blue-600 rounded"><?php echo e($type); ?></span>
-                                                            </div>
-                                                            <div class="text-[10px] text-gray-500 flex items-center gap-1">
-                                                                <i class="fa-solid fa-location-dot"></i> <?php echo e($sched->location->name ?? 'Lokasi tidak diketahui'); ?>
+                                        <?php else: ?>
+                                            
+                                            <div id="chart-year-empty-state"
+                                                class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4 text-gray-400">
+                                                <i class="fa-regular fa-calendar-xmark text-6xl mb-4 text-gray-200"></i>
+                                                <p class="font-medium text-gray-800 dark:text-white/90 text-lg" id="year-empty-title">Belum ada data latihan di tahun ini</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-sm" id="year-empty-subtext">Pilih tahun lain atau tunggu hingga Coach menginput data perkembangan.</p>
+                                            </div>
 
+                                            
+                                            <div id="chart-no-data-state"
+                                                class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4 text-gray-400">
+                                                <i class="fa-solid fa-folder-open text-6xl mb-4 text-gray-200"></i>
+                                                <p class="font-medium text-gray-600">Belum ada riwayat perkembangan untuk murid ini</p>
+                                                <p class="text-xs text-gray-400 mt-1 max-w-sm" id="no-data-subtext">Hubungi Coach pendamping untuk menginput data perkembangan fisik pertama.</p>
+                                            </div>
+
+                                            
+                                            <div id="chart-container" class="hidden flex-1 flex-col min-w-0 overflow-hidden">
+                                                
+                                                <div id="prestasi-charts-container" class="hidden flex-col space-y-8 w-full mt-4 min-w-0">
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-0">
+                                                            <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Kondisi Fisik</h4>
+                                                            <div class="relative w-full h-[250px]">
+                                                                <canvas id="radarChart"></canvas>
                                                             </div>
                                                         </div>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-0">
+                                                            <h4 class="text-sm font-bold text-center text-slate-700 mb-2">Sistem Energi</h4>
+                                                            <div class="relative w-full h-[250px]">
+                                                                <canvas id="barChart"></canvas>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 min-w-0">
+                                                         <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+                                                             <h4 class="text-sm font-bold text-slate-700 flex items-center gap-1"><i class="fa-solid fa-stopwatch text-indigo-500"></i> Personal Best Time</h4>
+                                                             <div class="w-full sm:w-60">
+                                                                 <select id="pbt_filter_selector" class="w-full text-xs rounded-md border-gray-300 shadow-sm text-gray-900 font-semibold bg-white py-1 max-w-full truncate">
+                                                                     <!-- Dynamically populated -->
+                                                                 </select>
+                                                             </div>
+                                                         </div>
+                                                         <div class="relative w-full h-[300px]">
+                                                             <canvas id="lineChartPBT"></canvas>
+                                                         </div>
+                                                     </div>
                                                 </div>
-
-                                                <?php
-                                                    $pendingReq = $myStudent->scheduleChangeRequests->where('status','pending')->first();
-                                                ?>
 
                                                 
-                                                <?php if($pendingReq): ?>
-                                                    <div class="mt-2 p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-[11px]">
-                                                        <div class="flex items-center gap-1.5 text-amber-800 font-bold mb-1">
-                                                            <i class="fa-solid fa-clock-rotate-left"></i> Pengajuan Pindah Jadwal (Pending)
-                                                        </div>
-                                                        <p class="text-slate-600 leading-relaxed mb-1">Menunggu persetujuan Admin untuk pindah ke jadwal berikut:</p>
-                                                        <div class="space-y-1">
-                                                            <?php $__currentLoopData = $pendingReq->new_schedule_ids; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $newId): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                <?php $newSched = $schedules->firstWhere('id', $newId); ?>
-                                                                <?php if($newSched): ?>
-                                                                    <?php
-                                                                        $nd = $days[$newSched->day_of_week] ?? '?';
-                                                                        $ntr = substr($newSched->start_time,0,5).' - '.substr($newSched->end_time,0,5);
-                                                                        $nType = $newSched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
-                                                                    ?>
-                                                                    <div class="bg-white border border-amber-100 rounded p-1.5 flex flex-col gap-0.5">
-                                                                        <div class="flex justify-between items-center">
-                                                                            <span class="text-amber-700 font-bold"><?php echo e($nd); ?>, <?php echo e($ntr); ?></span>
-                                                                            <span class="px-1 text-[9px] bg-amber-50 text-amber-600 rounded"><?php echo e($nType); ?></span>
-                                                                        </div>
-                                                                        <div class="text-[10px] text-gray-500 flex items-center gap-1">
-                                                                            <i class="fa-solid fa-location-dot"></i> <?php echo e($newSched->location->name ?? '?'); ?>
-
-                                                                        </div>
-                                                                    </div>
-                                                                <?php endif; ?>
-                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                        </div>
-                                                        <p class="text-[9px] text-slate-400 mt-1.5 font-semibold">Diajukan: <?php echo e($pendingReq->created_at->translatedFormat('d F Y')); ?></p>
-                                                    </div>
-                                                <?php else: ?>
-                                                    
-                                                    <div class="mt-3">
-                                                        <button type="button" onclick="openScheduleRequestModal()"
-                                                            class="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold rounded-lg transition-colors">
-                                                            <i class="fa-solid fa-calendar-plus"></i> Ajukan Pindah Jadwal
-                                                        </button>
-                                                    </div>
-                                                <?php endif; ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php else: ?>
-                        
-                        <div class="flex flex-col">
-                            
-                            <div class="relative w-full h-[360px] mb-6">
-                                <canvas id="progressChart"></canvas>
-                            </div>
-
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
-                                <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
-                                    <h4
-                                        class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
-                                    </h4>
-                                    <p class="text-sm text-gray-600 italic">
-                                        "<?php echo e($latestReport->notes ?? 'Tidak ada catatan pada evaluasi terakhir.'); ?>"
-                                    </p>
-                                    <div class="text-[10px] text-gray-400 mt-2 font-semibold">
-                                        Diinput pada: <?php echo e($latestReport->date->translatedFormat('d F Y')); ?>
-
-                                    </div>
-                                </div>
-                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
-                                    <h4
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
-                                    </h4>
-                                    <div class="space-y-1.5 text-xs text-gray-600">
-                                        <div>Kelas: <span class="font-bold text-gray-800"><?php echo e($myStudent->swimmingClass->name ?? 'Belum Ditentukan'); ?> <?php echo e(isset($myStudent->swimmingClass->category) ? '(' . $myStudent->swimmingClass->category->name . ')' : ''); ?></span></div>
-                                        <div>Pelatih: <span class="font-bold text-gray-800"><?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?></span></div>
-                                        <div>Lokasi: <span class="font-bold text-gray-800">
-                                            <?php echo e($myStudent->location->name ?? 'Belum Dipilih'); ?>
-
-                                            <?php if($myStudent->secondaryLocation): ?> & <?php echo e($myStudent->secondaryLocation->name); ?><?php endif; ?>
-                                        </span></div>
-                                        <div>Sisa Kuota: <span class="font-bold text-blue-600"><?php echo e($myStudent->quota_left); ?> sesi</span></div>
-                                        <?php if($myStudent->schedules && $myStudent->schedules->isNotEmpty()): ?>
-                                            <div class="pt-1.5 mt-1.5 border-t border-gray-200">
-                                                <span class="font-bold text-gray-500 block mb-1">Jadwal Aktif:</span>
-                                                <div class="space-y-1">
-                                                    <?php $__currentLoopData = $myStudent->schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <?php
-                                                            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-                                                            $dayName = $days[$sched->day_of_week] ?? 'Hari Tidak Valid';
-                                                            $timeRange = substr($sched->start_time, 0, 5) . ' - ' . substr($sched->end_time, 0, 5);
-                                                            $type = $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
-                                                        ?>
-                                                        <div class="bg-white border border-gray-100 rounded p-1.5 text-[11px] font-semibold text-gray-700 shadow-sm flex flex-col gap-0.5">
-                                                            <div class="flex justify-between items-center">
-                                                                <span class="text-blue-700 font-bold"><?php echo e($dayName); ?>, <?php echo e($timeRange); ?></span>
-                                                                <span class="px-1 py-0.2 text-[9px] bg-blue-50 text-blue-600 rounded"><?php echo e($type); ?></span>
+                                                <div id="freetext-container" class="hidden mt-4 mb-6 min-w-0">
+                                                    <div style="display: flex; height: 420px; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; background: #fff;">
+                                                        
+                                                        <div style="width: 200px; min-width: 200px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                                                            <div style="padding: 12px; border-bottom: 1px solid #e2e8f0; background: rgba(241,245,249,0.8);">
+                                                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                                                    <i class="fa-regular fa-calendar-days"></i> Menu Bulan
+                                                                </h4>
                                                             </div>
-                                                            <div class="text-[10px] text-gray-500 flex items-center gap-1">
-                                                                <i class="fa-solid fa-location-dot"></i> <?php echo e($sched->location->name ?? 'Lokasi tidak diketahui'); ?>
-
+                                                            <div id="freetext-month-list" style="flex: 1; overflow-y: auto; padding: 8px;" class="space-y-1">
+                                                                
                                                             </div>
                                                         </div>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                        
+                                                        <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+                                                            <div id="freetext-detail-panel" style="flex: 1; overflow-y: auto; padding: 20px;">
+                                                                <div id="freetext-detail-empty" class="flex flex-col items-center justify-center h-full text-gray-400">
+                                                                    <i class="fa-regular fa-hand-pointer text-4xl mb-3 text-gray-200"></i>
+                                                                    <p class="text-sm font-medium text-gray-500">Pilih bulan di samping kiri</p>
+                                                                    <p class="text-xs text-gray-400 mt-1">Detail catatan perkembangan akan ditampilkan di sini.</p>
+                                                                </div>
+                                                                <div id="freetext-detail-content" class="hidden">
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
-                                                <?php
-                                                    $pendingReq = $myStudent->scheduleChangeRequests->where('status','pending')->first();
-                                                ?>
-
                                                 
-                                                <?php if($pendingReq): ?>
-                                                    <div class="mt-2 p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-[11px]">
-                                                        <div class="flex items-center gap-1.5 text-amber-800 font-bold mb-1">
-                                                            <i class="fa-solid fa-clock-rotate-left"></i> Pengajuan Pindah Jadwal (Pending)
-                                                        </div>
-                                                        <p class="text-slate-600 leading-relaxed mb-1">Menunggu persetujuan Admin untuk pindah ke jadwal berikut:</p>
-                                                        <div class="space-y-1">
-                                                            <?php $__currentLoopData = $pendingReq->new_schedule_ids; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $newId): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                <?php $newSched = $schedules->firstWhere('id', $newId); ?>
-                                                                <?php if($newSched): ?>
-                                                                    <?php
-                                                                        $nd = $days[$newSched->day_of_week] ?? '?';
-                                                                        $ntr = substr($newSched->start_time,0,5).' - '.substr($newSched->end_time,0,5);
-                                                                        $nType = $newSched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
-                                                                    ?>
-                                                                    <div class="bg-white border border-amber-100 rounded p-1.5 flex flex-col gap-0.5">
-                                                                        <div class="flex justify-between items-center">
-                                                                            <span class="text-amber-700 font-bold"><?php echo e($nd); ?>, <?php echo e($ntr); ?></span>
-                                                                            <span class="px-1 text-[9px] bg-amber-50 text-amber-600 rounded"><?php echo e($nType); ?></span>
-                                                                        </div>
-                                                                        <div class="text-[10px] text-gray-500 flex items-center gap-1">
-                                                                            <i class="fa-solid fa-location-dot"></i> <?php echo e($newSched->location->name ?? '?'); ?>
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
+                                                    <div class="md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+                                                        <h4
+                                                            class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                                            <i class="fa-solid fa-comment-dots"></i> Catatan Terakhir Pelatih
+                                                        </h4>
+                                                        <p id="latest-note" class="text-sm text-gray-600 italic break-words whitespace-pre-wrap">"Tidak ada catatan pada evaluasi terakhir."</p>
+                                                        <div id="latest-note-date" class="text-[10px] text-gray-400 mt-2 font-semibold">Diinput pada: -</div>
+                                                    </div>
 
-                                                                        </div>
+                                                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col justify-center">
+                                                        <h4
+                                                            class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                                            <i class="fa-solid fa-circle-info"></i> Info Latihan Saya
+                                                        </h4>
+                                                        <div class="space-y-1.5 text-xs text-gray-600">
+                                                            <div>Kelas: <span class="font-bold text-gray-800"><?php echo e($myStudent->swimmingClass->name ?? 'Belum Ditentukan'); ?> <?php echo e(isset($myStudent->swimmingClass->category) ? '(' . $myStudent->swimmingClass->category->name . ')' : ''); ?></span></div>
+                                                            <div>Pelatih: <span class="font-bold text-gray-800"><?php echo e($myStudent->coach->name ?? 'Belum Ditugaskan'); ?></span></div>
+                                                            <div>Lokasi: <span class="font-bold text-gray-800"><?php echo e($myStudent->location->name ?? 'Belum Dipilih'); ?><?php if($myStudent->secondaryLocation): ?> & <?php echo e($myStudent->secondaryLocation->name); ?><?php endif; ?></span></div>
+                                                            <div>Sisa Kuota: <span class="font-bold text-blue-600"><?php echo e($myStudent->quota_left); ?> sesi</span></div>
+                                                            <?php if($myStudent->schedules && $myStudent->schedules->isNotEmpty()): ?>
+                                                                <div class="pt-1.5 mt-1.5 border-t border-gray-200">
+                                                                    <span class="font-bold text-gray-500 block mb-1">Jadwal Aktif:</span>
+                                                                    <div class="space-y-1">
+                                                                        <?php $__currentLoopData = $myStudent->schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                            <?php
+                                                                                $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                                                                                $dayName = $days[$sched->day_of_week] ?? 'Hari Tidak Valid';
+                                                                                $timeRange = substr($sched->start_time, 0, 5) . ' - ' . substr($sched->end_time, 0, 5);
+                                                                                $type = $sched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                                                                            ?>
+                                                                            <div class="bg-white border border-gray-100 rounded p-1.5 text-[11px] font-semibold text-gray-700 shadow-sm flex flex-col gap-0.5">
+                                                                                <div class="flex justify-between items-center">
+                                                                                    <span class="text-blue-700 font-bold"><?php echo e($dayName); ?>, <?php echo e($timeRange); ?></span>
+                                                                                    <span class="px-1 py-0.2 text-[9px] bg-blue-50 text-blue-600 rounded"><?php echo e($type); ?></span>
+                                                                                </div>
+                                                                                <div class="text-[10px] text-gray-500 flex items-center gap-1">
+                                                                                    <i class="fa-solid fa-location-dot"></i> <?php echo e($sched->location->name ?? 'Lokasi tidak diketahui'); ?>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                     </div>
-                                                                <?php endif; ?>
-                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                    <?php
+                                                                        $pendingReq = $myStudent->scheduleChangeRequests->where('status','pending')->first();
+                                                                    ?>
+
+                                                                    
+                                                                    <?php if($pendingReq): ?>
+                                                                        <div class="mt-2 p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-[11px]">
+                                                                            <div class="flex items-center gap-1.5 text-amber-800 font-bold mb-1">
+                                                                                <i class="fa-solid fa-clock-rotate-left"></i> Pengajuan Pindah Jadwal (Pending)
+                                                                            </div>
+                                                                            <p class="text-slate-600 leading-relaxed mb-1">Menunggu persetujuan Admin untuk pindah ke jadwal berikut:</p>
+                                                                            <div class="space-y-1">
+                                                                                <?php $__currentLoopData = $pendingReq->new_schedule_ids; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $newId): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                                    <?php $newSched = $schedules->firstWhere('id', $newId); ?>
+                                                                                    <?php if($newSched): ?>
+                                                                                        <?php
+                                                                                            $nd = $days[$newSched->day_of_week] ?? '?';
+                                                                                            $ntr = substr($newSched->start_time,0,5).' - '.substr($newSched->end_time,0,5);
+                                                                                            $nType = $newSched->session_type === 'dryland' ? 'Dryland' : 'Berenang';
+                                                                                        ?>
+                                                                                        <div class="bg-white border border-amber-100 rounded p-1.5 flex flex-col gap-0.5">
+                                                                                            <div class="flex justify-between items-center">
+                                                                                                <span class="text-amber-700 font-bold"><?php echo e($nd); ?>, <?php echo e($ntr); ?></span>
+                                                                                                <span class="px-1 text-[9px] bg-amber-50 text-amber-600 rounded"><?php echo e($nType); ?></span>
+                                                                                            </div>
+                                                                                            <div class="text-[10px] text-gray-500 flex items-center gap-1">
+                                                                                                <i class="fa-solid fa-location-dot"></i> <?php echo e($newSched->location->name ?? '?'); ?>
+
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    <?php endif; ?>
+                                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                            </div>
+                                                                            <p class="text-[9px] text-slate-400 mt-1.5 font-semibold">Diajukan: <?php echo e($pendingReq->created_at->translatedFormat('d F Y')); ?></p>
+                                                                        </div>
+                                                                    <?php else: ?>
+                                                                        
+                                                                        <div class="mt-3">
+                                                                            <button type="button" onclick="openScheduleRequestModal()"
+                                                                                class="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold rounded-lg transition-colors">
+                                                                                <i class="fa-solid fa-calendar-plus"></i> Ajukan Pindah Jadwal
+                                                                            </button>
+                                                                        </div>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                            <?php endif; ?>
                                                         </div>
-                                                        <p class="text-[9px] text-slate-400 mt-1.5 font-semibold">Diajukan: <?php echo e($pendingReq->created_at->translatedFormat('d F Y')); ?></p>
                                                     </div>
-                                                <?php else: ?>
-                                                    
-                                                    <div class="mt-3">
-                                                        <button type="button" onclick="openScheduleRequestModal()"
-                                                            class="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold rounded-lg transition-colors">
-                                                            <i class="fa-solid fa-calendar-plus"></i> Ajukan Pindah Jadwal
-                                                        </button>
-                                                    </div>
-                                                <?php endif; ?>
+                                                </div>
                                             </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     <?php endif; ?>
-                <?php endif; ?>
             </div>
 
         </div>
-    </div>
-
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <?php if($myStudent && $myStudent->progressReports->isNotEmpty() && $myStudent->progressReports->first()?->report_type === 'structured'): ?>
+    <?php if($myStudent && $myStudent->progressReports->isNotEmpty()): ?>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const reports = <?php echo json_encode($myStudent->progressReports, 15, 512) ?>;
+                const yearDropdown = document.getElementById('chart_year_filter');
+                const noDataState = document.getElementById('chart-no-data-state');
+                const yearEmptyState = document.getElementById('chart-year-empty-state');
+                const chartContainer = document.getElementById('chart-container');
+                const latestNoteText = document.getElementById('latest-note');
+                const latestNoteDate = document.getElementById('latest-note-date');
+                const freetextContainer = document.getElementById('freetext-container');
+                const prestasiContainer = document.getElementById('prestasi-charts-container');
 
-                const labels = [];
-                const strengthData = [];
-                const enduranceData = [];
-                const flexibilityData = [];
-                const speedData = [];
-                const agilityData = [];
+                let radarChartInst = null;
+                let barChartInst = null;
+                let lineChartPBTInst = null;
+                
+                const allReports = <?php echo json_encode($myStudent->progressReports, 15, 512) ?>;
 
-                reports.forEach(report => {
-                    const d = new Date(report.date);
-                    labels.push(d.toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: '2-digit'
-                    }));
-                    strengthData.push(report.strength);
-                    enduranceData.push(report.endurance);
-                    flexibilityData.push(report.flexibility);
-                    speedData.push(report.speed);
-                    agilityData.push(report.agility);
-                });
+                // Helper: ubah "01:25.50" jadi detik "85.5"
+                function parseTimeToSeconds(timeStr) {
+                    if (!timeStr) return null;
+                    const match = String(timeStr).match(/(?:(\d+):)?(\d+)[.,:](\d+)/);
+                    if (match) {
+                        const m = parseInt(match[1] || 0);
+                        const s = parseInt(match[2] || 0);
+                        const ms = parseInt(match[3] || 0);
+                        const msVal = ms < 100 ? ms * 10 : ms;
+                        return m * 60 + s + (msVal / 1000);
+                    }
+                    return null;
+                }
 
-                const ctx = document.getElementById('progressChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                                label: 'Strength',
-                                data: strengthData,
+                // Fungsi format balik dari detik ke "MM:SS.ms"
+                function formatSecondsToTime(totalSeconds) {
+                    if (totalSeconds == null) return "-";
+                    const m = Math.floor(totalSeconds / 60);
+                    const s = Math.floor(totalSeconds % 60);
+                    const ms = Math.round((totalSeconds - Math.floor(totalSeconds)) * 100);
+                    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+                }
+
+                function hideAllStates() {
+                    noDataState.classList.add('hidden');
+                    noDataState.style.display = '';
+                    yearEmptyState.classList.add('hidden');
+                    yearEmptyState.style.display = '';
+                    chartContainer.classList.add('hidden');
+                    chartContainer.style.display = '';
+                }
+
+                function destroyAllCharts() {
+                    if (radarChartInst) { radarChartInst.destroy(); radarChartInst = null; }
+                    if (barChartInst) { barChartInst.destroy(); barChartInst = null; }
+                    if (lineChartPBTInst) { lineChartPBTInst.destroy(); lineChartPBTInst = null; }
+                }
+
+                function renderChartsForYear(year) {
+                    destroyAllCharts();
+                    hideAllStates();
+
+                    const filteredReports = allReports.filter(r => new Date(r.date).getFullYear() === parseInt(year));
+
+                    if (filteredReports.length === 0) {
+                        yearEmptyState.classList.remove('hidden');
+                        yearEmptyState.style.display = 'flex';
+                        return;
+                    }
+
+                    chartContainer.classList.remove('hidden');
+                    chartContainer.style.display = 'flex';
+
+                    // Update catatan terakhir
+                    const latestReport = filteredReports[filteredReports.length - 1];
+                    latestNoteText.textContent = latestReport.notes ?
+                        `"${latestReport.notes}"` :
+                        `"Tidak ada catatan pada evaluasi terakhir."`;
+
+                    const ld = new Date(latestReport.date);
+                    latestNoteDate.textContent =
+                        `Diinput pada: ${ld.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}`;
+
+                    const isPrestasi = allReports.some(r => r.metrics && ('Personal Best Time' in r.metrics));
+
+                    if (isPrestasi) {
+                        if (freetextContainer) freetextContainer.classList.add('hidden');
+                        if (prestasiContainer) prestasiContainer.classList.remove('hidden');
+                        prestasiContainer.style.display = 'flex';
+
+                        const labels = [];
+                        const radarData = { Endurance: [], Fleksibilitas: [], Strength: [], Speed: [], Agility: [] };
+                        const barData = { Aerobic: [], Anaerobic: [] };
+
+                        let hasKondisiFisik = false;
+                        let hasSistemEnergi = false;
+
+                        filteredReports.forEach(report => {
+                            const d = new Date(report.date);
+                            labels.push(d.toLocaleDateString('id-ID', { month: 'short' }));
+
+                            if (report.metrics) {
+                                const kf = report.metrics['Kondisi Fisik'] || {};
+                                if (Object.keys(kf).length > 0) hasKondisiFisik = true;
+                                radarData.Endurance.push(kf['Endurance'] || 0);
+                                radarData.Fleksibilitas.push(kf['Fleksibilitas'] || 0);
+                                radarData.Strength.push(kf['Strength'] || 0);
+                                radarData.Speed.push(kf['Speed'] || 0);
+                                radarData.Agility.push(kf['Agility'] || 0);
+
+                                const se = report.metrics['Sistem Energi'] || {};
+                                if (Object.keys(se).length > 0) hasSistemEnergi = true;
+                                barData.Aerobic.push(se['Aerobic'] || 0);
+                                barData.Anaerobic.push(se['Anaerobic'] || 0);
+                            }
+                        });
+
+                        const kondisiFisikEl = document.getElementById('radarChart').closest('.bg-slate-50, .bg-gray-50, .rounded-xl');
+                        const sistemEnergiEl = document.getElementById('barChart').closest('.bg-slate-50, .bg-gray-50, .rounded-xl');
+                        const chartsGridEl = kondisiFisikEl.parentElement;
+
+                        if (hasKondisiFisik) kondisiFisikEl.style.display = '';
+                        else kondisiFisikEl.style.display = 'none';
+
+                        if (hasSistemEnergi) sistemEnergiEl.style.display = '';
+                        else sistemEnergiEl.style.display = 'none';
+
+                        if (!hasKondisiFisik && !hasSistemEnergi) chartsGridEl.style.display = 'none';
+                        else chartsGridEl.style.display = '';
+
+                        const len = labels.length;
+
+                        if (hasKondisiFisik) {
+                            const latestLabels = ['Endurance', 'Fleksibilitas', 'Strength', 'Speed', 'Agility'];
+                            const latestData = len > 0 ? [
+                                radarData.Endurance[len-1], radarData.Fleksibilitas[len-1],
+                                radarData.Strength[len-1], radarData.Speed[len-1], radarData.Agility[len-1]
+                            ] : [];
+                            const prevData = len > 1 ? [
+                                radarData.Endurance[len-2], radarData.Fleksibilitas[len-2],
+                                radarData.Strength[len-2], radarData.Speed[len-2], radarData.Agility[len-2]
+                            ] : [];
+
+                            const radarDatasets = [{
+                                label: labels[len-1] || 'Bulan Ini',
+                                data: latestData,
+                                backgroundColor: 'rgba(37, 99, 235, 0.2)',
                                 borderColor: 'rgb(37, 99, 235)',
-                                backgroundColor: 'rgba(37, 99, 235, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
-                            },
-                            {
-                                label: 'Endurance',
-                                data: enduranceData,
-                                borderColor: 'rgb(16, 185, 129)',
-                                backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
-                            },
-                            {
-                                label: 'Flexibility',
-                                data: flexibilityData,
-                                borderColor: 'rgb(147, 51, 234)',
-                                backgroundColor: 'rgba(147, 51, 234, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
-                            },
-                            {
-                                label: 'Speed',
-                                data: speedData,
-                                borderColor: 'rgb(239, 68, 68)',
-                                backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
-                            },
-                            {
-                                label: 'Agility',
-                                data: agilityData,
-                                borderColor: 'rgb(245, 158, 11)',
-                                backgroundColor: 'rgba(245, 158, 11, 0.05)',
-                                borderWidth: 2.5,
-                                tension: 0.3,
-                                fill: false
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgb(37, 99, 235)'
+                            }];
+                            if (len > 1) {
+                                radarDatasets.push({
+                                    label: labels[len-2] || 'Bulan Lalu',
+                                    data: prevData,
+                                    backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                                    borderColor: 'rgb(156, 163, 175)',
+                                    borderWidth: 2,
+                                    pointBackgroundColor: 'rgb(156, 163, 175)'
+                                });
                             }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                labels: {
-                                    boxWidth: 15,
-                                    font: {
-                                        size: 11,
-                                        weight: '600'
-                                    }
+                            radarChartInst = new Chart(document.getElementById('radarChart').getContext('2d'), {
+                                type: 'radar',
+                                data: { labels: latestLabels, datasets: radarDatasets },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: { r: { min: 0, max: 100 } },
+                                    plugins: { legend: { position: 'bottom' } }
                                 }
-                            },
-                            tooltip: {
-                                padding: 10,
-                                cornerRadius: 8
-                            }
-                        },
-                        scales: {
-                            y: {
-                                min: 0,
-                                max: 100,
-                                grid: {
-                                    color: 'rgba(0,0,0,0.05)'
+                            });
+                        }
+
+                        if (hasSistemEnergi) {
+                            barChartInst = new Chart(document.getElementById('barChart').getContext('2d'), {
+                                type: 'bar',
+                                data: {
+                                    labels: labels,
+                                    datasets: [
+                                        { label: 'Aerobic', data: barData.Aerobic, backgroundColor: 'rgba(16, 185, 129, 0.7)' },
+                                        { label: 'Anaerobic', data: barData.Anaerobic, backgroundColor: 'rgba(239, 68, 68, 0.7)' }
+                                    ]
                                 },
-                                title: {
-                                    display: true,
-                                    text: 'Skor Perkembangan',
-                                    font: {
-                                        weight: '600'
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { position: 'bottom' } },
+                                    scales: { y: { beginAtZero: true, max: 100 } }
+                                }
+                            });
+                        }
+
+                        const pbtSelector = document.getElementById('pbt_filter_selector');
+                        const pbtCombinations = [];
+
+                        filteredReports.forEach(report => {
+                            if (report.metrics && report.metrics['Personal Best Time']) {
+                                let entries = [];
+                                if (Array.isArray(report.metrics['Personal Best Time'])) {
+                                    entries = report.metrics['Personal Best Time'];
+                                } else {
+                                    entries = [{
+                                        gaya: 'Gaya Bebas',
+                                        jarak: '50m',
+                                        test_per_bulan: report.metrics['Personal Best Time']['Test per Bulan'] || '',
+                                        pbt_event: report.metrics['Personal Best Time']['PBT Event'] || ''
+                                    }];
+                                }
+                                entries.forEach(e => {
+                                    if (e.gaya && e.jarak) {
+                                        const key = `${e.gaya} - ${e.jarak}`;
+                                        if (!pbtCombinations.includes(key)) pbtCombinations.push(key);
+                                    }
+                                });
+                            }
+                        });
+
+                        const oldSelectedVal = pbtSelector ? pbtSelector.value : '';
+
+                        if (pbtSelector) {
+                            pbtSelector.innerHTML = '';
+                            if (pbtCombinations.length === 0) {
+                                const opt = document.createElement('option');
+                                opt.value = '';
+                                opt.textContent = 'Tidak ada data PBT';
+                                pbtSelector.appendChild(opt);
+                            } else {
+                                pbtCombinations.forEach(comb => {
+                                    const opt = document.createElement('option');
+                                    opt.value = comb;
+                                    opt.textContent = comb;
+                                    pbtSelector.appendChild(opt);
+                                });
+
+                                if (pbtCombinations.includes(oldSelectedVal)) pbtSelector.value = oldSelectedVal;
+                                else pbtSelector.value = pbtCombinations[0];
+                            }
+                            pbtSelector.onchange = null;
+                            pbtSelector.addEventListener('change', updateLineChartPBT);
+                        }
+
+                        function updateLineChartPBT() {
+                            if (lineChartPBTInst) { lineChartPBTInst.destroy(); lineChartPBTInst = null; }
+                            const val = pbtSelector ? pbtSelector.value : '';
+                            if (!val) return;
+
+                            const parts = val.split(' - ');
+                            const selGaya = parts[0];
+                            const selJarak = parts[1];
+
+                            const localLabels = [];
+                            const localPbtData = { TestPerBulan: [], PbtEvent: [] };
+
+                            filteredReports.forEach(report => {
+                                const d = new Date(report.date);
+                                let entry = null;
+
+                                if (report.metrics && report.metrics['Personal Best Time']) {
+                                    let entries = [];
+                                    if (Array.isArray(report.metrics['Personal Best Time'])) {
+                                        entries = report.metrics['Personal Best Time'];
+                                    } else {
+                                        entries = [{
+                                            gaya: 'Gaya Bebas',
+                                            jarak: '50m',
+                                            test_per_bulan: report.metrics['Personal Best Time']['Test per Bulan'] || '',
+                                            pbt_event: report.metrics['Personal Best Time']['PBT Event'] || ''
+                                        }];
+                                    }
+                                    entry = entries.find(e => e.gaya === selGaya && e.jarak === selJarak);
+                                }
+
+                                if (entry && entry.test_per_bulan) {
+                                    localLabels.push(d.toLocaleDateString('id-ID', { month: 'short' }));
+                                    localPbtData.TestPerBulan.push(parseTimeToSeconds(entry.test_per_bulan));
+                                    localPbtData.PbtEvent.push({
+                                        val: parseTimeToSeconds(entry.pbt_event),
+                                        raw: entry.pbt_event
+                                    });
+                                }
+                            });
+
+                            const pbtDatasets = [
+                                {
+                                    label: 'Test per Bulan',
+                                    data: localPbtData.TestPerBulan,
+                                    borderColor: 'rgb(147, 51, 234)',
+                                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                                    tension: 0.3,
+                                    fill: true
+                                },
+                                {
+                                    label: 'PBT Event',
+                                    data: localPbtData.PbtEvent.map(e => e.val),
+                                    type: 'scatter',
+                                    pointBackgroundColor: 'rgb(245, 158, 11)',
+                                    pointBorderColor: 'rgb(255, 255, 255)',
+                                    pointRadius: 6,
+                                    pointHoverRadius: 8
+                                }
+                            ];
+
+                            lineChartPBTInst = new Chart(document.getElementById('lineChartPBT').getContext('2d'), {
+                                type: 'line',
+                                data: { labels: localLabels, datasets: pbtDatasets },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: { position: 'bottom' },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    if (context.dataset.label === 'PBT Event') {
+                                                        const rawText = localPbtData.PbtEvent[context.dataIndex].raw;
+                                                        return `Event: ${rawText || formatSecondsToTime(context.raw)}`;
+                                                    }
+                                                    return `Test: ${formatSecondsToTime(context.raw)}`;
+                                                }
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            reverse: true,
+                                            ticks: {
+                                                callback: function(value) { return formatSecondsToTime(value); }
+                                            },
+                                            title: { display: true, text: 'Waktu (MM:SS.ms)' }
+                                        }
                                     }
                                 }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
+                            });
+                        }
+
+                        updateLineChartPBT();
+
+                    } else {
+                        if (prestasiContainer) { prestasiContainer.classList.add('hidden'); prestasiContainer.style.display = 'none'; }
+                        if (freetextContainer) {
+                            freetextContainer.classList.remove('hidden');
+
+                            const monthList = document.getElementById('freetext-month-list');
+                            const detailEmpty = document.getElementById('freetext-detail-empty');
+                            const detailContent = document.getElementById('freetext-detail-content');
+                            monthList.innerHTML = '';
+                            detailContent.innerHTML = '';
+                            detailContent.classList.add('hidden');
+                            detailEmpty.classList.remove('hidden');
+
+                            const sortedReports = [...filteredReports].reverse();
+
+                            function showMonthDetail(report, btnEl) {
+                                monthList.querySelectorAll('button').forEach(b => {
+                                    b.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
+                                    b.classList.add('bg-white', 'text-slate-700', 'hover:bg-indigo-50');
+                                    b.querySelector('.month-dot')?.classList.remove('bg-white');
+                                    b.querySelector('.month-dot')?.classList.add('bg-indigo-400');
+                                });
+                                btnEl.classList.remove('bg-white', 'text-slate-700', 'hover:bg-indigo-50');
+                                btnEl.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
+                                btnEl.querySelector('.month-dot')?.classList.remove('bg-indigo-400');
+                                btnEl.querySelector('.month-dot')?.classList.add('bg-white');
+
+                                detailEmpty.classList.add('hidden');
+                                detailContent.classList.remove('hidden');
+
+                                const d = new Date(report.date);
+                                const dateStr = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+
+                                let metricsHtml = '';
+                                if (report.metrics) {
+                                    for (const [category, items] of Object.entries(report.metrics)) {
+                                        metricsHtml += `<div class="mb-4">
+                                            <h5 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-1.5 mb-3 flex items-center gap-1.5">
+                                                <i class="fa-solid fa-layer-group text-indigo-500 text-xs"></i> ${category}
+                                            </h5>
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+                                        for (const [key, val] of Object.entries(items)) {
+                                            let badgeColor = 'bg-slate-100 text-slate-700';
+                                            if (val === 'Sangat Mahir' || val === 'Lulus Tahap Ini' || val === 'Sudah Lancar') badgeColor = 'bg-green-100 text-green-700';
+                                            else if (val === 'Berkembang Baik' || val === 'Mulai Bisa') badgeColor = 'bg-blue-100 text-blue-700';
+                                            else if (val === 'Mulai Terlihat') badgeColor = 'bg-amber-100 text-amber-700';
+                                            else if (val === 'Belum Berkembang' || val === 'Belum Bisa' || val === 'Belum Memulai') badgeColor = 'bg-red-100 text-red-700';
+
+                                            metricsHtml += `<div class="text-xs flex justify-between items-center p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                                                <span class="font-medium text-slate-600">${key}</span>
+                                                <span class="px-2 py-0.5 rounded-full font-bold ${badgeColor}">${val}</span>
+                                            </div>`;
+                                        }
+                                        metricsHtml += `</div></div>`;
+                                    }
                                 }
+
+                                detailContent.innerHTML = `
+                                    <div class="flex items-center gap-2 mb-5">
+                                        <div class="w-1 h-6 bg-indigo-500 rounded-full"></div>
+                                        <h4 class="text-base font-bold text-slate-800">Bulan: ${dateStr}</h4>
+                                    </div>
+                                    <div class="mb-5">
+                                        ${metricsHtml || '<p class="text-sm text-gray-400 italic">Tidak ada data metrik untuk bulan ini.</p>'}
+                                    </div>
+                                    ${report.notes ? `
+                                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
+                                        <p class="text-xs font-bold text-indigo-800 mb-1.5 flex items-center gap-1">
+                                            <i class="fa-solid fa-comment-dots"></i> Catatan Pelatih:
+                                        </p>
+                                        <p class="text-sm text-slate-700 italic leading-relaxed">${report.notes}</p>
+                                    </div>` : `
+                                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl">
+                                        <p class="text-xs text-slate-400 italic">Tidak ada catatan dari pelatih pada bulan ini.</p>
+                                    </div>`}
+                                `;
                             }
+
+                            sortedReports.forEach((report, idx) => {
+                                const d = new Date(report.date);
+                                const monthName = d.toLocaleDateString('id-ID', { month: 'long' });
+
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm font-semibold transition-all duration-150 bg-white text-slate-700 hover:bg-indigo-50 border border-transparent';
+                                btn.innerHTML = `
+                                    <span class="month-dot w-2 h-2 rounded-full bg-indigo-400 shrink-0"></span>
+                                    <span class="truncate">${monthName}</span>
+                                `;
+                                btn.addEventListener('click', () => showMonthDetail(report, btn));
+                                monthList.appendChild(btn);
+
+                                if (idx === 0) showMonthDetail(report, btn);
+                            });
                         }
                     }
+                }
+
+                if (allReports.length === 0) {
+                    hideAllStates();
+                    noDataState.classList.remove('hidden');
+                    noDataState.style.display = 'flex';
+                    yearDropdown.disabled = true;
+                    yearDropdown.innerHTML = '<option value="" disabled selected>-- Tahun --</option>';
+                    return;
+                }
+
+                const yearsSet = new Set();
+                allReports.forEach(r => {
+                    yearsSet.add(new Date(r.date).getFullYear());
+                });
+                const years = [...yearsSet].sort((a, b) => b - a);
+
+                yearDropdown.innerHTML = '<option value="" disabled>-- Tahun --</option>';
+                years.forEach(y => {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.textContent = y;
+                    yearDropdown.appendChild(opt);
+                });
+                yearDropdown.disabled = false;
+                yearDropdown.value = years[0];
+
+                renderChartsForYear(years[0]);
+
+                yearDropdown.addEventListener('change', function() {
+                    if (this.value) renderChartsForYear(this.value);
                 });
             });
         </script>
