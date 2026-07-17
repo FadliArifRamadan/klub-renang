@@ -65,6 +65,11 @@ Route::middleware('auth')->group(function () {
         Route::resource('swimming-classes', \App\Http\Controllers\Admin\SwimmingClassController::class)->except(['create', 'show', 'edit']);
         Route::resource('schedules', \App\Http\Controllers\Admin\ScheduleController::class)->except(['create', 'show', 'edit']);
 
+        // Kelola Izin Pelatih
+        Route::get('/leaves', [\App\Http\Controllers\Admin\LeaveController::class, 'index'])->name('leaves.index');
+        Route::post('/leaves/approve/{id}', [\App\Http\Controllers\Admin\LeaveController::class, 'approve'])->name('leaves.approve');
+        Route::post('/leaves/reject/{id}', [\App\Http\Controllers\Admin\LeaveController::class, 'reject'])->name('leaves.reject');
+
         // Kelola Murid (RESTful URI & Nama Plural)
         Route::get('/students', [\App\Http\Controllers\Admin\StudentController::class, 'index'])->name('students.index');
         Route::post('/students/suspend/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'suspend'])->name('students.suspend');
@@ -97,8 +102,14 @@ Route::middleware('auth')->group(function () {
             $totalCoaches = \App\Models\User::where('role', 'coach')->count();
             $totalLocations = \App\Models\Location::count();
 
-            // Ambil data murid yang dilatih oleh coach ini
-            $students = \App\Models\Student::where('coach_id', $user->id)
+            // Ambil data murid yang dilatih oleh coach ini (sebagai pelatih utama maupun pendamping di jadwal)
+            $students = \App\Models\Student::where(function($query) use ($user) {
+                    $query->where('coach_id', $user->id)
+                        ->orWhereHas('schedules', function($q) use ($user) {
+                            $q->where('coach_id', $user->id);
+                        });
+                })
+                ->where('status', 'active')
                 ->with(['progressReports' => function ($query) {
                     $query->oldest('date');
                 }, 'location', 'coach', 'package'])
@@ -123,6 +134,10 @@ Route::middleware('auth')->group(function () {
         // Catat & Pantau Perkembangan Murid
         Route::get('/progress', [\App\Http\Controllers\Coach\ProgressReportController::class, 'index'])->name('progress.index');
         Route::post('/progress', [\App\Http\Controllers\Coach\ProgressReportController::class, 'store'])->name('progress.store');
+
+        // Izin Latihan Pelatih
+        Route::get('/leaves', [\App\Http\Controllers\Coach\LeaveController::class, 'index'])->name('leaves.index');
+        Route::post('/leaves', [\App\Http\Controllers\Coach\LeaveController::class, 'store'])->name('leaves.store');
     });
 
     // 3. KELOMPOK ROUTE PARENT (ORANG TUA)
@@ -158,9 +173,18 @@ Route::middleware('auth')->group(function () {
 
             $packages = \App\Models\Package::with('locationPrices')->oldest()->get();
             $locations = \App\Models\Location::oldest()->get();
-            $schedules = \App\Models\Schedule::with('location')->where('is_active', true)->get();
+            $schedules = \App\Models\Schedule::with(['location', 'coach'])->where('is_active', true)->get();
+            $schedules->each(function ($sched) {
+                $sched->current_enrolled_count = $sched->getCurrentEnrolledCount();
+                $sched->coach_name = $sched->coach->name ?? 'Belum Ditentukan';
+            });
 
-            return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children', 'expiredStudents', 'packages', 'locations', 'schedules'));
+            $activeLeaves = \App\Models\CoachLeave::where('status', 'approved')
+                ->where('leave_date', '>=', now()->startOfDay())
+                ->with(['coach', 'substituteCoach'])
+                ->get();
+
+            return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children', 'expiredStudents', 'packages', 'locations', 'schedules', 'activeLeaves'));
         })->name('dashboard');
 
         // Rute untuk melihat daftar anak (RESTful URI)
@@ -216,14 +240,23 @@ Route::middleware('auth')->group(function () {
 
             $packages = \App\Models\Package::with('locationPrices')->oldest()->get();
             $locations = \App\Models\Location::oldest()->get();
-            $schedules = \App\Models\Schedule::with('location')
+            $schedules = \App\Models\Schedule::with(['location', 'coach'])
                 ->where('is_active', true)
                 ->when($myStudent, function ($q) use ($myStudent) {
                     return $q->where('swimming_class_id', $myStudent->swimming_class_id);
                 })
                 ->get();
+            $schedules->each(function ($sched) {
+                $sched->current_enrolled_count = $sched->getCurrentEnrolledCount();
+                $sched->coach_name = $sched->coach->name ?? 'Belum Ditentukan';
+            });
 
-            return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent', 'expiredStudents', 'packages', 'locations', 'schedules'));
+            $activeLeaves = \App\Models\CoachLeave::where('status', 'approved')
+                ->where('leave_date', '>=', now()->startOfDay())
+                ->with(['coach', 'substituteCoach'])
+                ->get();
+
+            return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent', 'expiredStudents', 'packages', 'locations', 'schedules', 'activeLeaves'));
         })->name('dashboard');
         Route::get('/students', [\App\Http\Controllers\General\StudentController::class, 'index'])->name('students.index');
         // Routes for General user to register a package (single registration)

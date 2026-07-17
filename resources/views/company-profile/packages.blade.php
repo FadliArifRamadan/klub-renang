@@ -160,10 +160,10 @@
                                         </div>
                                         <div class="flex items-center justify-between text-xs font-semibold text-slate-650">
                                             <span class="flex items-center gap-2">
-                                                <i class="fa-solid fa-users text-blue-500"></i> Batas Kuota Kelas
+                                                <i class="fa-solid fa-users text-blue-500"></i> Kapasitas per Sesi
                                             </span>
                                             <span class="font-bold text-red-500">
-                                                Maksimal {{ $class->max_quota }} Murid
+                                                Maksimal 15 Murid / Sesi
                                             </span>
                                         </div>
                                     </div>

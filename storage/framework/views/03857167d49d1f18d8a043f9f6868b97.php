@@ -45,6 +45,7 @@
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-800/50 border-b dark:border-gray-700">
                             <tr>
+                                <th class="px-6 py-3 text-center w-12">No</th>
                                 <th class="px-6 py-3">Nama Murid</th>
                                 <th class="px-6 py-3">Paket Kursus</th>
                                 <th class="px-6 py-3">Nominal Transfer</th>
@@ -53,8 +54,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $__empty_1 = true; $__currentLoopData = $payments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <?php $__empty_1 = true; $__currentLoopData = $payments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <tr class="bg-white dark:bg-gray-900 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+                                    <td class="px-6 py-4 font-bold text-gray-900 dark:text-white/90 text-center">
+                                        <?php echo e(($payments->currentPage() - 1) * $payments->perPage() + $index + 1); ?>
+
+                                    </td>
                                     <td class="px-6 py-4 font-bold text-gray-900 dark:text-white/90">
                                         <?php echo e($payment->student->name ?? 'N/A'); ?>
 
@@ -111,39 +116,17 @@
                                                         class="flex items-center justify-start space-x-3 text-emerald-600 mb-4">
                                                         <i class="fa-solid fa-circle-check text-2xl"></i>
                                                         <h2 class="text-lg font-medium text-gray-900 dark:text-white/90">
-                                                            Verifikasi & Alokasi Pelatih (Coach)
+                                                            Persetujuan Pembayaran Kursus
                                                         </h2>
                                                     </div>
 
                                                     <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-                                                        Konfirmasi pembayaran sebesar
+                                                        Apakah Anda yakin ingin menyetujui pembayaran sebesar
                                                         <span class="font-bold text-emerald-600">Rp
                                                             <?php echo e(number_format($payment->amount, 0, ',', '.')); ?></span>
                                                         dari anak bernama <span
-                                                            class="font-bold text-gray-900 dark:text-white/90">"<?php echo e($payment->student->name ?? 'Murid'); ?>"</span>.
+                                                            class="font-bold text-gray-900 dark:text-white/90">"<?php echo e($payment->student->name ?? 'Murid'); ?>"</span> dan mengaktifkan murid ini?
                                                     </p>
-
-                                                    <div class="mb-5 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 p-4 rounded-xl">
-                                                        <label
-                                                            class="block text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-blue-400 mb-2">
-                                                            <i class="fa-solid fa-user-tie mr-1"></i> Penetapan /
-                                                            Penggantian Pelatih Murid:
-                                                        </label>
-
-                                                        <select name="coach_id" required
-                                                            class="w-full text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                            <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                <option value="<?php echo e($coach->id); ?>"
-                                                                    <?php echo e(old('coach_id', $payment->student->coach_id ?? '') == $coach->id ? 'selected' : ''); ?>>
-                                                                    <?php echo e($coach->name); ?> — (Saat ini memegang: <?php echo e($coach->students_count); ?> / 15 Murid Latih)
-                                                                </option>
-                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                        </select>
-
-                                                        <p class="text-[11px] text-blue-600 dark:text-blue-400 mt-1.5 leading-tight">
-                                                            *Sistem menampilkan jumlah beban murid aktif dari masing-masing coach saat ini. Sesuai kesepakatan, batas maksimal per pelatih adalah 15 anak demi efektivitas latihan.
-                                                        </p>
-                                                    </div>
 
                                                     <div class="mt-6 flex justify-end space-x-3">
                                                         <?php if (isset($component)) { $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af = $component; } ?>
@@ -268,7 +251,7 @@
                                 </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <tr>
-                                    <td colspan="5" class="px-6 py-8 text-center text-gray-400 dark:text-gray-500 italic">
+                                    <td colspan="6" class="px-6 py-8 text-center text-gray-400 dark:text-gray-500 italic">
                                         <i class="fa-solid fa-folder-open text-2xl block mb-2 text-gray-300 dark:text-gray-600"></i>
                                         Saat ini tidak ada ajuan konfirmasi pembayaran baru dari Parent.
                                     </td>

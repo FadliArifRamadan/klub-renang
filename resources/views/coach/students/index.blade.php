@@ -94,7 +94,12 @@
 
                                     {{-- Jadwal Latihan --}}
                                     <td class="px-6 py-4">
-                                        @forelse($student->schedules as $sched)
+                                        @php
+                                            $filteredSchedules = $student->schedules->filter(function($s) use ($coachIds) {
+                                                return in_array($s->coach_id, $coachIds);
+                                            });
+                                        @endphp
+                                        @forelse($filteredSchedules as $sched)
                                             <div class="mb-1.5 last:mb-0">
                                                 <span class="inline-flex items-center text-[11px] font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
                                                     {{ $sched->day_name }} ({{ substr($sched->start_time, 0, 5) }})

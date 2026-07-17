@@ -237,6 +237,23 @@
                                     </template>
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ route('coach.leaves.index') }}"
+                                    class="menu-item group {{ request()->routeIs('coach.leaves.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('coach.leaves.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-calendar-times text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Izin Latihan</span>
+                                    </template>
+                                </a>
+                            </li>
                         @endif
 
                         <!-- PARENT -->
@@ -465,6 +482,23 @@
                                     </span>
                                     <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
                                         <span class="menu-item-text">Kelola Jadwal</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.leaves.index') }}"
+                                    class="menu-item group {{ request()->routeIs('admin.leaves.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size {{ request()->routeIs('admin.leaves.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                        <i class="fa-solid fa-calendar-times text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Persetujuan Izin</span>
                                     </template>
                                 </a>
                             </li>

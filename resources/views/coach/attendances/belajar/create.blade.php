@@ -96,7 +96,14 @@
                                     @foreach ($students as $student)
                                         @php
                                             $quotaEmpty = $student->quota_left <= 0;
-                                            $scheduleDays = $student->schedules->pluck('day_of_week')->unique()->values()->toArray();
+                                            $scheduleDays = $student->schedules
+                                                ->filter(function($s) use ($coachIds) {
+                                                    return in_array($s->coach_id, $coachIds);
+                                                })
+                                                ->pluck('day_of_week')
+                                                ->unique()
+                                                ->values()
+                                                ->toArray();
                                         @endphp
                                         <tr data-schedule-days="{{ json_encode($scheduleDays) }}"
                                             class="student-row bg-white border-b hover:bg-gray-50 transition-colors duration-150 {{ $quotaEmpty ? 'bg-red-50/30' : '' }}">

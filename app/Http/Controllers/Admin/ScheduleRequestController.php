@@ -46,6 +46,22 @@ class ScheduleRequestController extends Controller
         }
 
         $student = $scheduleRequest->student;
+        $package = $student->package;
+
+        // Validasi Kapasitas pada Jadwal Baru
+        foreach ($scheduleRequest->new_schedule_ids as $scheduleId) {
+            $schedule = \App\Models\Schedule::findOrFail($scheduleId);
+            $currentEnrolled = $schedule->students()
+                ->whereIn('students.status', ['active', 'pending'])
+                ->where('students.id', '!=', $student->id)
+                ->count();
+
+            $limit = $schedule->getCapacityLimitForPackage($package);
+
+            if ($currentEnrolled >= $limit) {
+                return redirect()->back()->with('error', 'Gagal menyetujui! Jadwal latihan ' . $schedule->day_name . ' ' . $schedule->time_range . ' di ' . $schedule->location->name . ' sudah penuh (Maksimal ' . $limit . ' murid).');
+            }
+        }
 
         // Lakukan sinkronisasi jadwal baru pada pivot table student_schedules
         $student->schedules()->sync($scheduleRequest->new_schedule_ids);

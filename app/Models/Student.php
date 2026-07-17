@@ -134,7 +134,7 @@ class Student extends Model
     /**
      * Mengaktifkan kembali paket murid yang dibekukan, memperpanjang masa aktif, dan menetapkan Coach baru
      */
-    public function resume(int $coachId)
+    public function resume(?int $coachId = null)
     {
         $daysSuspended = 0;
         if ($this->suspended_at) {
@@ -147,13 +147,18 @@ class Student extends Model
             $expiresAt = $expiresAt->addDays($daysSuspended);
         }
 
-        $this->update([
+        $updateData = [
             'status' => 'active',
-            'coach_id' => $coachId,
             'suspended_at' => null,
             'suspension_reason' => null,
             'package_expires_at' => $expiresAt,
-        ]);
+        ];
+
+        if ($coachId !== null) {
+            $updateData['coach_id'] = $coachId;
+        }
+
+        $this->update($updateData);
     }
 
     /**

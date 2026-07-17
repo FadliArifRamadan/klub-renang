@@ -16,7 +16,12 @@ class ProgressReportController extends Controller
     public function index()
     {
         // Mengambil murid aktif coach yang sedang login beserta relasi perkembangan terurut tanggal, kelas, kategori, dan lokasi
-        $students = Student::where('coach_id', Auth::id())
+        $students = Student::where(function($query) {
+                $query->where('coach_id', Auth::id())
+                    ->orWhereHas('schedules', function($q) {
+                        $q->where('coach_id', Auth::id());
+                    });
+            })
             ->where('status', 'active')
             ->with(['progressReports' => function ($query) {
                 $query->oldest('date');
@@ -43,8 +48,11 @@ class ProgressReportController extends Controller
 
         $student = Student::findOrFail($request->student_id);
 
-        // Keamanan: pastikan murid milik coach yang login
-        if ($student->coach_id != Auth::id()) {
+        // Keamanan: pastikan murid milik coach yang login atau coach mengajar salah satu jadwalnya
+        $isAllowed = $student->coach_id == Auth::id() || 
+                     $student->schedules()->where('coach_id', Auth::id())->exists();
+
+        if (!$isAllowed) {
             return redirect()->back()->with('error', 'Anda tidak memiliki hak untuk mencatat perkembangan murid ini.');
         }
 

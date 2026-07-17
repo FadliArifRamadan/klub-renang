@@ -19,6 +19,43 @@
                 </p>
             </div>
 
+            {{-- Notifikasi Izin Pelatih --}}
+            @if ($myStudent && isset($activeLeaves) && $activeLeaves->isNotEmpty())
+                @php
+                    $myStudentLeaves = $activeLeaves->filter(function($leave) use ($myStudent) {
+                        if ($leave->coach_id != $myStudent->coach_id) {
+                            return false;
+                        }
+                        $dayOfWeek = ($leave->leave_date->dayOfWeek === 0) ? 6 : ($leave->leave_date->dayOfWeek - 1);
+                        return $myStudent->schedules->contains('day_of_week', $dayOfWeek);
+                    });
+                @endphp
+                @if ($myStudentLeaves->isNotEmpty())
+                    <div class="space-y-3 mb-8">
+                        @foreach ($myStudentLeaves as $leave)
+                            <div class="flex p-4 text-sm rounded-xl bg-sky-50 border border-sky-200 text-sky-800 shadow-sm" role="alert">
+                                <div style="margin-right: 16px; margin-top: 2px; flex-shrink: 0;" class="text-sky-600">
+                                    <i class="fa-solid fa-circle-info text-lg"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold">Informasi Latihan:</span>
+                                    Pelatih Anda <span class="font-bold text-slate-800">{{ $leave->coach->name }}</span> berhalangan melatih pada tanggal <span class="font-semibold">{{ $leave->leave_date->translatedFormat('d F Y') }}</span> ({{ $leave->leave_date->translatedFormat('l') }}).
+                                    @if ($leave->substitute_coach_id)
+                                        <div class="mt-1">
+                                            Sesi latihan akan dipimpin oleh pelatih pengganti: <span class="font-bold text-slate-800 underline">{{ $leave->substituteCoach->name }}</span>.
+                                        </div>
+                                    @else
+                                        <div class="mt-1 font-bold text-amber-700">
+                                            Latihan untuk jadwal ini diliburkan (tidak ada pelatih pengganti). Kuota sesi Anda tidak akan dikurangi.
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            @endif
+
             {{-- Notifikasi Sesi Habis --}}
             @if (isset($expiredStudents) && $expiredStudents->isNotEmpty())
                 <div class="bg-amber-50 border border-amber-300 rounded-xl p-5 mb-8 shadow-sm" x-data="{ showNotif: true }" x-show="showNotif" x-transition>
@@ -54,65 +91,115 @@
                                         </div>
 
                                         {{-- Modal Daftar Ulang --}}
-                                        {{-- Modal Daftar Ulang --}}
                                         <x-modal name="renew-student-{{ $expStudent->id }}" maxWidth="2xl" focusable>
                                             <form method="POST" action="{{ route('general.students.renew', $expStudent->id) }}" enctype="multipart/form-data" class="p-6 text-left"
                                                 x-data="{
                                                     allPackages: {{ $packages->toJson() }},
                                                     allSchedules: {{ $schedules->toJson() }},
                                                     classId: '{{ $expStudent->swimming_class_id }}',
-                                                    locationId: '{{ $expStudent->location_id }}',
-                                                    secondaryLocationId: '{{ $expStudent->secondary_location_id }}',
                                                     packageId: '{{ $expStudent->package_id }}',
-                                                    selectedScheduleIds: {{ $expStudent->schedules->pluck('id')->map(fn($id) => (string)$id)->toJson() }},
                                                     shouldPayRegFee: {{ $expStudent->shouldPayRegistrationFee() ? 'true' : 'false' }},
+                                                    classCategorySlug: '{{ $expStudent->swimmingClass->category->slug ?? '' }}',
+                                                    selectedScheduleIds: [
+                                                         @if(!$expStudent->schedules->isEmpty())
+                                                             @foreach($expStudent->schedules as $index => $sched)
+                                                                 '{{ $sched->id }}'{{ $index < count($expStudent->schedules) - 1 ? ',' : '' }}
+                                                             @endforeach
+                                                         @endif
+                                                     ],
 
-                                                    get filteredPackages() {
-                                                        if (!this.classId) return [];
-                                                        return this.allPackages.filter(p => p.swimming_class_id == this.classId);
-                                                    },
-                                                    get filteredSchedules() {
-                                                        if (!this.classId) return [];
-                                                        let schedules = this.allSchedules.filter(s => s.swimming_class_id == this.classId);
-                                                        if (this.locationId) {
-                                                            const locIds = [this.locationId];
-                                                            if (this.secondaryLocationId) locIds.push(this.secondaryLocationId);
-                                                            schedules = schedules.filter(s => locIds.includes(String(s.location_id)));
-                                                        }
-                                                        return schedules;
-                                                    },
-                                                    get showSecondaryLocation() {
-                                                        if (!this.packageId) return false;
-                                                        const pkg = this.allPackages.find(p => p.id == this.packageId);
-                                                        return pkg && pkg.sessions >= 8 && pkg.is_location_based;
-                                                    },
-                                                    get calculatedPrice() {
-                                                        const pkg = this.allPackages.find(p => p.id == this.packageId);
-                                                        if (!pkg) return 0;
-                                                        if (pkg.is_location_based && this.locationId) {
-                                                            const lp = (pkg.location_prices || []).find(l => l.location_id == this.locationId);
-                                                            return lp ? lp.price : 0;
-                                                        }
-                                                        return pkg.price || 0;
-                                                    },
-                                                    get totalAmount() {
-                                                        let total = this.calculatedPrice;
-                                                        if (this.shouldPayRegFee) total += 30000;
-                                                        return total;
-                                                    },
-                                                    onLocationChange() {
-                                                        this.selectedScheduleIds = [];
-                                                        this.secondaryLocationId = '';
-                                                    },
-                                                    onPackageChange() {
-                                                        if (!this.showSecondaryLocation) this.secondaryLocationId = '';
-                                                    },
-                                                    toggleSchedule(schedId) {
-                                                        const id = String(schedId);
-                                                        const idx = this.selectedScheduleIds.indexOf(id);
-                                                        if (idx > -1) this.selectedScheduleIds.splice(idx, 1);
-                                                        else this.selectedScheduleIds.push(id);
-                                                    },
+                                                     get locationId() {
+                                                         if (this.selectedScheduleIds.length === 0) return '';
+                                                         const firstSchedId = this.selectedScheduleIds[0];
+                                                         const sched = this.allSchedules.find(s => String(s.id) == firstSchedId);
+                                                         return sched ? String(sched.location_id) : '';
+                                                     },
+                                                     get secondaryLocationId() {
+                                                         const loc1 = this.locationId;
+                                                         if (!loc1) return '';
+                                                         for (let id of this.selectedScheduleIds) {
+                                                             const sched = this.allSchedules.find(s => String(s.id) == id);
+                                                             if (sched && String(sched.location_id) !== loc1) {
+                                                                 return String(sched.location_id);
+                                                             }
+                                                         }
+                                                         return '';
+                                                     },
+                                                     get maxSlots() {
+                                                         if (this.classCategorySlug === 'prestasi') return 999;
+                                                         if (!this.packageId) return 1;
+                                                         const pkg = this.allPackages.find(p => p.id == this.packageId);
+                                                         if (!pkg) return 1;
+                                                         const sessions = pkg.sessions || 4;
+                                                         if (sessions <= 4) return 1;
+                                                         if (sessions <= 8) return 2;
+                                                         if (sessions <= 12) return 3;
+                                                         return 4;
+                                                     },
+                                                     get filteredPackages() {
+                                                         if (!this.classId) return [];
+                                                         return this.allPackages.filter(p => p.swimming_class_id == this.classId);
+                                                     },
+                                                     get calculatedPrice() {
+                                                         const pkg = this.allPackages.find(p => p.id == this.packageId);
+                                                         if (!pkg) return 0;
+                                                         if (pkg.is_location_based && this.locationId) {
+                                                             const lp = (pkg.location_prices || []).find(l => l.location_id == this.locationId);
+                                                             return lp ? lp.price : 0;
+                                                         }
+                                                         return pkg.price || 0;
+                                                     },
+                                                     get totalAmount() {
+                                                         let total = this.calculatedPrice;
+                                                         if (this.shouldPayRegFee) total += 30000;
+                                                         return total;
+                                                     },
+                                                     get filteredSchedules() {
+                                                         if (!this.classId) return [];
+                                                         return this.allSchedules.filter(s => s.swimming_class_id == this.classId);
+                                                     },
+                                                     isScheduleDisabled(sched) {
+                                                         const limit = this.getScheduleCapacityLimit(sched);
+                                                         const isFull = (sched.current_enrolled_count || 0) >= limit;
+                                                         const isChecked = this.selectedScheduleIds.includes(String(sched.id));
+                                                         if (isFull && !isChecked) return true;
+                                                         if (this.selectedScheduleIds.length >= this.maxSlots && !isChecked) return true;
+                                                         return false;
+                                                     },
+                                                     toggleSchedule(schedId) {
+                                                         const id = String(schedId);
+                                                         const idx = this.selectedScheduleIds.indexOf(id);
+                                                         if (idx > -1) {
+                                                             this.selectedScheduleIds.splice(idx, 1);
+                                                         } else {
+                                                             if (this.selectedScheduleIds.length < this.maxSlots) {
+                                                                 this.selectedScheduleIds.push(id);
+                                                             }
+                                                         }
+                                                     },
+                                                     onPackageChange() {
+                                                         if (this.selectedScheduleIds.length > this.maxSlots) {
+                                                             this.selectedScheduleIds = this.selectedScheduleIds.slice(0, this.maxSlots);
+                                                         }
+                                                     },
+                                                     getScheduleCapacityLimit(sched) {
+                                                         if (this.classCategorySlug === 'prestasi') {
+                                                             return 15;
+                                                         }
+                                                         if (!this.packageId) {
+                                                             return 4;
+                                                         }
+                                                         const pkg = this.allPackages.find(p => p.id == this.packageId);
+                                                         if (!pkg) return 4;
+                                                         
+                                                         const type = pkg.package_type || 'regular';
+                                                         const name = pkg.name || '';
+                                                         
+                                                         if (type === 'private' || (type === 'single_session' && name.toLowerCase().includes('private'))) {
+                                                             return 1;
+                                                         }
+                                                         return 4;
+                                                     },
                                                     formatPrice(val) {
                                                         return 'Rp ' + Number(val).toLocaleString('id-ID');
                                                     },
@@ -153,18 +240,6 @@
                                                     </select>
                                                 </div>
 
-                                                <!-- Tempat Latihan Utama -->
-                                                <div class="mb-4">
-                                                    <x-input-label for="location-{{ $expStudent->id }}" value="Pilih Tempat Latihan Utama" />
-                                                    <select id="location-{{ $expStudent->id }}" name="location_id" x-model="locationId" @change="onLocationChange()" required
-                                                        class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                        <option value="">-- Pilih Kolam Renang --</option>
-                                                        @foreach ($locations as $loc)
-                                                            <option value="{{ $loc->id }}">{{ $loc->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
                                                 <!-- Paket Kursus (filtered by class) -->
                                                 <div class="mb-4">
                                                     <x-input-label for="package-{{ $expStudent->id }}" value="Pilih Paket Kursus" />
@@ -172,54 +247,47 @@
                                                         class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                                                         <option value="">-- Pilih Paket Latihan --</option>
                                                         <template x-for="pkg in filteredPackages" :key="pkg.id">
-                                                            <option :value="pkg.id" :selected="pkg.id == packageId" x-text="pkg.name + ' — ' + formatPrice(pkg.is_location_based ? ((pkg.location_prices || []).find(l => l.location_id == locationId)?.price || 0) : (pkg.price || 0)) + ' (' + pkg.sessions + 'x Pertemuan)'"></option>
+                                                            <option :value="pkg.id" :selected="pkg.id == packageId" x-text="pkg.name + ' — ' + (locationId ? formatPrice(pkg.is_location_based ? ((pkg.location_prices || []).find(l => l.location_id == locationId)?.price || 0) : (pkg.price || 0)) : '(Harga menyesuaikan kolam)') + ' (' + pkg.sessions + 'x Pertemuan)'"></option>
                                                         </template>
                                                     </select>
                                                 </div>
 
-                                                <!-- Lokasi Kedua (opsional, paket >= 8 sesi) -->
-                                                <div class="mb-4" x-show="showSecondaryLocation" x-transition>
-                                                    <x-input-label value="Pilih Tempat Latihan Kedua (Opsional, Paket 8 Sesi)" />
-                                                    <select name="secondary_location_id" x-model="secondaryLocationId"
-                                                        class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                        <option value="">-- Tidak Perlu / Sama Dengan Lokasi Utama --</option>
-                                                        @foreach ($locations as $loc)
-                                                            <option value="{{ $loc->id }}" x-bind:disabled="locationId == '{{ $loc->id }}'">{{ $loc->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <small class="text-gray-400 mt-1 block">*Untuk paket 8 pertemuan, Anda bisa memilih 2 lokasi berbeda.</small>
-                                                </div>
+                                                <input type="hidden" name="location_id" :value="locationId">
+                                                <input type="hidden" name="secondary_location_id" :value="secondaryLocationId">
 
-                                                <!-- Jadwal Latihan -->
-                                                <div class="mb-4" x-show="filteredSchedules.length > 0" x-transition>
+                                                <!-- Jadwal Latihan Checkbox Grid -->
+                                                <div class="mb-4" x-show="packageId && filteredSchedules.length > 0" x-transition>
                                                     <x-input-label value="Pilih Jadwal Latihan" />
-                                                    <p class="text-xs text-gray-400 mb-2">Centang jadwal latihan yang diinginkan.</p>
-                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                                                    <p class="text-xs text-gray-400 mb-2">Centang jadwal latihan yang diinginkan. Batas slot jadwal disesuaikan dengan jenis paket latihan.</p>
+
+                                                    <div class="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-1">
                                                         <template x-for="sched in filteredSchedules" :key="sched.id">
-                                                            <label class="flex items-center gap-2.5 p-3 border rounded-lg cursor-pointer transition-all duration-100 text-sm"
-                                                                :class="selectedScheduleIds.includes(String(sched.id)) ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:border-gray-300'">
+                                                            <label class="flex items-start gap-2.5 p-2.5 border rounded-lg cursor-pointer transition-all duration-100 text-xs"
+                                                                :class="selectedScheduleIds.includes(String(sched.id)) ? 'border-blue-400 bg-blue-50/50' : 
+                                                                    (isScheduleDisabled(sched) ? 'border-gray-100 bg-gray-50/30 opacity-60 cursor-not-allowed' : 'border-gray-200 hover:border-gray-300')">
                                                                 <input type="checkbox" name="schedule_ids[]" :value="sched.id"
-                                                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-0.5"
                                                                     @change="toggleSchedule(sched.id)"
-                                                                    :checked="selectedScheduleIds.includes(String(sched.id))" />
-                                                                <div>
-                                                                    <span class="font-semibold text-gray-700" x-text="getDayName(sched.day_of_week)"></span>
-                                                                    <span class="text-gray-500" x-text="formatTime(sched.start_time) + ' - ' + formatTime(sched.end_time)"></span>
-                                                                    <span class="text-[10px] ml-1 px-1.5 py-0.5 rounded-full font-bold"
-                                                                        :class="sched.session_type === 'swim' ? 'bg-cyan-100 text-cyan-700' : 'bg-orange-100 text-orange-700'"
-                                                                        x-text="sched.session_type === 'swim' ? 'Renang' : 'Dryland'"></span>
-                                                                    <span class="block text-[10px] text-gray-400" x-text="sched.location?.name || ''"></span>
+                                                                    :checked="selectedScheduleIds.includes(String(sched.id))"
+                                                                    :disabled="isScheduleDisabled(sched)" />
+                                                                <div class="flex-1">
+                                                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                                                        <span class="font-bold text-gray-800" x-text="getDayName(sched.day_of_week) + ', ' + formatTime(sched.start_time) + ' - ' + formatTime(sched.end_time)"></span>
+                                                                        <span class="text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase"
+                                                                            :class="sched.session_type === 'swim' ? 'bg-cyan-100 text-cyan-700' : 'bg-orange-100 text-orange-700'"
+                                                                            x-text="sched.session_type === 'swim' ? 'Renang' : 'Dryland'"></span>
+                                                                    </div>
+                                                                    <span class="block text-[10px] text-gray-500 mt-0.5"><i class="fa-solid fa-map-pin text-gray-400 mr-0.5"></i><span x-text="sched.location?.name || ''"></span></span>
+                                                                    <span class="block text-[10px] font-bold mt-0.5"
+                                                                        :class="(sched.current_enrolled_count || 0) >= getScheduleCapacityLimit(sched) ? 'text-red-500' : 'text-blue-600'"
+                                                                        x-text="(sched.current_enrolled_count || 0) + '/' + getScheduleCapacityLimit(sched) + ' Terisi' + ((sched.current_enrolled_count || 0) >= getScheduleCapacityLimit(sched) ? ' (Penuh)' : '')"></span>
                                                                 </div>
                                                             </label>
                                                         </template>
                                                     </div>
-                                                </div>
-
-                                                <div class="mb-4 bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-lg text-xs"
-                                                    x-show="filteredSchedules.length === 0 && locationId" x-transition>
-                                                    <i class="fa-solid fa-circle-exclamation mr-1"></i>
-                                                    <strong>Tidak Ada Jadwal:</strong> Belum ada jadwal latihan yang tersedia untuk kelas dan lokasi terpilih.
-                                                </div>
+                                                    <x-input-error :messages="$errors->get('schedule_ids')" class="mt-2" />
+                                                    <small class="text-gray-400 mt-1 block">*Maksimal jadwal latihan untuk paket ini adalah <span class="font-bold text-slate-600" x-text="maxSlots"></span> sesi per minggu.</small>
+                                                </div></div>
 
                                                 <!-- Ringkasan Pembayaran -->
                                                 <div class="mb-4" x-show="packageId" x-transition>

@@ -91,15 +91,28 @@
                                         </td>
 
                                         <td class="px-4 py-4 text-center">
-                                            @if ($student->coach)
-                                                <span
-                                                    class="inline-flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200 dark:border-blue-800">
-                                                    <i class="fa-solid fa-user-tie mr-1.5 text-[10px]"></i>
-                                                    {{ $student->coach->name }}
-                                                </span>
-                                            @else
-                                                <span class="text-xs text-gray-400 dark:text-gray-500 italic">Belum Ditentukan</span>
-                                            @endif
+                                            @php
+                                                $coaches = $student->schedules->map(fn($s) => $s->coach)->filter()->unique('id');
+                                            @endphp
+                                            @forelse($coaches as $c)
+                                                <div class="mb-1 last:mb-0">
+                                                    <span
+                                                        class="inline-flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200 dark:border-blue-800">
+                                                        <i class="fa-solid fa-user-tie mr-1.5 text-[10px]"></i>
+                                                        {{ $c->name }}
+                                                    </span>
+                                                </div>
+                                            @empty
+                                                @if ($student->coach)
+                                                    <span
+                                                        class="inline-flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200 dark:border-blue-800">
+                                                        <i class="fa-solid fa-user-tie mr-1.5 text-[10px]"></i>
+                                                        {{ $student->coach->name }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-xs text-gray-400 dark:text-gray-500 italic">Belum Ditentukan</span>
+                                                @endif
+                                            @endforelse
                                         </td>
 
                                         <td class="px-6 py-4">
@@ -298,36 +311,6 @@
                                                             {{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }}<br>
                                                             - Durasi Suspend:
                                                             {{ round(now()->diffInDays($student->suspended_at)) }} Hari
-                                                        </div>
-
-                                                        <div class="mt-4">
-                                                            <x-input-label for="coach_id_{{ $student->id }}"
-                                                                value="Pilih Coach / Pelatih Pendamping" />
-                                                            <select id="coach_id_{{ $student->id }}" name="coach_id"
-                                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                                                required>
-                                                                @foreach ($coaches as $coach)
-                                                                    @php
-                                                                        $isCurrentCoach = $student->coach_id == $coach->id;
-                                                                        $isFull = $coach->students_count >= 15;
-                                                                    @endphp
-                                                                    <option value="{{ $coach->id }}"
-                                                                        {{ $isCurrentCoach ? 'selected' : '' }}
-                                                                        {{ $isFull && !$isCurrentCoach ? 'disabled' : '' }}>
-                                                                        {{ $coach->name }}
-                                                                        ({{ $coach->students_count }}/15 Murid Aktif)
-                                                                        @if ($isCurrentCoach)
-                                                                            [Pelatih Asal]
-                                                                        @endif
-                                                                        @if ($isFull && !$isCurrentCoach)
-                                                                            [PENUH]
-                                                                        @endif
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                            <p class="text-xs text-gray-400 mt-1">Hanya pelatih yang
-                                                                memiliki slot kosong (&lt; 15 murid aktif) yang dapat
-                                                                ditugaskan.</p>
                                                         </div>
 
                                                         <div class="mt-6 flex justify-end space-x-3">

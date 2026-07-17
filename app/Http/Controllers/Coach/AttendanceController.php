@@ -33,7 +33,22 @@ class AttendanceController extends Controller
      */
     public function createBelajar()
     {
-        $students = Student::where('coach_id', Auth::id())
+        $today = date('Y-m-d');
+        // Cari coach mana saja yang sedang diwakili hari ini
+        $substituteCoachIds = \App\Models\CoachLeave::where('status', 'approved')
+            ->where('leave_date', $today)
+            ->where('substitute_coach_id', Auth::id())
+            ->pluck('coach_id')
+            ->toArray();
+
+        $coachIds = array_merge([Auth::id()], $substituteCoachIds);
+
+        $students = Student::where(function($query) use ($coachIds) {
+                $query->whereIn('coach_id', $coachIds)
+                    ->orWhereHas('schedules', function($q) use ($coachIds) {
+                        $q->whereIn('coach_id', $coachIds);
+                    });
+            })
             ->where('status', 'active')
             ->whereHas('swimmingClass.category', function ($q) {
                 $q->where('slug', 'belajar');
@@ -42,7 +57,7 @@ class AttendanceController extends Controller
             ->oldest('name')
             ->get();
 
-        return view('coach.attendances.belajar.create', compact('students'));
+        return view('coach.attendances.belajar.create', compact('students', 'coachIds'));
     }
 
     /**
@@ -60,17 +75,37 @@ class AttendanceController extends Controller
             'student_ids.required' => 'Silakan pilih minimal satu murid untuk absen.',
         ]);
 
-        $coachId = Auth::id();
+        $authCoachId = Auth::id();
+        $date = $request->date;
+
+        // Cari coach mana saja yang diwakili pada tanggal terpilih
+        $substituteCoachIds = \App\Models\CoachLeave::where('status', 'approved')
+            ->where('leave_date', $date)
+            ->where('substitute_coach_id', $authCoachId)
+            ->pluck('coach_id')
+            ->toArray();
+
+        $allowedCoachIds = array_merge([$authCoachId], $substituteCoachIds);
 
         try {
-            DB::transaction(function () use ($request, $coachId) {
+            DB::transaction(function () use ($request, $authCoachId, $allowedCoachIds) {
+                // Konversi hari terpilih (Monday=0 ... Sunday=6)
+                $carbonDayOfWeek = \Carbon\Carbon::parse($request->date)->dayOfWeek;
+                $dayOfWeek = $carbonDayOfWeek === 0 ? 6 : $carbonDayOfWeek - 1;
+
                 foreach ($request->student_ids as $studentId) {
                     $student = Student::findOrFail($studentId);
 
-                    if ($student->coach_id == $coachId) {
+                    // Validasi: Harus memiliki jadwal di hari terpilih yang diajar oleh salah satu pelatih yang diizinkan (utama/pendamping/pengganti)
+                    $isAllowed = $student->schedules()
+                        ->whereIn('coach_id', $allowedCoachIds)
+                        ->where('day_of_week', $dayOfWeek)
+                        ->exists();
+
+                    if ($isAllowed) {
                         Attendance::create([
                             'student_id' => $student->id,
-                            'coach_id' => $coachId,
+                            'coach_id' => $authCoachId, // Catat coach pengganti yang mengajar
                             'location_id' => $student->location_id,
                             'session_type' => 'swim', // Default untuk kelas belajar
                             'date' => $request->date,
@@ -135,7 +170,22 @@ class AttendanceController extends Controller
      */
     public function createPrestasi()
     {
-        $students = Student::where('coach_id', Auth::id())
+        $today = date('Y-m-d');
+        // Cari coach mana saja yang sedang diwakili hari ini
+        $substituteCoachIds = \App\Models\CoachLeave::where('status', 'approved')
+            ->where('leave_date', $today)
+            ->where('substitute_coach_id', Auth::id())
+            ->pluck('coach_id')
+            ->toArray();
+
+        $coachIds = array_merge([Auth::id()], $substituteCoachIds);
+
+        $students = Student::where(function($query) use ($coachIds) {
+                $query->whereIn('coach_id', $coachIds)
+                    ->orWhereHas('schedules', function($q) use ($coachIds) {
+                        $q->whereIn('coach_id', $coachIds);
+                    });
+            })
             ->where('status', 'active')
             ->whereHas('swimmingClass.category', function ($q) {
                 $q->where('slug', 'prestasi');
@@ -144,7 +194,7 @@ class AttendanceController extends Controller
             ->oldest('name')
             ->get();
 
-        return view('coach.attendances.prestasi.create', compact('students'));
+        return view('coach.attendances.prestasi.create', compact('students', 'coachIds'));
     }
 
     /**
@@ -164,14 +214,34 @@ class AttendanceController extends Controller
             'student_ids.required' => 'Silakan pilih minimal satu atlet untuk absen.',
         ]);
 
-        $coachId = Auth::id();
+        $authCoachId = Auth::id();
+        $date = $request->date;
+
+        // Cari coach mana saja yang diwakili pada tanggal terpilih
+        $substituteCoachIds = \App\Models\CoachLeave::where('status', 'approved')
+            ->where('leave_date', $date)
+            ->where('substitute_coach_id', $authCoachId)
+            ->pluck('coach_id')
+            ->toArray();
+
+        $allowedCoachIds = array_merge([$authCoachId], $substituteCoachIds);
 
         try {
-            DB::transaction(function () use ($request, $coachId) {
+            DB::transaction(function () use ($request, $authCoachId, $allowedCoachIds) {
+                // Konversi hari terpilih (Monday=0 ... Sunday=6)
+                $carbonDayOfWeek = \Carbon\Carbon::parse($request->date)->dayOfWeek;
+                $dayOfWeek = $carbonDayOfWeek === 0 ? 6 : $carbonDayOfWeek - 1;
+
                 foreach ($request->student_ids as $studentId) {
                     $student = Student::findOrFail($studentId);
 
-                    if ($student->coach_id == $coachId) {
+                    // Validasi: Harus memiliki jadwal di hari terpilih yang diajar oleh salah satu pelatih yang diizinkan (utama/pendamping/pengganti)
+                    $isAllowed = $student->schedules()
+                        ->whereIn('coach_id', $allowedCoachIds)
+                        ->where('day_of_week', $dayOfWeek)
+                        ->exists();
+
+                    if ($isAllowed) {
                         $sessionType = $request->session_type;
                         if ($sessionType === 'swim' && $student->swim_sessions_left <= 0) {
                             throw new \Exception("Kuota sesi berenang untuk {$student->name} sudah habis.");
@@ -181,7 +251,7 @@ class AttendanceController extends Controller
 
                         Attendance::create([
                             'student_id' => $student->id,
-                            'coach_id' => $coachId,
+                            'coach_id' => $authCoachId, // Catat coach pengganti yang mengajar
                             'location_id' => $student->location_id,
                             'session_type' => $request->session_type,
                             'date' => $request->date,

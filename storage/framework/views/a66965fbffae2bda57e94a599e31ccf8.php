@@ -108,7 +108,12 @@
 
                                     
                                     <td class="px-6 py-4">
-                                        <?php $__empty_2 = true; $__currentLoopData = $student->schedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
+                                        <?php
+                                            $filteredSchedules = $student->schedules->filter(function($s) use ($coachIds) {
+                                                return in_array($s->coach_id, $coachIds);
+                                            });
+                                        ?>
+                                        <?php $__empty_2 = true; $__currentLoopData = $filteredSchedules; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sched): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
                                             <div class="mb-1.5 last:mb-0">
                                                 <span class="inline-flex items-center text-[11px] font-semibold text-slate-800 bg-slate-100 rounded px-1.5 py-0.5">
                                                     <?php echo e($sched->day_name); ?> (<?php echo e(substr($sched->start_time, 0, 5)); ?>)

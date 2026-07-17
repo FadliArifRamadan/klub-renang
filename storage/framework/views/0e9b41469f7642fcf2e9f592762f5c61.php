@@ -133,9 +133,15 @@ unset($__errorArgs, $__bag); ?>
                                     <?php $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php
                                             $quotaEmpty = $student->quota_left <= 0;
-                                            $schedulesData = $student->schedules->map(function($s) {
-                                                return ['day' => $s->day_of_week, 'type' => $s->session_type];
-                                            })->toArray();
+                                            $schedulesData = $student->schedules
+                                                ->filter(function($s) use ($coachIds) {
+                                                    return in_array($s->coach_id, $coachIds);
+                                                })
+                                                ->map(function($s) {
+                                                    return ['day' => $s->day_of_week, 'type' => $s->session_type];
+                                                })
+                                                ->values()
+                                                ->toArray();
                                             $hasSwim = $student->package && !is_null($student->package->swim_sessions) && $student->package->swim_sessions > 0;
                                             $hasDryland = $student->package && !is_null($student->package->dryland_sessions) && $student->package->dryland_sessions > 0;
                                             if ($student->package && is_null($student->package->swim_sessions)) {

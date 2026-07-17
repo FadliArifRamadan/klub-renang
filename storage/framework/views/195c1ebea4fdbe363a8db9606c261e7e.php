@@ -71,18 +71,44 @@
                 </div>
 
                 
-                <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit mb-6">
-                    <a href="<?php echo e(route('admin.schedules.index')); ?>" 
-                        class="px-4 py-2 text-xs font-bold rounded-xl transition-all <?php echo e(empty($locationId) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800'); ?>">
-                        Semua
-                    </a>
-                    <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $loc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <a href="<?php echo e(route('admin.schedules.index', ['location_id' => $loc->id])); ?>" 
-                            class="px-4 py-2 text-xs font-bold rounded-xl transition-all <?php echo e($locationId == $loc->id ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'); ?>">
-                            <?php echo e($loc->name); ?>
-
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                    
+                    <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit">
+                        <a href="<?php echo e(route('admin.schedules.index', ['coach_name' => request('coach_name')])); ?>" 
+                            class="px-4 py-2 text-xs font-bold rounded-xl transition-all <?php echo e(empty($locationId) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800'); ?>">
+                            Semua
                         </a>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $loc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <a href="<?php echo e(route('admin.schedules.index', ['location_id' => $loc->id, 'coach_name' => request('coach_name')])); ?>" 
+                                class="px-4 py-2 text-xs font-bold rounded-xl transition-all <?php echo e($locationId == $loc->id ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'); ?>">
+                                <?php echo e($loc->name); ?>
+
+                            </a>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
+
+                    
+                    <form method="GET" action="<?php echo e(route('admin.schedules.index')); ?>" class="flex items-center gap-2 w-full lg:w-auto">
+                        <?php if($locationId): ?>
+                            <input type="hidden" name="location_id" value="<?php echo e($locationId); ?>">
+                        <?php endif; ?>
+                        <div class="relative w-full lg:w-64">
+                            <input type="text" name="coach_name" value="<?php echo e(request('coach_name')); ?>" placeholder="Cari nama pelatih..." 
+                                class="w-full pl-9 pr-4 py-2 text-xs border border-gray-300 rounded-xl focus:border-blue-500 focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 shadow-sm">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                        </div>
+                        <button type="submit" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow transition-colors flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-filter"></i> Cari
+                        </button>
+                        <?php if(request('coach_name')): ?>
+                            <a href="<?php echo e(route('admin.schedules.index', $locationId ? ['location_id' => $locationId] : [])); ?>" 
+                                class="px-3.5 py-2 border border-gray-300 hover:bg-gray-50 text-gray-600 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0">
+                                <i class="fa-solid fa-rotate-right"></i> Reset
+                            </a>
+                        <?php endif; ?>
+                    </form>
                 </div>
 
                 <div class="relative overflow-x-auto border sm:rounded-lg">
@@ -94,6 +120,7 @@
                                 <th scope="col" class="px-6 py-3">Jam Latihan</th>
                                 <th scope="col" class="px-6 py-3">Kelas Renang</th>
                                 <th scope="col" class="px-6 py-3">Lokasi Kolam</th>
+                                <th scope="col" class="px-6 py-3">Pelatih (Coach)</th>
                                 <th scope="col" class="px-6 py-3 text-center">Jenis Sesi</th>
                                 <th scope="col" class="px-6 py-3 text-center">Status</th>
                                 <th scope="col" class="px-4 py-3 text-center w-32">Aksi</th>
@@ -120,6 +147,10 @@
                                     </td>
                                     <td class="px-6 py-4 text-gray-800 dark:text-gray-100">
                                         <?php echo e($sched->location->name); ?>
+
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-800 dark:text-gray-100 font-medium">
+                                        <?php echo e($sched->coach->name ?? 'Belum Ditentukan'); ?>
 
                                     </td>
                                     <td class="px-6 py-4 text-center">
@@ -381,6 +412,35 @@
                                                     <select id="session_type-<?php echo e($sched->id); ?>" name="session_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                                         <option value="swim" <?php if($sched->session_type == 'swim'): echo 'selected'; endif; ?>>Renang (Swim)</option>
                                                         <option value="dryland" <?php if($sched->session_type == 'dryland'): echo 'selected'; endif; ?>>Latihan Darat (Dryland)</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mt-4">
+                                                    <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'coach-'.e($sched->id).'','value' => 'Pelatih / Coach (Opsional)']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-label'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['for' => 'coach-'.e($sched->id).'','value' => 'Pelatih / Coach (Opsional)']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+                                                    <select id="coach-<?php echo e($sched->id); ?>" name="coach_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                                        <option value="">-- Tanpa Pelatih --</option>
+                                                        <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option value="<?php echo e($coach->id); ?>" <?php if($sched->coach_id == $coach->id): echo 'selected'; endif; ?>><?php echo e($coach->name); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </select>
                                                 </div>
 
@@ -840,6 +900,35 @@
                 <select id="create-session-type" name="session_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                     <option value="swim" <?php if(old('session_type') == 'swim'): echo 'selected'; endif; ?>>Renang (Swim)</option>
                     <option value="dryland" <?php if(old('session_type') == 'dryland'): echo 'selected'; endif; ?>>Latihan Darat (Dryland)</option>
+                </select>
+            </div>
+
+            <div class="mt-4">
+                <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'create-coach','value' => 'Pelatih / Coach (Opsional)']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-label'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['for' => 'create-coach','value' => 'Pelatih / Coach (Opsional)']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
+<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
+<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
+<?php endif; ?>
+                <select id="create-coach" name="coach_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                    <option value="" selected>-- Tanpa Pelatih --</option>
+                    <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($coach->id); ?>" <?php if(old('coach_id') == $coach->id): echo 'selected'; endif; ?>><?php echo e($coach->name); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
 

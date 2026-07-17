@@ -110,18 +110,30 @@
                                     </td>
 
                                     <td class="px-6 py-4">
-                                        <?php if($student->coach): ?>
-                                            <div class="flex items-center space-x-2">
-                                                <span
-                                                    class="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
-                                                    <i class="fa-solid fa-user-tie mr-1.5"></i>
-                                                    <?php echo e($student->coach->name); ?>
+                                         <?php
+                                             $coaches = $student->schedules->map(fn($s) => $s->coach)->filter()->unique('id');
+                                         ?>
+                                         <?php $__empty_2 = true; $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
+                                             <div class="mb-1.5 last:mb-0">
+                                                 <span
+                                                     class="inline-flex items-center bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
+                                                     <i class="fa-solid fa-user-tie mr-1.5"></i>
+                                                     <?php echo e($c->name); ?>
 
-                                                </span>
-                                            </div>
-                                        <?php else: ?>
-                                            <span class="text-gray-400 italic text-xs">Mencari Rekomendasi Admin</span>
-                                        <?php endif; ?>
+                                                 </span>
+                                             </div>
+                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
+                                             <?php if($student->coach): ?>
+                                                 <span
+                                                     class="inline-flex items-center bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
+                                                     <i class="fa-solid fa-user-tie mr-1.5"></i>
+                                                     <?php echo e($student->coach->name); ?>
+
+                                                 </span>
+                                             <?php else: ?>
+                                                 <span class="text-gray-400 italic text-xs">Mencari Rekomendasi Admin</span>
+                                             <?php endif; ?>
+                                         <?php endif; ?>
                                     </td>
 
                                     <td class="px-6 py-4">

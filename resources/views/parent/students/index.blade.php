@@ -94,17 +94,28 @@
                                     </td>
 
                                     <td class="px-6 py-4">
-                                        @if ($student->coach)
-                                            <div class="flex items-center space-x-2">
-                                                <span
-                                                    class="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
-                                                    <i class="fa-solid fa-user-tie mr-1.5"></i>
-                                                    {{ $student->coach->name }}
-                                                </span>
-                                            </div>
-                                        @else
-                                            <span class="text-gray-400 italic text-xs">Mencari Rekomendasi Admin</span>
-                                        @endif
+                                         @php
+                                             $coaches = $student->schedules->map(fn($s) => $s->coach)->filter()->unique('id');
+                                         @endphp
+                                         @forelse($coaches as $c)
+                                             <div class="mb-1.5 last:mb-0">
+                                                 <span
+                                                     class="inline-flex items-center bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
+                                                     <i class="fa-solid fa-user-tie mr-1.5"></i>
+                                                     {{ $c->name }}
+                                                 </span>
+                                             </div>
+                                         @empty
+                                             @if ($student->coach)
+                                                 <span
+                                                     class="inline-flex items-center bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
+                                                     <i class="fa-solid fa-user-tie mr-1.5"></i>
+                                                     {{ $student->coach->name }}
+                                                 </span>
+                                             @else
+                                                 <span class="text-gray-400 italic text-xs">Mencari Rekomendasi Admin</span>
+                                             @endif
+                                         @endforelse
                                     </td>
 
                                     <td class="px-6 py-4">

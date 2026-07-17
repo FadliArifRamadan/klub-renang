@@ -45,7 +45,6 @@
                                 <th scope="col" class="px-6 py-3">Nama Kelas</th>
                                 <th scope="col" class="px-6 py-3">Kategori</th>
                                 <th scope="col" class="px-6 py-3 text-center">Rentang Umur</th>
-                                <th scope="col" class="px-6 py-3 text-center">Kuota Maksimal</th>
                                 <th scope="col" class="px-6 py-3 text-center">Status</th>
                                 <th scope="col" class="px-4 py-3 text-center w-32">Aksi</th>
                             </tr>
@@ -70,11 +69,6 @@
                                         @else
                                             {{ $class->age_min }} Tahun Keatas
                                         @endif
-                                    </td>
-                                    <td class="px-6 py-4 text-center">
-                                        <span class="bg-gray-100 text-gray-800 dark:text-gray-100 text-xs font-semibold px-2.5 py-0.5 rounded">
-                                            {{ $class->max_quota }} Murid / Kelas
-                                        </span>
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         @if($class->is_active)
@@ -144,12 +138,6 @@
                                                         <x-text-input id="age_max-{{ $class->id }}" class="block mt-1 w-full" type="number" name="age_max"
                                                             :value="old('age_max', $class->age_max)" placeholder="Kosongkan jika bebas" />
                                                     </div>
-                                                </div>
-
-                                                <div class="mt-4">
-                                                    <x-input-label for="max_quota-{{ $class->id }}" value="Kuota Maksimal Murid per Kelas" />
-                                                    <x-text-input id="max_quota-{{ $class->id }}" class="block mt-1 w-full" type="number" name="max_quota"
-                                                        :value="old('max_quota', $class->max_quota)" placeholder="15" required />
                                                 </div>
 
                                                 <div class="mt-4">
@@ -267,11 +255,6 @@
                     <x-input-label for="create-age-max" value="Usia Maksimum (Nullable)" />
                     <x-text-input id="create-age-max" class="block mt-1 w-full" type="number" name="age_max" :value="old('age_max')" placeholder="Kosongkan jika bebas" />
                 </div>
-            </div>
-
-            <div class="mt-4">
-                <x-input-label for="create-quota" value="Kuota Maksimal Murid per Kelas" />
-                <x-text-input id="create-quota" class="block mt-1 w-full" type="number" name="max_quota" :value="old('max_quota', 15)" placeholder="15" required />
             </div>
 
             <div class="mt-4">

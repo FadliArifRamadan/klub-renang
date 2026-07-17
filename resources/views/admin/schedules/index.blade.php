@@ -40,18 +40,44 @@
                     </div>
                 </div>
 
-                {{-- Tab Filter Lokasi --}}
-                <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit mb-6">
-                    <a href="{{ route('admin.schedules.index') }}" 
-                        class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($locationId) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
-                        Semua
-                    </a>
-                    @foreach($locations as $loc)
-                        <a href="{{ route('admin.schedules.index', ['location_id' => $loc->id]) }}" 
-                            class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ $locationId == $loc->id ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
-                            {{ $loc->name }}
+                {{-- Filter & Pencarian --}}
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                    {{-- Tab Filter Lokasi --}}
+                    <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit">
+                        <a href="{{ route('admin.schedules.index', ['coach_name' => request('coach_name')]) }}" 
+                            class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($locationId) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
+                            Semua
                         </a>
-                    @endforeach
+                        @foreach($locations as $loc)
+                            <a href="{{ route('admin.schedules.index', ['location_id' => $loc->id, 'coach_name' => request('coach_name')]) }}" 
+                                class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ $locationId == $loc->id ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
+                                {{ $loc->name }}
+                            </a>
+                        @endforeach
+                    </div>
+
+                    {{-- Form Pencarian Coach --}}
+                    <form method="GET" action="{{ route('admin.schedules.index') }}" class="flex items-center gap-2 w-full lg:w-auto">
+                        @if($locationId)
+                            <input type="hidden" name="location_id" value="{{ $locationId }}">
+                        @endif
+                        <div class="relative w-full lg:w-64">
+                            <input type="text" name="coach_name" value="{{ request('coach_name') }}" placeholder="Cari nama pelatih..." 
+                                class="w-full pl-9 pr-4 py-2 text-xs border border-gray-300 rounded-xl focus:border-blue-500 focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 shadow-sm">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                        </div>
+                        <button type="submit" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow transition-colors flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-filter"></i> Cari
+                        </button>
+                        @if(request('coach_name'))
+                            <a href="{{ route('admin.schedules.index', $locationId ? ['location_id' => $locationId] : []) }}" 
+                                class="px-3.5 py-2 border border-gray-300 hover:bg-gray-50 text-gray-600 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0">
+                                <i class="fa-solid fa-rotate-right"></i> Reset
+                            </a>
+                        @endif
+                    </form>
                 </div>
 
                 <div class="relative overflow-x-auto border sm:rounded-lg">
@@ -63,6 +89,7 @@
                                 <th scope="col" class="px-6 py-3">Jam Latihan</th>
                                 <th scope="col" class="px-6 py-3">Kelas Renang</th>
                                 <th scope="col" class="px-6 py-3">Lokasi Kolam</th>
+                                <th scope="col" class="px-6 py-3">Pelatih (Coach)</th>
                                 <th scope="col" class="px-6 py-3 text-center">Jenis Sesi</th>
                                 <th scope="col" class="px-6 py-3 text-center">Status</th>
                                 <th scope="col" class="px-4 py-3 text-center w-32">Aksi</th>
@@ -86,6 +113,9 @@
                                     </td>
                                     <td class="px-6 py-4 text-gray-800 dark:text-gray-100">
                                         {{ $sched->location->name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-800 dark:text-gray-100 font-medium">
+                                        {{ $sched->coach->name ?? 'Belum Ditentukan' }}
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         @if($sched->session_type == 'dryland')
@@ -187,6 +217,16 @@
                                                     <select id="session_type-{{ $sched->id }}" name="session_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                                         <option value="swim" @selected($sched->session_type == 'swim')>Renang (Swim)</option>
                                                         <option value="dryland" @selected($sched->session_type == 'dryland')>Latihan Darat (Dryland)</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mt-4">
+                                                    <x-input-label for="coach-{{ $sched->id }}" value="Pelatih / Coach (Opsional)" />
+                                                    <select id="coach-{{ $sched->id }}" name="coach_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                                        <option value="">-- Tanpa Pelatih --</option>
+                                                        @foreach($coaches as $coach)
+                                                            <option value="{{ $coach->id }}" @selected($sched->coach_id == $coach->id)>{{ $coach->name }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
 
@@ -329,6 +369,16 @@
                 <select id="create-session-type" name="session_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                     <option value="swim" @selected(old('session_type') == 'swim')>Renang (Swim)</option>
                     <option value="dryland" @selected(old('session_type') == 'dryland')>Latihan Darat (Dryland)</option>
+                </select>
+            </div>
+
+            <div class="mt-4">
+                <x-input-label for="create-coach" value="Pelatih / Coach (Opsional)" />
+                <select id="create-coach" name="coach_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                    <option value="" selected>-- Tanpa Pelatih --</option>
+                    @foreach($coaches as $coach)
+                        <option value="{{ $coach->id }}" @selected(old('coach_id') == $coach->id)>{{ $coach->name }}</option>
+                    @endforeach
                 </select>
             </div>
 

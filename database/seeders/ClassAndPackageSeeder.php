@@ -23,6 +23,7 @@ class ClassAndPackageSeeder extends Seeder
             'Star Sport' => ['address' => 'Star Sport Hall, Cirebon'],
             'Tirta' => ['address' => 'Kolam Renang Tirta, Cirebon'],
             'Pacific' => ['address' => 'Pacific Sport Center, Cirebon'],
+            'Home Visit' => ['address' => 'Kolam Renang Pribadi'],
         ];
 
         $locationModels = [];
@@ -101,6 +102,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 450000,
                     'Tirta' => 450000,
                     'Pacific' => 450000,
+                    'Home Visit' => 1000000,
                 ]
             ],
             [
@@ -114,6 +116,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 225000,
                     'Tirta' => 225000,
                     'Pacific' => 225000,
+                    'Home Visit' => 500000,
                 ]
             ],
             [
@@ -127,6 +130,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 80000,
                     'Tirta' => 80000,
                     'Pacific' => 80000,
+                    'Home Visit' => 150000,
                 ]
             ],
             [
@@ -140,6 +144,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 850000,
                     'Tirta' => 850000,
                     'Pacific' => 850000,
+                    'Home Visit' => 1500000,
                 ]
             ],
             [
@@ -153,6 +158,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 425000,
                     'Tirta' => 425000,
                     'Pacific' => 425000,
+                    'Home Visit' => 800000,
                 ]
             ],
             [
@@ -166,6 +172,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 110000,
                     'Tirta' => 110000,
                     'Pacific' => 110000,
+                    'Home Visit' => 250000,
                 ]
             ],
         ];
@@ -248,12 +255,12 @@ class ClassAndPackageSeeder extends Seeder
         }
 
         // 6. Seed Schedules
-        // Batita: Senin & Rabu, 16:00 - 17:00 at Taman Wahidin (id=1 or by model lookup)
         $tamanWahidin = $locationModels['Taman Wahidin'];
         $cipto = $locationModels['Cipto'];
         $starSport = $locationModels['Star Sport'];
         $tirta = $locationModels['Tirta'];
         $pacific = $locationModels['Pacific'];
+        $homeVisit = $locationModels['Home Visit'];
 
         $scheduleData = [
             // Belajar - Batita
@@ -261,23 +268,28 @@ class ClassAndPackageSeeder extends Seeder
             ['class' => $belajarClassModels['Batita'], 'location' => $tamanWahidin, 'day' => 2, 'start' => '16:00', 'end' => '17:00', 'type' => 'swim', 'notes' => 'Sesi Kolam Dangkal'],
             ['class' => $belajarClassModels['Batita'], 'location' => $starSport, 'day' => 1, 'start' => '10:00', 'end' => '11:00', 'type' => 'swim', 'notes' => 'Sesi Kolam Dangkal'],
             ['class' => $belajarClassModels['Batita'], 'location' => $starSport, 'day' => 3, 'start' => '10:00', 'end' => '11:00', 'type' => 'swim', 'notes' => 'Sesi Kolam Dangkal'],
+            ['class' => $belajarClassModels['Batita'], 'location' => $homeVisit, 'day' => 5, 'start' => '10:00', 'end' => '11:00', 'type' => 'swim', 'notes' => 'Home Visit Batita'],
 
             // Belajar - Balita
             ['class' => $belajarClassModels['Balita'], 'location' => $cipto, 'day' => 0, 'start' => '17:00', 'end' => '18:00', 'type' => 'swim', 'notes' => 'Sesi Balita'],
             ['class' => $belajarClassModels['Balita'], 'location' => $cipto, 'day' => 2, 'start' => '17:00', 'end' => '18:00', 'type' => 'swim', 'notes' => 'Sesi Balita'],
             ['class' => $belajarClassModels['Balita'], 'location' => $tirta, 'day' => 5, 'start' => '09:00', 'end' => '10:00', 'type' => 'swim', 'notes' => 'Sesi Akhir Pekan'],
             ['class' => $belajarClassModels['Balita'], 'location' => $tirta, 'day' => 6, 'start' => '09:00', 'end' => '10:00', 'type' => 'swim', 'notes' => 'Sesi Akhir Pekan'],
+            ['class' => $belajarClassModels['Balita'], 'location' => $homeVisit, 'day' => 5, 'start' => '11:00', 'end' => '12:00', 'type' => 'swim', 'notes' => 'Home Visit Balita'],
 
             // Belajar - Anak-anak
             ['class' => $belajarClassModels['Anak-anak'], 'location' => $tamanWahidin, 'day' => 1, 'start' => '16:00', 'end' => '17:30', 'type' => 'swim', 'notes' => 'Sesi Reguler'],
             ['class' => $belajarClassModels['Anak-anak'], 'location' => $tamanWahidin, 'day' => 3, 'start' => '16:00', 'end' => '17:30', 'type' => 'swim', 'notes' => 'Sesi Reguler'],
             ['class' => $belajarClassModels['Anak-anak'], 'location' => $pacific, 'day' => 5, 'start' => '15:00', 'end' => '16:30', 'type' => 'swim', 'notes' => 'Sesi Akhir Pekan'],
             ['class' => $belajarClassModels['Anak-anak'], 'location' => $pacific, 'day' => 6, 'start' => '15:00', 'end' => '16:30', 'type' => 'swim', 'notes' => 'Sesi Akhir Pekan'],
+            ['class' => $belajarClassModels['Anak-anak'], 'location' => $homeVisit, 'day' => 6, 'start' => '09:00', 'end' => '10:30', 'type' => 'swim', 'notes' => 'Home Visit Anak-anak'],
+            ['class' => $belajarClassModels['Anak-anak'], 'location' => $homeVisit, 'day' => 6, 'start' => '14:00', 'end' => '15:30', 'type' => 'swim', 'notes' => 'Home Visit Anak-anak'],
 
             // Belajar - Dewasa
             ['class' => $belajarClassModels['Dewasa'], 'location' => $cipto, 'day' => 4, 'start' => '19:00', 'end' => '20:30', 'type' => 'swim', 'notes' => 'Sesi Malam Dewasa'],
             ['class' => $belajarClassModels['Dewasa'], 'location' => $starSport, 'day' => 5, 'start' => '07:00', 'end' => '08:30', 'type' => 'swim', 'notes' => 'Sesi Pagi'],
             ['class' => $belajarClassModels['Dewasa'], 'location' => $starSport, 'day' => 6, 'start' => '07:00', 'end' => '08:30', 'type' => 'swim', 'notes' => 'Sesi Pagi'],
+            ['class' => $belajarClassModels['Dewasa'], 'location' => $homeVisit, 'day' => 6, 'start' => '16:00', 'end' => '17:30', 'type' => 'swim', 'notes' => 'Home Visit Dewasa'],
 
             // Prestasi - Pra Junior (Senin, Rabu, Jumat swim di Taman Wahidin; Sabtu dryland)
             ['class' => $prestasiClassModels['Pra Junior'], 'location' => $tamanWahidin, 'day' => 0, 'start' => '16:00', 'end' => '18:00', 'type' => 'swim', 'notes' => 'Latihan Air'],
@@ -314,8 +326,14 @@ class ClassAndPackageSeeder extends Seeder
             ['class' => $prestasiClassModels['Finswimming'], 'location' => $pacific, 'day' => 5, 'start' => '15:00', 'end' => '17:00', 'type' => 'dryland', 'notes' => 'Latihan Darat/Fisik'],
         ];
 
-        foreach ($scheduleData as $sd) {
-            \App\Models\Schedule::firstOrCreate([
+        // Ambil semua coach yang sudah dibuat di DatabaseSeeder
+        $coaches = \App\Models\User::where('role', 'coach')->get();
+        $coachCount = $coaches->count();
+
+        foreach ($scheduleData as $index => $sd) {
+            $assignedCoach = $coaches[$index % $coachCount] ?? null;
+
+            \App\Models\Schedule::updateOrCreate([
                 'swimming_class_id' => $sd['class']->id,
                 'location_id' => $sd['location']->id,
                 'day_of_week' => $sd['day'],
@@ -324,7 +342,8 @@ class ClassAndPackageSeeder extends Seeder
                 'session_type' => $sd['type'],
             ], [
                 'is_active' => true,
-                'notes' => $sd['notes']
+                'notes' => $sd['notes'],
+                'coach_id' => $assignedCoach ? $assignedCoach->id : null,
             ]);
         }
     }

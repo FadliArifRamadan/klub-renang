@@ -105,15 +105,29 @@
                                         </td>
 
                                         <td class="px-4 py-4 text-center">
-                                            <?php if($student->coach): ?>
-                                                <span
-                                                    class="inline-flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200 dark:border-blue-800">
-                                                    <i class="fa-solid fa-user-tie mr-1.5 text-[10px]"></i>
-                                                    <?php echo e($student->coach->name); ?>
+                                            <?php
+                                                $coaches = $student->schedules->map(fn($s) => $s->coach)->filter()->unique('id');
+                                            ?>
+                                            <?php $__empty_2 = true; $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_2 = false; ?>
+                                                <div class="mb-1 last:mb-0">
+                                                    <span
+                                                        class="inline-flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200 dark:border-blue-800">
+                                                        <i class="fa-solid fa-user-tie mr-1.5 text-[10px]"></i>
+                                                        <?php echo e($c->name); ?>
 
-                                                </span>
-                                            <?php else: ?>
-                                                <span class="text-xs text-gray-400 dark:text-gray-500 italic">Belum Ditentukan</span>
+                                                    </span>
+                                                </div>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_2): ?>
+                                                <?php if($student->coach): ?>
+                                                    <span
+                                                        class="inline-flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200 dark:border-blue-800">
+                                                        <i class="fa-solid fa-user-tie mr-1.5 text-[10px]"></i>
+                                                        <?php echo e($student->coach->name); ?>
+
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="text-xs text-gray-400 dark:text-gray-500 italic">Belum Ditentukan</span>
+                                                <?php endif; ?>
                                             <?php endif; ?>
                                         </td>
 
@@ -400,56 +414,6 @@
                                                             <?php echo e($student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin'); ?><br>
                                                             - Durasi Suspend:
                                                             <?php echo e(round(now()->diffInDays($student->suspended_at))); ?> Hari
-                                                        </div>
-
-                                                        <div class="mt-4">
-                                                            <?php if (isset($component)) { $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-label','data' => ['for' => 'coach_id_'.e($student->id).'','value' => 'Pilih Coach / Pelatih Pendamping']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('input-label'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['for' => 'coach_id_'.e($student->id).'','value' => 'Pilih Coach / Pelatih Pendamping']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
-<?php $attributes = $__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
-<?php unset($__attributesOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581)): ?>
-<?php $component = $__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581; ?>
-<?php unset($__componentOriginale3da9d84bb64e4bc2eeebaafabfb2581); ?>
-<?php endif; ?>
-                                                            <select id="coach_id_<?php echo e($student->id); ?>" name="coach_id"
-                                                                class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                                                required>
-                                                                <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                    <?php
-                                                                        $isCurrentCoach = $student->coach_id == $coach->id;
-                                                                        $isFull = $coach->students_count >= 15;
-                                                                    ?>
-                                                                    <option value="<?php echo e($coach->id); ?>"
-                                                                        <?php echo e($isCurrentCoach ? 'selected' : ''); ?>
-
-                                                                        <?php echo e($isFull && !$isCurrentCoach ? 'disabled' : ''); ?>>
-                                                                        <?php echo e($coach->name); ?>
-
-                                                                        (<?php echo e($coach->students_count); ?>/15 Murid Aktif)
-                                                                        <?php if($isCurrentCoach): ?>
-                                                                            [Pelatih Asal]
-                                                                        <?php endif; ?>
-                                                                        <?php if($isFull && !$isCurrentCoach): ?>
-                                                                            [PENUH]
-                                                                        <?php endif; ?>
-                                                                    </option>
-                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                            </select>
-                                                            <p class="text-xs text-gray-400 mt-1">Hanya pelatih yang
-                                                                memiliki slot kosong (&lt; 15 murid aktif) yang dapat
-                                                                ditugaskan.</p>
                                                         </div>
 
                                                         <div class="mt-6 flex justify-end space-x-3">

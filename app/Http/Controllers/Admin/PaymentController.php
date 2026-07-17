@@ -27,11 +27,8 @@ class PaymentController extends Controller
             ->oldest()
             ->paginate(5);
 
-        // Ambil daftar Coach (User dengan role coach) beserta jumlah murid aktif mereka
-        $coaches = User::where('role', 'coach')
-            ->withCount(['students' => function ($query) {
-                $query->where('status', 'active');
-            }])->get();
+        // Ambil daftar Coach (User dengan role coach)
+        $coaches = User::where('role', 'coach')->oldest('name')->get();
 
         return view('admin.payments.index', compact('payments', 'coaches'));
     }
@@ -46,23 +43,6 @@ class PaymentController extends Controller
 
         $student = Student::findOrFail($student_id);
 
-        // Validasi input coach_id jika Admin memilih untuk mengganti Coach
-        $request->validate([
-            'coach_id' => 'required|exists:users,id'
-        ]);
-
-        // Cek kuota maksimal pelatih (maksimal 15 murid aktif secara keseluruhan)
-        $max_students = 15;
-        $chosen_coach = User::findOrFail($request->coach_id);
-
-        $active_students_count = Student::where('coach_id', $request->coach_id)
-            ->where('status', 'active')
-            ->count();
-
-        if ($active_students_count >= $max_students) {
-            return redirect()->back()->with('error', "Gagal memverifikasi! Coach {$chosen_coach->name} sudah mencapai batas maksimal {$max_students} murid aktif.");
-        }
-
         // Hitung batas waktu paket
         $package = $student->package;
         $activeMonths = $package ? $package->active_period_months : 1;
@@ -70,9 +50,8 @@ class PaymentController extends Controller
         $packageExpiresAt = now()->addMonths($activeMonths);
 
         // Bungkus dalam transaksi database untuk menjamin integritas data ganda
-        DB::transaction(function () use ($student, $request, $package, $packageActivatedAt, $packageExpiresAt) {
+        DB::transaction(function () use ($student, $package, $packageActivatedAt, $packageExpiresAt) {
             $student->update([
-                'coach_id' => $request->coach_id,
                 'status'   => 'active',
                 'quota_left' => $package ? $package->sessions : 0,
                 'registration_fee_paid' => true,
@@ -90,7 +69,7 @@ class PaymentController extends Controller
             }
         });
 
-        $chosen_coach = User::find($request->coach_id);
+        $chosen_coach = User::find($student->coach_id);
 
         // Kirim notifikasi ke pemilik akun (General atau Parent)
         $owner = User::find($student->user_id);
@@ -98,7 +77,7 @@ class PaymentController extends Controller
             $owner->notify(new PaymentApproved($student->name, $chosen_coach->name ?? 'Admin'));
         }
 
-        return redirect()->back()->with('success', "Pembayaran untuk {$student->name} berhasil diverifikasi dan Coach telah ditetapkan ke {$chosen_coach->name}.");
+        return redirect()->back()->with('success', "Pembayaran untuk {$student->name} berhasil diverifikasi dan akun murid telah aktif.");
     }
 
     /**

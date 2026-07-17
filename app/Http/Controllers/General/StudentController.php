@@ -33,7 +33,11 @@ class StudentController extends Controller
 
         $locations = Location::oldest()->get();
         $packages = Package::with('locationPrices')->oldest()->get();
-        $schedules = Schedule::where('is_active', true)->with(['location', 'swimmingClass'])->orderBy('day_of_week')->orderBy('start_time')->get();
+        $schedules = Schedule::where('is_active', true)->with(['location', 'swimmingClass', 'coach'])->orderBy('day_of_week')->orderBy('start_time')->get();
+        $schedules->each(function ($sched) {
+            $sched->current_enrolled_count = $sched->getCurrentEnrolledCount();
+            $sched->coach_name = $sched->coach->name ?? 'Belum Ditentukan';
+        });
         $coaches = User::where('role', 'coach')->oldest()->get();
 
         return view('general.students.create', compact(
@@ -90,6 +94,19 @@ class StudentController extends Controller
 
         $package = Package::findOrFail($request->package_id);
 
+        // Validasi Kapasitas Latihan
+        foreach ($request->schedule_ids as $scheduleId) {
+            $schedule = Schedule::findOrFail($scheduleId);
+            $currentEnrolled = $schedule->getCurrentEnrolledCount();
+            $limit = $schedule->getCapacityLimitForPackage($package);
+
+            if ($currentEnrolled >= $limit) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['schedule_ids' => 'Jadwal latihan ' . $schedule->day_name . ' ' . $schedule->time_range . ' di ' . $schedule->location->name . ' sudah penuh (Maksimal ' . $limit . ' murid).']);
+            }
+        }
+
         DB::transaction(function () use ($request, $package) {
             $student = Student::create([
                 'user_id' => Auth::id(),
@@ -142,6 +159,26 @@ class StudentController extends Controller
         ]);
 
         $package = Package::findOrFail($request->package_id);
+
+        // Validasi Kapasitas Latihan
+        if ($request->schedule_ids) {
+            foreach ($request->schedule_ids as $scheduleId) {
+                $schedule = Schedule::findOrFail($scheduleId);
+                // Hitung murid lain di jadwal ini
+                $currentEnrolled = $schedule->students()
+                    ->whereIn('students.status', ['active', 'pending'])
+                    ->where('students.id', '!=', $student->id)
+                    ->count();
+
+                $limit = $schedule->getCapacityLimitForPackage($package);
+
+                if ($currentEnrolled >= $limit) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->withErrors(['schedule_ids' => 'Jadwal latihan ' . $schedule->day_name . ' ' . $schedule->time_range . ' di ' . $schedule->location->name . ' sudah penuh (Maksimal ' . $limit . ' murid).']);
+                }
+            }
+        }
 
         // Upload bukti transfer
         $imageName = 'receipt_default.jpg';

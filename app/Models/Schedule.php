@@ -7,9 +7,14 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['swimming_class_id', 'location_id', 'day_of_week', 'start_time', 'end_time', 'session_type', 'is_active', 'notes'])]
+#[Fillable(['swimming_class_id', 'location_id', 'day_of_week', 'start_time', 'end_time', 'session_type', 'coach_id', 'is_active', 'notes'])]
 class Schedule extends Model
 {
+    // Relasi ke Coach/Pelatih
+    public function coach(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'coach_id');
+    }
     // Relasi ke SwimmingClass (Jadwal terikat ke satu kelas)
     public function swimmingClass(): BelongsTo
     {
@@ -49,5 +54,49 @@ class Schedule extends Model
     public function getTimeRangeAttribute(): string
     {
         return substr($this->start_time, 0, 5) . ' - ' . substr($this->end_time, 0, 5);
+    }
+
+    // Hitung jumlah murid terdaftar (active/pending) di jadwal ini
+    public function getCurrentEnrolledCount(): int
+    {
+        return $this->students()
+            ->whereIn('students.status', ['active', 'pending'])
+            ->count();
+    }
+
+    // Tentukan kapasitas maksimal berdasarkan kategori kelas dan paket
+    public function getCapacityLimitForPackage($package): int
+    {
+        // 1. Cek Kategori Kelas Prestasi
+        if ($this->swimmingClass && $this->swimmingClass->class_category_id) {
+            $category = $this->swimmingClass->category ?? $this->swimmingClass->swimmingClassCategory ?? null;
+            // Jika relasi direct belum di-load, kita cari manual atau gunakan fallback slug
+            if ($this->swimmingClass->relationLoaded('category') && $this->swimmingClass->category) {
+                if ($this->swimmingClass->category->slug === 'prestasi') {
+                    return 15;
+                }
+            } else {
+                // Gunakan query langsung jika diperlukan atau fallback dari relasi category
+                $cat = ClassCategory::find($this->swimmingClass->class_category_id);
+                if ($cat && $cat->slug === 'prestasi') {
+                    return 15;
+                }
+            }
+        }
+
+        if (!$package) {
+            return 4; // Default untuk Belajar Reguler
+        }
+
+        $type = is_string($package) ? $package : ($package->package_type ?? 'regular');
+        $name = is_string($package) ? '' : ($package->name ?? '');
+
+        // 2. Belajar Private & Single Private
+        if ($type === 'private' || ($type === 'single_session' && stripos($name, 'private') !== false)) {
+            return 1;
+        }
+
+        // 3. Belajar Reguler & Single Reguler
+        return 4;
     }
 }

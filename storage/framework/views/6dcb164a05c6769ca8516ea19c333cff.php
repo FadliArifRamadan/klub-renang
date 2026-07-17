@@ -238,6 +238,23 @@
                                     </template>
                                 </a>
                             </li>
+                            <li>
+                                <a href="<?php echo e(route('coach.leaves.index')); ?>"
+                                    class="menu-item group <?php echo e(request()->routeIs('coach.leaves.index') ? 'menu-item-active' : 'menu-item-inactive'); ?>"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size <?php echo e(request()->routeIs('coach.leaves.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'); ?>">
+                                        <i class="fa-solid fa-calendar-times text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Izin Latihan</span>
+                                    </template>
+                                </a>
+                            </li>
                         <?php endif; ?>
 
                         <!-- PARENT -->
@@ -466,6 +483,23 @@
                                     </span>
                                     <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
                                         <span class="menu-item-text">Kelola Jadwal</span>
+                                    </template>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<?php echo e(route('admin.leaves.index')); ?>"
+                                    class="menu-item group <?php echo e(request()->routeIs('admin.leaves.index') ? 'menu-item-active' : 'menu-item-inactive'); ?>"
+                                    :class="{
+                                        'lg:justify-center': !sidebarExpanded && !
+                                            sidebarHovered,
+                                        'lg:justify-start': sidebarExpanded || sidebarHovered
+                                    }">
+                                    <span
+                                        class="menu-item-icon-size <?php echo e(request()->routeIs('admin.leaves.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'); ?>">
+                                        <i class="fa-solid fa-calendar-times text-xl w-6 text-center"></i>
+                                    </span>
+                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                        <span class="menu-item-text">Persetujuan Izin</span>
                                     </template>
                                 </a>
                             </li>

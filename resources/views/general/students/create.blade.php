@@ -96,24 +96,6 @@
                         <x-input-error :messages="$errors->get('swimming_class_id')" class="mt-2" />
                     </div>
 
-                    {{-- Step 3: Pilih Lokasi Utama --}}
-                    <div class="mt-5" x-show="selectedClassId" x-transition>
-                        <x-input-label for="location_id" value="Pilih Tempat Latihan Utama" />
-                        <select id="location_id" name="location_id"
-                            class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                            x-model="selectedLocationId"
-                            @change="onLocationChange()"
-                            required>
-                            <option value="">-- Pilih Kolam Renang --</option>
-                            @foreach ($locations as $location)
-                                <option value="{{ $location->id }}">
-                                    {{ $location->name }} — ({{ $location->address }})
-                                </option>
-                            @endforeach
-                        </select>
-                        <x-input-error :messages="$errors->get('location_id')" class="mt-2" />
-                    </div>
-
                     {{-- Step 4: Pilih Paket --}}
                     <div class="mt-5" x-show="selectedClassId" x-transition>
                         <x-input-label for="package_id" value="Pilih Paket Kursus" />
@@ -124,78 +106,63 @@
                             required>
                             <option value="">-- Pilih Paket Latihan --</option>
                             <template x-for="pkg in filteredPackages" :key="pkg.id">
-                                <option :value="pkg.id" x-text="pkg.name + ' — ' + formatPrice(getPackagePrice(pkg)) + ' (' + pkg.sessions + 'x Pertemuan)'"></option>
+                                <option :value="pkg.id" x-text="pkg.name + ' — ' + (selectedLocationId ? formatPrice(getPackagePrice(pkg)) : '(Harga menyesuaikan kolam)') + ' (' + pkg.sessions + 'x Pertemuan)'"></option>
                             </template>
                         </select>
                         <x-input-error :messages="$errors->get('package_id')" class="mt-2" />
                     </div>
 
-                    {{-- Step 4b: Lokasi Kedua (hanya untuk paket 8 sesi) --}}
-                    <div class="mt-5" x-show="showSecondaryLocation" x-transition>
-                        <x-input-label for="secondary_location_id" value="Pilih Tempat Latihan Kedua (Opsional, Paket 8 Sesi)" />
-                        <select id="secondary_location_id" name="secondary_location_id"
-                            class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                            x-model="selectedSecondaryLocationId">
-                            <option value="">-- Tidak Perlu / Sama Dengan Lokasi Utama --</option>
-                            @foreach ($locations as $location)
-                                <option value="{{ $location->id }}"
-                                    x-bind:disabled="selectedLocationId == '{{ $location->id }}'">
-                                    {{ $location->name }} — ({{ $location->address }})
-                                </option>
-                            @endforeach
-                        </select>
-                        <small class="text-gray-400 mt-1 block">*Untuk paket 8 pertemuan (2x seminggu), Anda bisa memilih 2 lokasi berbeda sesuai ketersediaan jadwal.</small>
-                        <x-input-error :messages="$errors->get('secondary_location_id')" class="mt-2" />
-                    </div>
-
                     {{-- Step 5: Pilih Jadwal Latihan --}}
                     <div class="mt-5" x-show="filteredSchedules.length > 0" x-transition>
                         <x-input-label value="Pilih Jadwal Latihan" />
-                        <p class="text-xs text-gray-400 mb-2">Centang jadwal latihan yang diinginkan.</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-1">
+                        <p class="text-xs text-gray-400 mb-2">Centang jadwal latihan yang diinginkan. Batas slot jadwal disesuaikan dengan jenis paket latihan.</p>
+
+                        <div class="mb-3 bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-lg text-xs" x-show="selectedCategoryId && allCategories.find(c => c.id == selectedCategoryId)?.slug === 'prestasi'">
+                            <i class="fa-solid fa-lightbulb mr-1 text-amber-500"></i>
+                            <strong>Petunjuk Sesi Latihan:</strong> Kelas Prestasi memiliki sesi <strong>Renang</strong> dan <strong>Dryland</strong>. Silakan centang kedua sesi latihan tersebut di bawah sesuai jadwal yang tersedia.
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1">
                             <template x-for="sched in filteredSchedules" :key="sched.id">
-                                <label class="flex items-center gap-2.5 p-3 border rounded-lg cursor-pointer transition-all duration-100 text-sm"
-                                    :class="selectedScheduleIds.includes(String(sched.id))
-                                        ? 'border-blue-400 bg-blue-50'
-                                        : 'border-gray-200 hover:border-gray-300'">
+                                <label class="flex items-start gap-3 p-3 border rounded-xl cursor-pointer transition-all duration-100 text-sm"
+                                    :class="selectedScheduleIds.includes(String(sched.id)) ? 'border-blue-400 bg-blue-50/50' : 
+                                        (isScheduleDisabled(sched) ? 'border-gray-100 bg-gray-50/30 opacity-60 cursor-not-allowed' : 'border-gray-200 hover:border-gray-300')">
                                     <input type="checkbox" name="schedule_ids[]" :value="sched.id"
-                                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-1"
                                         @change="toggleSchedule(sched.id)"
-                                        :checked="selectedScheduleIds.includes(String(sched.id))" />
-                                    <div>
-                                        <span class="font-semibold text-gray-700" x-text="getDayName(sched.day_of_week)"></span>
-                                        <span class="text-gray-500" x-text="formatTime(sched.start_time) + ' - ' + formatTime(sched.end_time)"></span>
-                                        <span class="text-[10px] ml-1 px-1.5 py-0.5 rounded-full font-bold"
-                                            :class="sched.session_type === 'swim' ? 'bg-cyan-100 text-cyan-700' : 'bg-orange-100 text-orange-700'"
-                                            x-text="sched.session_type === 'swim' ? 'Renang' : 'Dryland'"></span>
-                                        <span class="block text-[10px] text-gray-400" x-text="sched.location?.name || ''"></span>
+                                        :checked="selectedScheduleIds.includes(String(sched.id))"
+                                        :disabled="isScheduleDisabled(sched)" />
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="font-bold text-gray-800" x-text="getDayName(sched.day_of_week) + ', ' + formatTime(sched.start_time) + ' - ' + formatTime(sched.end_time)"></span>
+                                            <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase"
+                                                :class="sched.session_type === 'swim' ? 'bg-cyan-100 text-cyan-700' : 'bg-orange-100 text-orange-700'"
+                                                x-text="sched.session_type === 'swim' ? 'Renang' : 'Dryland'"></span>
+                                        </div>
+                                        <span class="block text-xs text-gray-500 mt-1"><i class="fa-solid fa-map-pin text-gray-400 mr-1"></i><span x-text="sched.location?.name || ''"></span></span>
+                                        <span class="block text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-user-tie text-gray-400 mr-1"></i>Pelatih: <span class="font-semibold text-slate-700" x-text="sched.coach_name || 'Belum Ditentukan'"></span></span>
+                                        <span class="block text-[10px] font-bold mt-1"
+                                            :class="(sched.current_enrolled_count || 0) >= getScheduleCapacityLimit(sched) ? 'text-red-500' : 'text-blue-600'"
+                                            x-text="(sched.current_enrolled_count || 0) + '/' + getScheduleCapacityLimit(sched) + ' Terisi' + ((sched.current_enrolled_count || 0) >= getScheduleCapacityLimit(sched) ? ' (Penuh)' : '')"></span>
                                     </div>
                                 </label>
                             </template>
                         </div>
                         <x-input-error :messages="$errors->get('schedule_ids')" class="mt-2" />
+                        <small class="text-gray-400 mt-1 block">*Maksimal jadwal latihan untuk paket ini adalah <span class="font-bold text-slate-600" x-text="maxSlots"></span> sesi per minggu.</small>
                     </div>
 
-                    <div class="mt-5 bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-lg text-xs" 
-                        x-show="filteredSchedules.length === 0 && selectedClassId && selectedLocationId" x-transition>
+                    <input type="hidden" name="location_id" :value="selectedLocationId">
+                    <input type="hidden" name="secondary_location_id" :value="secondaryLocationId">
+
+                    <div class="mt-4 bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-lg text-xs"
+                        x-show="filteredSchedules.length === 0 && selectedClassId" x-transition>
                         <i class="fa-solid fa-circle-exclamation mr-1"></i>
-                        <strong>Tidak Ada Jadwal:</strong> Belum ada jadwal latihan yang tersedia untuk kelas dan lokasi kolam terpilih. Silakan hubungi admin atau pilih lokasi/kelas lain.
+                        <strong>Tidak Ada Jadwal:</strong> Belum ada jadwal latihan yang tersedia untuk kelas terpilih.
                     </div>
 
-                    {{-- Pilih Coach --}}
-                    <div class="mt-5" x-show="selectedClassId" x-transition>
-                        <x-input-label for="coach_id" value="Preferensi Coach (Opsional)" />
-                        <select id="coach_id" name="coach_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                            <option value="" selected>-- Bebas / Rekomendasi Admin --</option>
-                            @foreach ($coaches as $coach)
-                                <option value="{{ $coach->id }}" {{ old('coach_id') == $coach->id ? 'selected' : '' }}>
-                                    {{ $coach->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <small class="text-gray-400 mt-1 block">*Jika kosong, admin akan mengalokasikan coach.</small>
-                        <x-input-error :messages="$errors->get('coach_id')" class="mt-2" />
-                    </div>
+                    {{-- Hidden input for coach_id (automatically derived from first selected schedule) --}}
+                    <input type="hidden" name="coach_id" :value="selectedCoachId">
 
                     {{-- Ringkasan Pembayaran --}}
                     <div class="mt-6" x-show="selectedPackageId" x-transition>
@@ -246,8 +213,6 @@
                 // Selected values
                 selectedCategoryId: '{{ old('_category', '') }}',
                 selectedClassId: '{{ old('swimming_class_id', '') }}',
-                selectedLocationId: '{{ old('location_id', '') }}',
-                selectedSecondaryLocationId: '{{ old('secondary_location_id', '') }}',
                 selectedPackageId: '{{ old('package_id', '') }}',
                 selectedScheduleIds: [],
 
@@ -257,7 +222,69 @@
                     @endif
                 },
 
+                get selectedCoachId() {
+                    if (this.selectedScheduleIds.length === 0) return '';
+                    const firstSchedId = this.selectedScheduleIds[0];
+                    const sched = this.allSchedules.find(s => String(s.id) == firstSchedId);
+                    return sched ? (sched.coach_id || '') : '';
+                },
+
                 // Computed
+                get selectedLocationId() {
+                    if (this.selectedScheduleIds.length === 0) return '';
+                    const firstSchedId = this.selectedScheduleIds[0];
+                    const sched = this.allSchedules.find(s => String(s.id) == firstSchedId);
+                    return sched ? String(sched.location_id) : '';
+                },
+
+                get secondaryLocationId() {
+                    const loc1 = this.selectedLocationId;
+                    if (!loc1) return '';
+                    for (let id of this.selectedScheduleIds) {
+                        const sched = this.allSchedules.find(s => String(s.id) == id);
+                        if (sched && String(sched.location_id) !== loc1) {
+                            return String(sched.location_id);
+                        }
+                    }
+                    return '';
+                },
+
+                get isPrestasi() {
+                    if (!this.selectedCategoryId) return false;
+                    const cat = this.allCategories.find(c => c.id == this.selectedCategoryId);
+                    return cat && cat.slug === 'prestasi';
+                },
+
+                get maxSlots() {
+                    if (this.isPrestasi) return 999;
+                    if (!this.selectedPackageId) return 1;
+                    const pkg = this.allPackages.find(p => p.id == this.selectedPackageId);
+                    if (!pkg) return 1;
+                    const sessions = pkg.sessions || 4;
+                    if (sessions <= 4) return 1;
+                    if (sessions <= 8) return 2;
+                    if (sessions <= 12) return 3;
+                    return 4;
+                },
+
+                get availableCoaches() {
+                    const uniqueCoaches = [];
+                    const seen = new Set();
+                    
+                    this.selectedScheduleIds.forEach(id => {
+                        const sched = this.allSchedules.find(s => String(s.id) == id);
+                        if (sched && sched.coach_id && !seen.has(sched.coach_id)) {
+                            seen.add(sched.coach_id);
+                            uniqueCoaches.push({
+                                id: sched.coach_id,
+                                name: sched.coach_name || 'Belum Ditentukan'
+                            });
+                        }
+                    });
+                    
+                    return uniqueCoaches;
+                },
+
                 get filteredClasses() {
                     if (!this.selectedCategoryId) return [];
                     const cat = this.allCategories.find(c => c.id == this.selectedCategoryId);
@@ -267,27 +294,6 @@
                 get filteredPackages() {
                     if (!this.selectedClassId) return [];
                     return this.allPackages.filter(p => p.swimming_class_id == this.selectedClassId);
-                },
-
-                get filteredSchedules() {
-                    if (!this.selectedClassId) return [];
-                    let schedules = this.allSchedules.filter(s => s.swimming_class_id == this.selectedClassId);
-
-                    if (this.selectedLocationId) {
-                        const locIds = [this.selectedLocationId];
-                        if (this.selectedSecondaryLocationId) {
-                            locIds.push(this.selectedSecondaryLocationId);
-                        }
-                        schedules = schedules.filter(s => locIds.includes(String(s.location_id)));
-                    }
-
-                    return schedules;
-                },
-
-                get showSecondaryLocation() {
-                    if (!this.selectedPackageId) return false;
-                    const pkg = this.allPackages.find(p => p.id == this.selectedPackageId);
-                    return pkg && pkg.sessions >= 8 && pkg.is_location_based;
                 },
 
                 get showRegistrationFee() {
@@ -308,28 +314,19 @@
                     return total;
                 },
 
+                get filteredSchedules() {
+                    if (!this.selectedClassId) return [];
+                    return this.allSchedules.filter(s => s.swimming_class_id == this.selectedClassId);
+                },
+
                 // Methods
-                selectCategory(catId) {
-                    this.selectedCategoryId = catId;
-                    this.selectedClassId = '';
-                    this.selectedPackageId = '';
-                    this.selectedScheduleIds = [];
-                },
-
-                onClassChange() {
-                    this.selectedPackageId = '';
-                    this.selectedScheduleIds = [];
-                },
-
-                onLocationChange() {
-                    this.selectedScheduleIds = [];
-                    this.selectedSecondaryLocationId = '';
-                },
-
-                onPackageChange() {
-                    if (!this.showSecondaryLocation) {
-                        this.selectedSecondaryLocationId = '';
-                    }
+                isScheduleDisabled(sched) {
+                    const limit = this.getScheduleCapacityLimit(sched);
+                    const isFull = (sched.current_enrolled_count || 0) >= limit;
+                    const isChecked = this.selectedScheduleIds.includes(String(sched.id));
+                    if (isFull && !isChecked) return true;
+                    if (this.selectedScheduleIds.length >= this.maxSlots && !isChecked) return true;
+                    return false;
                 },
 
                 toggleSchedule(schedId) {
@@ -338,7 +335,64 @@
                     if (idx > -1) {
                         this.selectedScheduleIds.splice(idx, 1);
                     } else {
-                        this.selectedScheduleIds.push(id);
+                        if (this.selectedScheduleIds.length < this.maxSlots) {
+                            this.selectedScheduleIds.push(id);
+                        }
+                    }
+                    this.autoSelectCoach();
+                },
+
+                autoSelectCoach() {
+                    this.$nextTick(() => {
+                        const coaches = this.availableCoaches;
+                        if (coaches.length === 1) {
+                            this.selectedCoachId = String(coaches[0].id);
+                        } else if (coaches.length === 0 || !coaches.find(c => String(c.id) == this.selectedCoachId)) {
+                            this.selectedCoachId = '';
+                        }
+                    });
+                },
+
+                getScheduleCapacityLimit(sched) {
+                    if (this.selectedCategoryId) {
+                        const cat = this.allCategories.find(c => c.id == this.selectedCategoryId);
+                        if (cat && cat.slug === 'prestasi') {
+                            return 15;
+                        }
+                    }
+                    if (!this.selectedPackageId) {
+                        return 4;
+                    }
+                    const pkg = this.allPackages.find(p => p.id == this.selectedPackageId);
+                    if (!pkg) return 4;
+                    
+                    const type = pkg.package_type || 'regular';
+                    const name = pkg.name || '';
+                    
+                    if (type === 'private' || (type === 'single_session' && name.toLowerCase().includes('private'))) {
+                        return 1;
+                    }
+                    return 4;
+                },
+
+                selectCategory(catId) {
+                    this.selectedCategoryId = catId;
+                    this.selectedClassId = '';
+                    this.selectedPackageId = '';
+                    this.selectedCoachId = '';
+                    this.selectedScheduleIds = [];
+                },
+
+                onClassChange() {
+                    this.selectedPackageId = '';
+                    this.selectedCoachId = '';
+                    this.selectedScheduleIds = [];
+                },
+
+                onPackageChange() {
+                    this.selectedCoachId = '';
+                    if (this.selectedScheduleIds.length > this.maxSlots) {
+                        this.selectedScheduleIds = this.selectedScheduleIds.slice(0, this.maxSlots);
                     }
                 },
 
