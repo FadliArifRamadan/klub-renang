@@ -35,14 +35,14 @@
 
                 @if ($attendances->isEmpty())
                     {{-- Empty State --}}
-                    <div class="border rounded-lg p-12 text-center text-gray-400">
-                        <i class="fa-solid fa-clipboard-list text-4xl mb-3 block text-gray-300"></i>
-                        <p class="font-medium text-gray-600">Belum ada data absensi kelas belajar.</p>
-                        <p class="text-xs mt-1">Data absensi murid akan muncul di sini setelah Anda menginput absensi.</p>
+                    <div class="border border-[#D3AF37]/40 rounded-lg p-12 text-center text-gray-400">
+                        <i class="fa-solid fa-clipboard-list text-4xl mb-3 block text-[#D3AF37]"></i>
+                        <p class="font-medium text-slate-200">Belum ada data absensi kelas belajar.</p>
+                        <p class="text-xs text-slate-400 mt-1">Data absensi murid akan muncul di sini setelah Anda menginput absensi.</p>
                     </div>
                 @else
                     {{-- Table --}}
-                    <div class="relative overflow-x-auto border sm:rounded-lg mb-6">
+                    <div class="relative overflow-x-auto border border-[#D3AF37]/40 sm:rounded-lg mb-6">
                         <table class="w-full text-sm text-left text-gray-500">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
                                 <tr>
@@ -81,7 +81,7 @@
                                                     'single_session' => 'Single Session'
                                                 ];
                                             @endphp
-                                            <span class="inline-flex items-center gap-1 text-gray-700 bg-gray-100 px-2.5 py-1 rounded border border-gray-300 text-xs font-semibold whitespace-nowrap">
+                                            <span class="inline-flex items-center gap-1 text-[#D3AF37] bg-[#D3AF37]/15 px-3 py-1 rounded-md border border-[#D3AF37]/40 text-xs font-bold whitespace-nowrap">
                                                 {{ $labels[$pkgType] ?? 'Reguler' }}
                                             </span>
                                         </td>

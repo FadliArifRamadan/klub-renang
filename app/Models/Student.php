@@ -21,6 +21,11 @@ class Student extends Model
         ];
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     // Relasi ke tabel Packages (Satu murid mengambil satu paket)
     public function package(): BelongsTo
     {

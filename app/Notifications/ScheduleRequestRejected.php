@@ -5,6 +5,8 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
+use App\Notifications\Channels\WhatsappChannel;
+
 class ScheduleRequestRejected extends Notification
 {
     use Queueable;
@@ -16,7 +18,7 @@ class ScheduleRequestRejected extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', WhatsappChannel::class];
     }
 
     public function toDatabase(object $notifiable): array
@@ -30,5 +32,10 @@ class ScheduleRequestRejected extends Notification
             'color'        => 'red',
             'link'         => route('dashboard'),
         ];
+    }
+
+    public function toWhatsapp(object $notifiable): string
+    {
+        return "Halo Bapak/Ibu {$notifiable->name},\n\nPengajuan perpindahan jadwal latihan untuk murid *{$this->studentName}* ditolak oleh Admin.\n\nAlasan penolakan: \"{$this->reason}\"\n\nSilakan periksa kembali dashboard website untuk detail selengkapnya.";
     }
 }

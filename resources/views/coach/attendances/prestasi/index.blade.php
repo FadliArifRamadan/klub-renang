@@ -35,14 +35,14 @@
 
                 @if ($attendances->isEmpty())
                     {{-- Empty State --}}
-                    <div class="border rounded-lg p-12 text-center text-gray-400">
-                        <i class="fa-solid fa-clipboard-list text-4xl mb-3 block text-gray-300"></i>
-                        <p class="font-medium text-gray-600">Belum ada data absensi kelas prestasi.</p>
-                        <p class="text-xs mt-1">Data absensi atlet akan muncul di sini setelah Anda menginput absensi.</p>
+                    <div class="border border-[#D3AF37]/40 rounded-lg p-12 text-center text-gray-400">
+                        <i class="fa-solid fa-clipboard-list text-4xl mb-3 block text-[#D3AF37]"></i>
+                        <p class="font-medium text-slate-200">Belum ada data absensi kelas prestasi.</p>
+                        <p class="text-xs text-slate-400 mt-1">Data absensi atlet akan muncul di sini setelah Anda menginput absensi.</p>
                     </div>
                 @else
                     {{-- Table --}}
-                    <div class="relative overflow-x-auto border sm:rounded-lg mb-6">
+                    <div class="relative overflow-x-auto border border-[#D3AF37]/40 sm:rounded-lg mb-6">
                         <table class="w-full text-sm text-left text-gray-500">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b">
                                 <tr>

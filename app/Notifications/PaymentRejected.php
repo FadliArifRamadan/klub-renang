@@ -5,6 +5,8 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
+use App\Notifications\Channels\WhatsappChannel;
+
 class PaymentRejected extends Notification
 {
     use Queueable;
@@ -15,7 +17,7 @@ class PaymentRejected extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', WhatsappChannel::class];
     }
 
     public function toDatabase(object $notifiable): array
@@ -29,5 +31,10 @@ class PaymentRejected extends Notification
             'color'        => 'red',
             'link'         => null,
         ];
+    }
+
+    public function toWhatsapp(object $notifiable): string
+    {
+        return "Halo Bapak/Ibu {$notifiable->name},\n\nPembayaran pendaftaran/perpanjangan untuk *{$this->studentName}* telah *DITOLAK* oleh Admin.\n\nSilakan periksa kembali bukti transfer Anda di dashboard website dan lakukan unggah ulang bukti pembayaran yang valid.";
     }
 }

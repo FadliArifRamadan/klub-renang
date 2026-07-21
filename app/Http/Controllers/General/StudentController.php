@@ -107,7 +107,7 @@ class StudentController extends Controller
             }
         }
 
-        DB::transaction(function () use ($request, $package) {
+        $student = DB::transaction(function () use ($request, $package) {
             $student = Student::create([
                 'user_id' => Auth::id(),
                 'name' => $request->name,
@@ -127,7 +127,14 @@ class StudentController extends Controller
             if ($request->schedule_ids) {
                 $student->schedules()->attach($request->schedule_ids, ['enrolled_at' => now()]);
             }
+
+            return $student;
         });
+
+        // Kirim WA Konfirmasi Pendaftaran ke Orang Tua
+        $parent = Auth::user();
+        $msg = "Halo Bapak/Ibu {$parent->name},\n\nPendaftaran diri Anda/anak Anda *{$student->name}* di Black Diamond Swim Academy berhasil disimpan dengan status *Pending*.\n\nSilakan lanjutkan proses dengan melakukan transfer pembayaran biaya pendaftaran/paket dan unggah buktinya melalui menu pembayaran di dashboard orang tua. Terima kasih! 🏊";
+        \App\Services\WhatsappService::send($parent->phone, $msg);
 
         return redirect()->route('general.dashboard')
             ->with('success', 'Pendaftaran paket berhasil!');

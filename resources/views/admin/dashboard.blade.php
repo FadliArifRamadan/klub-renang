@@ -9,11 +9,12 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Welcome Panel --}}
-            <div class="bg-white dark:bg-white/[0.03] overflow-hidden sm:rounded-2xl p-6 md:p-8 mb-8 border border-gray-200 dark:border-gray-800 relative z-10 before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-br before:from-brand-50 before:to-transparent dark:before:from-brand-900/10">
-                <h1 class="text-gray-800 dark:text-white/90 text-2xl md:text-3xl font-bold tracking-tight mb-2">
+            <div class="bg-gradient-to-r from-[#101828] via-[#1E1E2D] to-[#101828] overflow-hidden rounded-2xl p-6 md:p-8 mb-8 border border-[#D3AF37]/30 shadow-xl relative z-10">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-[#D3AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
+                <h1 class="text-[#D3AF37] text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
                     Dashboard, {{ Auth::user()->name }}!
                 </h1>
-                <p class="text-gray-500 dark:text-gray-400 text-sm max-w-3xl leading-relaxed">
+                <p class="text-slate-300 text-sm max-w-3xl leading-relaxed font-normal">
                     Selamat datang di panel kontrol Black Diamond. Kelola verifikasi pembayaran, data murid, pelatih, kolam latihan, dan paket program secara terpusat dan efisien.
                 </p>
             </div>
@@ -22,8 +23,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
                 <!-- Card 1: Total Murid -->
                 <a href="{{ route('admin.students.index') }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
-                    <div class="flex items-center justify-center w-12 h-12 bg-blue-50 text-blue-600 rounded-xl dark:bg-blue-900/30 dark:text-blue-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                    <div class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
                         <i class="fa-solid fa-users text-xl"></i>
                     </div>
                     <div class="flex items-end justify-between mt-5">
@@ -31,7 +32,7 @@
                             <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total Murid</span>
                             <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ $totalStudents }} Murid</h4>
                         </div>
-                        <div class="text-gray-300 group-hover:text-blue-500 dark:text-gray-600 dark:group-hover:text-blue-400 transition-colors">
+                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
                             <i class="fa-solid fa-chevron-right text-sm"></i>
                         </div>
                     </div>
@@ -39,8 +40,8 @@
 
                 <!-- Card 2: Total Coach -->
                 <a href="{{ route('admin.users.index', ['role' => 'coach']) }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
-                    <div class="flex items-center justify-center w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl dark:bg-emerald-900/30 dark:text-emerald-400 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/50 transition-colors">
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                    <div class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
                         <i class="fa-solid fa-user-tie text-xl"></i>
                     </div>
                     <div class="flex items-end justify-between mt-5">
@@ -48,7 +49,7 @@
                             <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total Coach</span>
                             <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ $totalCoaches }} Pelatih</h4>
                         </div>
-                        <div class="text-gray-300 group-hover:text-emerald-500 dark:text-gray-600 dark:group-hover:text-emerald-400 transition-colors">
+                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
                             <i class="fa-solid fa-chevron-right text-sm"></i>
                         </div>
                     </div>
@@ -56,8 +57,8 @@
 
                 <!-- Card 3: Total Tempat Latihan -->
                 <a href="{{ route('admin.locations.index') }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
-                    <div class="flex items-center justify-center w-12 h-12 bg-amber-50 text-amber-600 rounded-xl dark:bg-amber-900/30 dark:text-amber-400 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/50 transition-colors">
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                    <div class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
                         <i class="fa-solid fa-location-dot text-xl"></i>
                     </div>
                     <div class="flex items-end justify-between mt-5">
@@ -65,7 +66,7 @@
                             <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Tempat Latihan</span>
                             <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ $totalLocations }} Lokasi</h4>
                         </div>
-                        <div class="text-gray-300 group-hover:text-amber-500 dark:text-gray-600 dark:group-hover:text-amber-400 transition-colors">
+                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
                             <i class="fa-solid fa-chevron-right text-sm"></i>
                         </div>
                     </div>
@@ -73,8 +74,8 @@
 
                 <!-- Card 4: Pending Payments -->
                 <a href="{{ route('admin.payments.index') }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
-                    <div class="flex items-center justify-center w-12 h-12 bg-rose-50 text-rose-600 rounded-xl dark:bg-rose-900/30 dark:text-rose-400 group-hover:bg-rose-100 dark:group-hover:bg-rose-900/50 transition-colors {{ $pendingPayments > 0 ? 'animate-pulse' : '' }}">
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                    <div class="flex items-center justify-center w-12 h-12 bg-rose-950/40 text-rose-400 border border-rose-800/50 rounded-xl transition-colors {{ $pendingPayments > 0 ? 'animate-pulse' : '' }}">
                         <i class="fa-solid fa-wallet text-xl"></i>
                     </div>
                     <div class="flex items-end justify-between mt-5">
@@ -83,13 +84,13 @@
                             <div class="flex items-center gap-2 mt-1">
                                 <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90">{{ $pendingPayments }} Pending</h4>
                                 @if ($pendingPayments > 0)
-                                    <span class="inline-flex items-center bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full dark:bg-rose-900/30 dark:text-rose-400">
+                                    <span class="inline-flex items-center bg-rose-900/40 text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-700/50">
                                         Perlu Aksi
                                     </span>
                                 @endif
                             </div>
                         </div>
-                        <div class="text-gray-300 group-hover:text-rose-500 dark:text-gray-600 dark:group-hover:text-rose-400 transition-colors">
+                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
                             <i class="fa-solid fa-chevron-right text-sm"></i>
                         </div>
                     </div>
@@ -100,8 +101,8 @@
                     $pendingScheds = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
                 @endphp
                 <a href="{{ route('admin.schedule-requests.index') }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-theme-sm">
-                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl dark:bg-indigo-900/30 dark:text-indigo-400 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 transition-colors {{ $pendingScheds > 0 ? 'animate-pulse' : '' }}">
+                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-950/40 text-indigo-400 border border-indigo-800/50 rounded-xl transition-colors {{ $pendingScheds > 0 ? 'animate-pulse' : '' }}">
                         <i class="fa-solid fa-calendar-check text-xl"></i>
                     </div>
                     <div class="flex items-end justify-between mt-5">
@@ -110,13 +111,17 @@
                             <div class="flex items-center gap-2 mt-1">
                                 <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90">{{ $pendingScheds }} Pending</h4>
                                 @if ($pendingScheds > 0)
-                                    <span class="inline-flex items-center bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full dark:bg-indigo-900/30 dark:text-indigo-400">
+                                    <span class="inline-flex items-center bg-indigo-900/40 text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-700/50">
                                         Perlu Aksi
                                     </span>
                                 @endif
                             </div>
                         </div>
-                        <div class="text-gray-300 group-hover:text-indigo-500 dark:text-gray-600 dark:group-hover:text-indigo-400 transition-colors">
+                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </div>
+                    </div>
+                </a>
                             <i class="fa-solid fa-chevron-right text-sm"></i>
                         </div>
                     </div>

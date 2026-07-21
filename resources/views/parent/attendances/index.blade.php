@@ -59,7 +59,7 @@
                                                     </span>
                                                 @endif
                                             @else
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/40">
                                                     {{ $labels[$pkgType] ?? 'Reguler' }}
                                                 </span>
                                             @endif

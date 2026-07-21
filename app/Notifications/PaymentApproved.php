@@ -5,6 +5,8 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
+use App\Notifications\Channels\WhatsappChannel;
+
 class PaymentApproved extends Notification
 {
     use Queueable;
@@ -16,7 +18,7 @@ class PaymentApproved extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', WhatsappChannel::class];
     }
 
     public function toDatabase(object $notifiable): array
@@ -30,5 +32,10 @@ class PaymentApproved extends Notification
             'color'        => 'green',
             'link'         => null,
         ];
+    }
+
+    public function toWhatsapp(object $notifiable): string
+    {
+        return "Halo Bapak/Ibu {$notifiable->name},\n\nPembayaran pendaftaran/perpanjangan untuk *{$this->studentName}* telah *DISETUJUI* oleh Admin.\n\nPelatih yang ditetapkan: *{$this->coachName}*.\n\nSelamat berlatih! 🏊";
     }
 }

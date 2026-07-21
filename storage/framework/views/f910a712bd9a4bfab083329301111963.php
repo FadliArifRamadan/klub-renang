@@ -1,33 +1,33 @@
 <?php $__env->startSection('content'); ?>
     <!-- Hero Section -->
     <section
-        class="relative pt-32 pb-24 md:pt-48 md:pb-40 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-950 text-white overflow-hidden">
-        <div class="absolute inset-0 hero-pattern opacity-30"></div>
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-500 rounded-full blur-[120px] opacity-30"></div>
-        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-indigo-500 rounded-full blur-[120px] opacity-30"></div>
+        class="relative pt-32 pb-24 md:pt-48 md:pb-40 bg-[#D3AF37] text-[#101828] overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-15"></div>
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-amber-300 rounded-full blur-[120px] opacity-40"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-yellow-400 rounded-full blur-[120px] opacity-40"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <!-- Text Container -->
                 <div class="lg:col-span-7 space-y-6 text-left">
                     <span
-                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider">
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#101828] border border-[#101828]/20 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider">
                         <i class="fa-solid fa-medal"></i> Klub Renang Terbaik & Profesional
                     </span>
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-[#101828]">
                         Wujudkan Potensi Terbaik Berenang Anda Bersama Kami
                     </h1>
-                    <p class="text-slate-200 text-base sm:text-lg max-w-2xl leading-relaxed">
+                    <p class="text-[#101828]/90 text-base sm:text-lg max-w-2xl leading-relaxed font-medium">
                         Kami menyediakan pelatihan berenang terstruktur bagi semua tingkatan usia dan kemampuan.
                         Didampingi oleh jajaran pelatih berpengalaman di kolam berstandar internasional.
                     </p>
                     <div class="flex flex-wrap gap-4 pt-4">
                         <a href="<?php echo e(route('packages')); ?>"
-                            class="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold rounded-2xl shadow-lg shadow-amber-500/20 transition-all hover:-translate-y-1">
+                            class="px-8 py-4 bg-[#101828] hover:bg-black text-[#D3AF37] font-extrabold rounded-2xl shadow-xl transition-all hover:-translate-y-1">
                             Lihat Paket Program
                         </a>
                         <a href="<?php echo e(route('about')); ?>"
-                            class="px-8 py-4 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-extrabold rounded-2xl transition-all hover:-translate-y-1">
+                            class="px-8 py-4 border-2 border-[#101828] text-[#101828] font-extrabold rounded-2xl hover:bg-[#101828] hover:text-[#D3AF37] transition-all hover:-translate-y-1">
                             Pelajari Lebih Lanjut
                         </a>
                     </div>
@@ -36,30 +36,30 @@
                 <!-- Graphic/Visual Container -->
                 <div class="lg:col-span-5 hidden lg:flex justify-center relative">
                     <div
-                        class="relative w-80 h-80 bg-blue-600/20 border border-white/15 rounded-3xl p-6 flex flex-col justify-between shadow-2xl backdrop-blur-sm">
+                        class="relative w-80 h-80 bg-[#101828] text-white border border-[#D3AF37]/40 rounded-3xl p-6 flex flex-col justify-between shadow-2xl backdrop-blur-sm">
                         <!-- Simulated Card Details -->
                         <div class="flex justify-between items-start">
-                            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
-                                <i class="fa-solid fa-water text-blue-300 text-xl"></i>
+                            <div class="w-12 h-12 bg-[#D3AF37]/15 border border-[#D3AF37]/30 rounded-2xl flex items-center justify-center">
+                                <i class="fa-solid fa-water text-[#D3AF37] text-xl"></i>
                             </div>
                             <span
-                                class="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold px-3 py-1 rounded-full uppercase">Pendaftaran
+                                class="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold px-3 py-1 rounded-full uppercase">Pendaftaran
                                 Buka</span>
                         </div>
                         <div class="space-y-2">
-                            <p class="text-xs text-blue-300 font-bold uppercase tracking-widest">Black Diamond Club</p>
-                            <h3 class="text-2xl font-extrabold">Jadilah Perenang yang Andal dan Percaya Diri</h3>
+                            <p class="text-xs text-[#D3AF37] font-bold uppercase tracking-widest">Black Diamond Club</p>
+                            <h3 class="text-2xl font-extrabold text-white">Jadilah Perenang yang Andal dan Percaya Diri</h3>
                         </div>
                         <div class="flex items-center gap-3 pt-4 border-t border-white/10">
                             <div class="flex -space-x-2">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-blue-400 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold">
+                                    class="w-8 h-8 rounded-full bg-[#D3AF37] text-[#101828] border-2 border-slate-900 flex items-center justify-center text-[10px] font-extrabold">
                                     A</div>
                                 <div
-                                    class="w-8 h-8 rounded-full bg-amber-400 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold">
+                                    class="w-8 h-8 rounded-full bg-amber-400 text-[#101828] border-2 border-slate-900 flex items-center justify-center text-[10px] font-extrabold">
                                     B</div>
                                 <div
-                                    class="w-8 h-8 rounded-full bg-emerald-400 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold">
+                                    class="w-8 h-8 rounded-full bg-emerald-400 text-[#101828] border-2 border-slate-900 flex items-center justify-center text-[10px] font-extrabold">
                                     C</div>
                             </div>
                             <span class="text-xs text-slate-300 font-medium">500+ Murid Telah Bergabung</span>
@@ -75,17 +75,17 @@
         <div
             class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center border border-slate-100">
             <div class="space-y-1">
-                <p class="text-4xl font-extrabold text-blue-600"><?php echo e($totalCoaches); ?>+</p>
+                <p class="text-4xl font-extrabold text-[#D3AF37]"><?php echo e($totalCoaches); ?>+</p>
                 <p class="text-sm font-bold text-slate-700 uppercase tracking-wide">Pelatih Berlisensi</p>
                 <p class="text-xs text-slate-400">Instruktur profesional berstandar nasional</p>
             </div>
             <div class="space-y-1 border-y md:border-y-0 md:border-x border-slate-100 py-6 md:py-0">
-                <p class="text-4xl font-extrabold text-blue-600"><?php echo e($totalLocations); ?>+</p>
+                <p class="text-4xl font-extrabold text-[#D3AF37]"><?php echo e($totalLocations); ?>+</p>
                 <p class="text-sm font-bold text-slate-700 uppercase tracking-wide">Pilihan Kolam Latihan</p>
                 <p class="text-xs text-slate-400">Kolam renang tersebar di area strategis</p>
             </div>
             <div class="space-y-1">
-                <p class="text-4xl font-extrabold text-blue-600">1-on-1 / Group</p>
+                <p class="text-4xl font-extrabold text-[#D3AF37]">1-on-1 / Group</p>
                 <p class="text-sm font-bold text-slate-700 uppercase tracking-wide">Pendekatan Personal</p>
                 <p class="text-xs text-slate-400">Grup belajar kecil & perhatian maksimal</p>
             </div>
@@ -95,7 +95,7 @@
     <!-- Why Choose Us -->
     <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div class="max-w-3xl mx-auto mb-16 space-y-4">
-            <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block">KEUNGGULAN KAMI</span>
+            <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">KEUNGGULAN KAMI</span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Mengapa Memilih Black Diamond?
             </h2>
             <p class="text-slate-500 text-sm">Kami berkomitmen memberikan pengalaman belajar renang terbaik, teraman, dan
@@ -105,7 +105,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div
                 class="bg-white p-8 rounded-3xl border border-slate-150 shadow-sm text-left hover:shadow-md transition duration-300">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center mb-6 text-xl">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h3 class="font-extrabold text-slate-800 text-lg mb-2">Mengutamakan Keamanan</h3>
@@ -114,7 +114,7 @@
             </div>
             <div
                 class="bg-white p-8 rounded-3xl border border-slate-150 shadow-sm text-left hover:shadow-md transition duration-300">
-                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6 text-xl">
+                <div class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center mb-6 text-xl">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <h3 class="font-extrabold text-slate-800 text-lg mb-2">Kurikulum Terstruktur</h3>
@@ -124,7 +124,7 @@
             <div
                 class="bg-white p-8 rounded-3xl border border-slate-150 shadow-sm text-left hover:shadow-md transition duration-300">
                 <div
-                    class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6 text-xl">
+                    class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center mb-6 text-xl">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
                 <h3 class="font-extrabold text-slate-800 text-lg mb-2">Jadwal Fleksibel</h3>
@@ -139,7 +139,7 @@
         <section class="py-24 bg-slate-100 border-y border-slate-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
-                    <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block">PROGRAM KAMI</span>
+                    <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">PROGRAM KAMI</span>
                     <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Pilih Paket Program
                         Latihan Terbaik Anda</h2>
                     <p class="text-slate-500 text-sm">Paket latihan terstruktur yang disesuaikan dengan kebutuhan frekuensi
@@ -153,7 +153,7 @@
                             <div>
                                 <div class="flex justify-between items-start mb-6">
                                     <span
-                                        class="bg-blue-50 border border-blue-150 text-blue-700 text-xs font-bold px-3.5 py-1 rounded-full uppercase">
+                                        class="bg-[#D3AF37]/15 border border-[#D3AF37]/30 text-[#D3AF37] text-xs font-bold px-3.5 py-1 rounded-full uppercase">
                                         <?php echo e($package->sessions); ?>x Sesi
                                     </span>
                                     <span class="text-xs text-slate-400 font-semibold">Masa Aktif:
@@ -169,7 +169,7 @@
                                 </div>
                             </div>
                             <a href="<?php echo e(route('packages')); ?>"
-                                class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl text-center text-sm shadow-md shadow-blue-500/10 transition-colors">
+                                class="w-full py-3 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-2xl text-center text-sm shadow-md transition-colors">
                                 Lihat Detail Paket
                             </a>
                         </div>
@@ -178,7 +178,7 @@
 
                 <div class="text-center">
                     <a href="<?php echo e(route('packages')); ?>"
-                        class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-1 inline-flex items-center gap-2">
+                        class="px-8 py-4 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-2xl shadow-lg transition-all hover:-translate-y-1 inline-flex items-center gap-2">
                         Lihat Semua Paket <i class="fa-solid fa-arrow-right text-sm"></i>
                     </a>
                 </div>
@@ -186,13 +186,11 @@
         </section>
     <?php endif; ?>
 
-
-
     <!-- Registration Flow Section -->
     <section class="py-24 bg-slate-100 border-y border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="max-w-3xl mx-auto mb-16 space-y-4">
-                <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block">ALUR PENDAFTARAN</span>
+                <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">ALUR PENDAFTARAN</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Langkah Mudah Bergabung
                     Latihan</h2>
                 <p class="text-slate-500 text-sm">Ikuti 4 langkah sederhana ini untuk memulai sesi latihan renang pertama
@@ -203,7 +201,7 @@
                 <!-- Step 1 -->
                 <div class="flex flex-col items-center">
                     <div
-                        class="w-16 h-16 rounded-full bg-blue-600 text-white font-extrabold text-xl flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4">
+                        class="w-16 h-16 rounded-full bg-[#D3AF37] text-[#101828] font-extrabold text-xl flex items-center justify-center shadow-lg mb-4">
                         1
                     </div>
                     <h3 class="font-extrabold text-slate-800 mb-1">Daftar Akun</h3>
@@ -213,7 +211,7 @@
                 <!-- Step 2 -->
                 <div class="flex flex-col items-center">
                     <div
-                        class="w-16 h-16 rounded-full bg-blue-600 text-white font-extrabold text-xl flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4">
+                        class="w-16 h-16 rounded-full bg-[#D3AF37] text-[#101828] font-extrabold text-xl flex items-center justify-center shadow-lg mb-4">
                         2
                     </div>
                     <h3 class="font-extrabold text-slate-800 mb-1">Pilih Paket & Lokasi</h3>
@@ -223,7 +221,7 @@
                 <!-- Step 3 -->
                 <div class="flex flex-col items-center">
                     <div
-                        class="w-16 h-16 rounded-full bg-blue-600 text-white font-extrabold text-xl flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4">
+                        class="w-16 h-16 rounded-full bg-[#D3AF37] text-[#101828] font-extrabold text-xl flex items-center justify-center shadow-lg mb-4">
                         3
                     </div>
                     <h3 class="font-extrabold text-slate-800 mb-1">Upload Pembayaran</h3>
@@ -233,7 +231,7 @@
                 <!-- Step 4 -->
                 <div class="flex flex-col items-center">
                     <div
-                        class="w-16 h-16 rounded-full bg-blue-600 text-white font-extrabold text-xl flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4">
+                        class="w-16 h-16 rounded-full bg-[#D3AF37] text-[#101828] font-extrabold text-xl flex items-center justify-center shadow-lg mb-4">
                         4
                     </div>
                     <h3 class="font-extrabold text-slate-800 mb-1">Mulai Latihan</h3>
@@ -243,7 +241,7 @@
             </div>
             <div class="text-center">
                 <a href="<?php echo e(route('register')); ?>"
-                    class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-1 inline-flex items-center gap-2">
+                    class="px-8 py-4 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-2xl shadow-lg transition-all hover:-translate-y-1 inline-flex items-center gap-2">
                     Daftar Sekarang <i class="fa-solid fa-arrow-right text-sm"></i>
                 </a>
             </div>
@@ -251,18 +249,19 @@
     </section>
 
     <!-- CTA Banner -->
-    <section class="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-950 text-white text-center mb-16">
-        <div class="max-w-2xl mx-auto px-6 space-y-6 py-12">
-            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">Siap Berenang Bersama Kami?</h2>
-            <p class="text-slate-300 text-sm mb-8 leading-relaxed">Bergabunglah dengan ratusan murid yang sudah merasakan
+    <section class="py-20 bg-gradient-to-r from-[#0B0F17] via-[#1E1A0E] to-[#D3AF37] text-white text-center mb-16 shadow-2xl border-y border-[#D3AF37]/40 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-10"></div>
+        <div class="max-w-3xl mx-auto px-6 space-y-6 py-10 relative z-10">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 text-[#D3AF37] tracking-tight">Siap Berenang Bersama Kami?</h2>
+            <p class="text-slate-200 text-base mb-8 leading-relaxed font-medium">Bergabunglah dengan ratusan murid yang sudah merasakan
                 manfaat latihan renang bersama Black Diamond Swimming Club.</p>
             <div class="flex flex-wrap justify-center gap-4">
                 <a href="<?php echo e(route('register')); ?>"
-                    class="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold rounded-2xl shadow-lg shadow-amber-500/20 transition-all hover:-translate-y-1">
+                    class="px-8 py-4 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-2xl shadow-xl transition-all hover:-translate-y-1">
                     Daftar Sekarang
                 </a>
                 <a href="<?php echo e(route('contact')); ?>"
-                    class="px-8 py-4 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-extrabold rounded-2xl transition-all hover:-translate-y-1">
+                    class="px-8 py-4 bg-[#101828]/80 hover:bg-[#101828] border-2 border-[#D3AF37]/60 text-[#D3AF37] font-extrabold rounded-2xl transition-all hover:-translate-y-1">
                     Hubungi Kami
                 </a>
             </div>

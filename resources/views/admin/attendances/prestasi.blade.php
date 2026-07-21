@@ -101,12 +101,12 @@
                                             @endif
                                         </td>
 
-                                        {{-- Jumlah (Sesi ke-n) --}}
-                                        <td class="px-6 py-4 text-center">
-                                            <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-green-100 bg-green-600 rounded-full">
-                                                Ke-{{ $att->session_count ?? 1 }}
-                                            </span>
-                                        </td>
+                                         {{-- Jumlah (Sesi ke-n) --}}
+                                         <td class="px-6 py-4 text-center">
+                                             <span class="inline-flex items-center justify-center px-2.5 py-1 text-xs font-semibold leading-none text-green-700 bg-green-50 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800 rounded whitespace-nowrap">
+                                                 Ke-{{ $att->session_count ?? 1 }}
+                                             </span>
+                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>

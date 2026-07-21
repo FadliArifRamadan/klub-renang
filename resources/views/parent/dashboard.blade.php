@@ -9,13 +9,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Welcome Panel --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8 border border-gray-100">
-                <h1 class="text-gray-900 text-3xl font-bold tracking-tight">
+            <div class="bg-gradient-to-r from-[#101828] via-[#1E1E2D] to-[#101828] overflow-hidden rounded-2xl p-6 md:p-8 mb-8 border border-[#D3AF37]/30 shadow-xl relative z-10">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-[#D3AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
+                <h1 class="text-[#D3AF37] text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
                     Halo, {{ Auth::user()->name }}!
                 </h1>
-                <p class="text-gray-600 mt-2 text-sm max-w-3xl leading-relaxed">
-                    Selamat datang di portal orang tua Black Diamond. Pantau perkembangan anak Anda, cek status latihan,
-                    dan lihat catatan terbaru dari pelatih di sini.
+                <p class="text-slate-300 text-sm max-w-3xl leading-relaxed font-normal">
+                    Selamat datang di portal orang tua Black Diamond. Pantau perkembangan anak Anda, cek status latihan, dan lihat catatan terbaru dari pelatih di sini.
                 </p>
             </div>
 
@@ -377,51 +377,51 @@
 
                 {{-- Card 1: Total Murid (Non-clickable) --}}
                 <div
-                    class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6 border border-gray-100 flex items-center justify-between cursor-default">
+                    class="bg-[#101828] overflow-hidden shadow-md sm:rounded-2xl p-6 border border-[#D3AF37]/30 flex items-center justify-between cursor-default">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                        <div class="p-3 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl">
                             <i class="fa-solid fa-users text-2xl w-8 text-center"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Murid</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ $totalStudents }} Murid</p>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Murid</p>
+                            <p class="text-2xl font-bold text-white mt-0.5">{{ $totalStudents }} Murid</p>
                         </div>
                     </div>
-                    <div class="text-gray-200">
+                    <div class="text-slate-600">
                         <i class="fa-solid fa-lock text-sm"></i>
                     </div>
                 </div>
 
                 {{-- Card 2: Total Coach (Non-clickable) --}}
                 <div
-                    class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6 border border-gray-100 flex items-center justify-between cursor-default">
+                    class="bg-[#101828] overflow-hidden shadow-md sm:rounded-2xl p-6 border border-[#D3AF37]/30 flex items-center justify-between cursor-default">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+                        <div class="p-3 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl">
                             <i class="fa-solid fa-user-tie text-2xl w-8 text-center"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Coach</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ $totalCoaches }} Pelatih</p>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Coach</p>
+                            <p class="text-2xl font-bold text-white mt-0.5">{{ $totalCoaches }} Pelatih</p>
                         </div>
                     </div>
-                    <div class="text-gray-200">
+                    <div class="text-slate-600">
                         <i class="fa-solid fa-lock text-sm"></i>
                     </div>
                 </div>
 
                 {{-- Card 3: Total Tempat Latihan (Non-clickable) --}}
                 <div
-                    class="bg-white overflow-hidden shadow-sm sm:rounded-xl p-6 border border-gray-100 flex items-center justify-between cursor-default">
+                    class="bg-[#101828] overflow-hidden shadow-md sm:rounded-2xl p-6 border border-[#D3AF37]/30 flex items-center justify-between cursor-default">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
+                        <div class="p-3 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl">
                             <i class="fa-solid fa-location-dot text-2xl w-8 text-center"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tempat Latihan</p>
-                            <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ $totalLocations }} Lokasi</p>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tempat Latihan</p>
+                            <p class="text-2xl font-bold text-white mt-0.5">{{ $totalLocations }} Lokasi</p>
                         </div>
                     </div>
-                    <div class="text-gray-200">
+                    <div class="text-slate-600">
                         <i class="fa-solid fa-lock text-sm"></i>
                     </div>
                 </div>

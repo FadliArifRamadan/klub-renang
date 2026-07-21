@@ -87,8 +87,9 @@ class AttendanceController extends Controller
 
         $allowedCoachIds = array_merge([$authCoachId], $substituteCoachIds);
 
+        $notifications = [];
         try {
-            DB::transaction(function () use ($request, $authCoachId, $allowedCoachIds) {
+            DB::transaction(function () use ($request, $authCoachId, $allowedCoachIds, &$notifications) {
                 // Konversi hari terpilih (Monday=0 ... Sunday=6)
                 $carbonDayOfWeek = \Carbon\Carbon::parse($request->date)->dayOfWeek;
                 $dayOfWeek = $carbonDayOfWeek === 0 ? 6 : $carbonDayOfWeek - 1;
@@ -121,10 +122,33 @@ class AttendanceController extends Controller
                                     'became_inactive_at' => now(),
                                 ]);
                             }
+
+                            // Kumpulkan status kuota untuk notifikasi WA
+                            $notifications[] = [
+                                'student_name' => $student->name,
+                                'quota_left' => $student->quota_left,
+                                'parent_id' => $student->user_id,
+                            ];
                         }
                     }
                 }
             });
+
+            // Kirim WA Notifikasi Kehadiran & Sisa Kuota ke Orang Tua
+            foreach ($notifications as $notif) {
+                $parent = \App\Models\User::find($notif['parent_id']);
+                if ($parent && !empty($parent->phone)) {
+                    $msg = "Halo Bapak/Ibu {$parent->name},\n\nAnak Anda *{$notif['student_name']}* telah diabsen HADIR latihan pada tanggal *{$request->date}*.\n\n";
+                    if ($notif['quota_left'] <= 0) {
+                        $msg .= "Sisa kuota latihan anak Anda sekarang: *0 (HABIS)*.\nAkun latihan berstatus tidak aktif. Silakan lakukan perpanjangan paket agar dapat melanjutkan latihan kembali.";
+                    } elseif ($notif['quota_left'] == 2) {
+                        $msg .= "Sisa kuota latihan anak Anda sekarang tinggal *2 sesi*. Mohon segera lakukan perpanjangan paket sebelum kuota habis.";
+                    } else {
+                        $msg .= "Sisa kuota latihan anak Anda sekarang: *{$notif['quota_left']} sesi*.";
+                    }
+                    \App\Services\WhatsappService::send($parent->phone, $msg);
+                }
+            }
 
             return redirect()->route('coach.students.index')
                 ->with('success', 'Absensi Kelas Belajar berhasil disimpan dan kuota murid telah diperbarui!');
@@ -226,8 +250,9 @@ class AttendanceController extends Controller
 
         $allowedCoachIds = array_merge([$authCoachId], $substituteCoachIds);
 
+        $notifications = [];
         try {
-            DB::transaction(function () use ($request, $authCoachId, $allowedCoachIds) {
+            DB::transaction(function () use ($request, $authCoachId, $allowedCoachIds, &$notifications) {
                 // Konversi hari terpilih (Monday=0 ... Sunday=6)
                 $carbonDayOfWeek = \Carbon\Carbon::parse($request->date)->dayOfWeek;
                 $dayOfWeek = $carbonDayOfWeek === 0 ? 6 : $carbonDayOfWeek - 1;
@@ -267,10 +292,34 @@ class AttendanceController extends Controller
                                     'became_inactive_at' => now(),
                                 ]);
                             }
+
+                            // Kumpulkan status kuota untuk notifikasi WA
+                            $notifications[] = [
+                                'student_name' => $student->name,
+                                'quota_left' => $student->quota_left,
+                                'parent_id' => $student->user_id,
+                            ];
                         }
                     }
                 }
             });
+
+            // Kirim WA Notifikasi Kehadiran & Sisa Kuota ke Orang Tua
+            foreach ($notifications as $notif) {
+                $parent = \App\Models\User::find($notif['parent_id']);
+                if ($parent && !empty($parent->phone)) {
+                    $sessionLabel = $request->session_type === 'dryland' ? 'latihan darat' : 'berenang';
+                    $msg = "Halo Bapak/Ibu {$parent->name},\n\nAnak Anda *{$notif['student_name']}* telah diabsen HADIR untuk sesi *{$sessionLabel}* pada tanggal *{$request->date}*.\n\n";
+                    if ($notif['quota_left'] <= 0) {
+                        $msg .= "Sisa kuota latihan anak Anda sekarang: *0 (HABIS)*.\nAkun latihan berstatus tidak aktif. Silakan lakukan perpanjangan paket agar dapat melanjutkan latihan kembali.";
+                    } elseif ($notif['quota_left'] == 2) {
+                        $msg .= "Sisa kuota latihan anak Anda sekarang tinggal *2 sesi*. Mohon segera lakukan perpanjangan paket sebelum kuota habis.";
+                    } else {
+                        $msg .= "Sisa kuota latihan anak Anda sekarang: *{$notif['quota_left']} sesi*.";
+                    }
+                    \App\Services\WhatsappService::send($parent->phone, $msg);
+                }
+            }
 
             return redirect()->route('coach.students.index')
                 ->with('success', 'Absensi Kelas Prestasi berhasil disimpan dan kuota atlet telah diperbarui!');

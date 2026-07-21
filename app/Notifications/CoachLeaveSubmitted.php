@@ -6,6 +6,8 @@ use App\Models\CoachLeave;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
+use App\Notifications\Channels\WhatsappChannel;
+
 class CoachLeaveSubmitted extends Notification
 {
     use Queueable;
@@ -17,7 +19,7 @@ class CoachLeaveSubmitted extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', WhatsappChannel::class];
     }
 
     public function toDatabase(object $notifiable): array
@@ -33,5 +35,11 @@ class CoachLeaveSubmitted extends Notification
             'color'        => 'amber',
             'link'         => route('admin.leaves.index'),
         ];
+    }
+
+    public function toWhatsapp(object $notifiable): string
+    {
+        $formattedDate = $this->leave->leave_date->format('d M Y');
+        return "Notifikasi Admin:\n\nCoach *{$this->coachName}* mengajukan izin tidak melatih untuk tanggal *{$formattedDate}*.\n\nAlasan: \"{$this->leave->reason}\"\n\nMohon periksa dan proses pengajuan izin ini di dashboard Admin.";
     }
 }

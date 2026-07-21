@@ -6,6 +6,8 @@ use App\Models\CoachLeave;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
+use App\Notifications\Channels\WhatsappChannel;
+
 class CoachLeaveRejected extends Notification
 {
     use Queueable;
@@ -16,7 +18,7 @@ class CoachLeaveRejected extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', WhatsappChannel::class];
     }
 
     public function toDatabase(object $notifiable): array
@@ -31,5 +33,11 @@ class CoachLeaveRejected extends Notification
             'color'        => 'red',
             'link'         => route('coach.leaves.index'),
         ];
+    }
+
+    public function toWhatsapp(object $notifiable): string
+    {
+        $formattedDate = $this->leave->leave_date->format('d M Y');
+        return "Halo Coach {$notifiable->name},\n\nPengajuan izin latihan Anda untuk tanggal *{$formattedDate}* telah *DITOLAK* oleh Admin.\n\nAlasan penolakan: \"{$this->leave->rejection_reason}\"\n\nMohon periksa kembali jadwal Anda atau ajukan ulang jika ada kekeliruan.";
     }
 }

@@ -78,16 +78,18 @@
                                         @endif
                                     </td>
                                     <td class="px-4 py-4 text-center">
-                                        <div class="inline-flex rounded-md shadow-sm" role="group">
+                                        <div class="inline-flex rounded-xl shadow-sm border border-[#D3AF37]/30 bg-[#161F30] overflow-hidden" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-class-{{ $class->id }}')"
-                                                class="px-3 py-2 text-xs font-medium text-amber-600 bg-white dark:bg-boxdark border border-gray-200 dark:border-strokedark rounded-l-lg hover:bg-amber-50">
+                                                class="px-3 py-2 text-xs font-bold text-[#D3AF37] bg-[#D3AF37]/15 hover:bg-[#D3AF37] hover:text-[#101828] transition-colors border-r border-[#D3AF37]/30"
+                                                title="Edit">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
 
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'confirm-class-deletion-{{ $class->id }}')"
-                                                class="px-3 py-2 text-xs font-medium text-red-600 bg-white dark:bg-boxdark border-y border-r border-gray-200 dark:border-strokedark rounded-r-lg hover:bg-red-50">
+                                                class="px-3 py-2 text-xs font-bold text-rose-400 bg-rose-950/40 hover:bg-rose-600 hover:text-white transition-colors"
+                                                title="Hapus">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>

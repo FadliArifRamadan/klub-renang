@@ -17,7 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-outfit antialiased bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300">
+<body class="font-outfit antialiased bg-[#0B0F17] text-white">
     <div x-data="{ sidebarExpanded: true, sidebarHovered: false, mobileSidebarOpen: false }" class="min-h-screen xl:flex">
         
         <div>

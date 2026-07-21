@@ -3,20 +3,20 @@
 @section('content')
     <!-- Page Hero -->
     <section
-        class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-950 text-white overflow-hidden">
-        <div class="absolute inset-0 hero-pattern opacity-30"></div>
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-500 rounded-full blur-[120px] opacity-20"></div>
-        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-indigo-500 rounded-full blur-[120px] opacity-20"></div>
+        class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-[#D3AF37] text-[#101828] overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-15"></div>
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-amber-300 rounded-full blur-[120px] opacity-40"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-yellow-400 rounded-full blur-[120px] opacity-40"></div>
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <span
-                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider mb-6">
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#101828] border border-[#101828]/20 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider mb-6">
                 <i class="fa-solid fa-info-circle"></i> Profil Klub
             </span>
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6 text-[#101828]">
                 Tentang Black Diamond Swimming Club
             </h1>
-            <p class="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8">
+            <p class="text-[#101828]/90 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8 font-medium">
                 Klub renang profesional yang berkomitmen melahirkan generasi perenang tangguh, aman, dan berprestasi di
                 Indonesia.
             </p>
@@ -27,13 +27,13 @@
     <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <!-- Visi -->
-            <div class="bg-gradient-to-br from-blue-50p-10 space-y-5">
+            <div class="space-y-5">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-blue-600/20">
+                    class="w-14 h-14 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center text-2xl">
                     <i class="fa-solid fa-eye"></i>
                 </div>
-                <h2 class="text-2xl font-extrabold text-slate-900">Visi Kami</h2>
-                <p class="text-slate-600 leading-relaxed">
+                <h2 class="text-3xl font-extrabold text-white">Visi Kami</h2>
+                <p class="text-slate-300 leading-relaxed text-base">
                     Menjadi pusat pelatihan renang terdepan di Indonesia yang menghasilkan atlet berkarakter, berprestasi,
                     dan mencintai dunia olahraga air secara berkelanjutan.
                 </p>
@@ -42,34 +42,34 @@
             <!-- Misi -->
             <div class="space-y-5">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-amber-500/20">
+                    class="w-14 h-14 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center text-2xl">
                     <i class="fa-solid fa-bullseye"></i>
                 </div>
-                <h2 class="text-2xl font-extrabold text-slate-900">Misi Kami</h2>
+                <h2 class="text-3xl font-extrabold text-white">Misi Kami</h2>
                 <ul class="space-y-4">
                     <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-circle-check text-emerald-500 mt-1 shrink-0"></i>
-                        <span class="text-slate-600">Memberikan pelatihan renang yang terstruktur, aman, dan menyenangkan
+                        <i class="fa-solid fa-circle-check text-[#D3AF37] mt-1 shrink-0"></i>
+                        <span class="text-slate-300 leading-relaxed">Memberikan pelatihan renang yang terstruktur, aman, dan menyenangkan
                             bagi semua kalangan usia.</span>
                     </li>
                     <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-circle-check text-emerald-500 mt-1 shrink-0"></i>
-                        <span class="text-slate-600">Menghadirkan pelatih berlisensi dan berpengalaman yang berdedikasi
+                        <i class="fa-solid fa-circle-check text-[#D3AF37] mt-1 shrink-0"></i>
+                        <span class="text-slate-300 leading-relaxed">Menghadirkan pelatih berlisensi dan berpengalaman yang berdedikasi
                             terhadap perkembangan setiap murid.</span>
                     </li>
                     <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-circle-check text-emerald-500 mt-1 shrink-0"></i>
-                        <span class="text-slate-600">Membangun lingkungan latihan yang positif, inklusif, dan mendukung
+                        <i class="fa-solid fa-circle-check text-[#D3AF37] mt-1 shrink-0"></i>
+                        <span class="text-slate-300 leading-relaxed">Membangun lingkungan latihan yang positif, inklusif, dan mendukung
                             tumbuh kembang anak secara holistik.</span>
                     </li>
                     <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-circle-check text-emerald-500 mt-1 shrink-0"></i>
-                        <span class="text-slate-600">Memanfaatkan teknologi digital untuk pemantauan perkembangan murid
+                        <i class="fa-solid fa-circle-check text-[#D3AF37] mt-1 shrink-0"></i>
+                        <span class="text-slate-300 leading-relaxed">Memanfaatkan teknologi digital untuk pemantauan perkembangan murid
                             secara transparan dan efisien.</span>
                     </li>
                     <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-circle-check text-emerald-500 mt-1 shrink-0"></i>
-                        <span class="text-slate-600">Memperluas jangkauan fasilitas kolam renang berkualitas di berbagai
+                        <i class="fa-solid fa-circle-check text-[#D3AF37] mt-1 shrink-0"></i>
+                        <span class="text-slate-300 leading-relaxed">Memperluas jangkauan fasilitas kolam renang berkualitas di berbagai
                             wilayah Indonesia.</span>
                     </li>
                 </ul>
@@ -81,27 +81,27 @@
     <section class="py-24 bg-slate-100 border-y border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
-                <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block">PERJALANAN KAMI</span>
+                <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">PERJALANAN KAMI</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Sejarah Black Diamond</h2>
                 <p class="text-slate-500 text-sm">Dari awal yang sederhana hingga menjadi klub renang terpercaya.</p>
             </div>
 
             <div class="relative max-w-4xl mx-auto">
                 <!-- Timeline Line -->
-                <div class="absolute left-1/2 -translate-x-0.5 top-0 bottom-0 w-0.5 bg-blue-200 hidden md:block"></div>
+                <div class="absolute left-1/2 -translate-x-0.5 top-0 bottom-0 w-0.5 bg-[#D3AF37]/30 hidden md:block"></div>
 
                 <!-- Timeline Items -->
                 <div class="space-y-12">
                     <!-- Item 1 -->
                     <div class="flex flex-col md:flex-row items-center gap-8">
                         <div class="md:w-1/2 md:text-right md:pr-12">
-                            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest block mb-1">2018</span>
+                            <span class="text-xs font-bold text-[#D3AF37] uppercase tracking-widest block mb-1">2018</span>
                             <h3 class="text-lg font-extrabold text-slate-800 mb-2">Berdirinya Black Diamond</h3>
                             <p class="text-sm text-slate-500 leading-relaxed">Dimulai oleh sekelompok pelatih renang
                                 berpengalaman dengan satu kolam renang dan 20 murid pertama di Bandung.</p>
                         </div>
                         <div
-                            class="relative z-10 w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold shrink-0 shadow-lg shadow-blue-500/30">
+                            class="relative z-10 w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center font-extrabold shrink-0 shadow-sm">
                             <i class="fa-solid fa-flag text-sm"></i>
                         </div>
                         <div class="md:w-1/2 md:pl-12 hidden md:block"></div>
@@ -111,11 +111,11 @@
                     <div class="flex flex-col md:flex-row items-center gap-8">
                         <div class="md:w-1/2 md:pr-12 hidden md:block"></div>
                         <div
-                            class="relative z-10 w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center font-extrabold shrink-0 shadow-lg shadow-amber-500/30">
+                            class="relative z-10 w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center font-extrabold shrink-0 shadow-sm">
                             <i class="fa-solid fa-trophy text-sm"></i>
                         </div>
                         <div class="md:w-1/2 md:pl-12">
-                            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest block mb-1">2020</span>
+                            <span class="text-xs font-bold text-[#D3AF37] uppercase tracking-widest block mb-1">2020</span>
                             <h3 class="text-lg font-extrabold text-slate-800 mb-2">Ekspansi ke 3 Lokasi</h3>
                             <p class="text-sm text-slate-500 leading-relaxed">Setelah dua tahun beroperasi, kami berhasil
                                 membuka 2 lokasi kolam renang baru dan merekrut 5 pelatih berlisensi tambahan.</p>
@@ -125,13 +125,13 @@
                     <!-- Item 3 -->
                     <div class="flex flex-col md:flex-row items-center gap-8">
                         <div class="md:w-1/2 md:text-right md:pr-12">
-                            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest block mb-1">2022</span>
+                            <span class="text-xs font-bold text-[#D3AF37] uppercase tracking-widest block mb-1">2022</span>
                             <h3 class="text-lg font-extrabold text-slate-800 mb-2">Digitalisasi Manajemen Klub</h3>
                             <p class="text-sm text-slate-500 leading-relaxed">Peluncuran platform digital untuk pemantauan
                                 absensi, laporan perkembangan, dan manajemen pembayaran secara online.</p>
                         </div>
                         <div
-                            class="relative z-10 w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center font-extrabold shrink-0 shadow-lg shadow-emerald-500/30">
+                            class="relative z-10 w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center font-extrabold shrink-0 shadow-sm">
                             <i class="fa-solid fa-laptop text-sm"></i>
                         </div>
                         <div class="md:w-1/2 md:pl-12 hidden md:block"></div>
@@ -141,11 +141,11 @@
                     <div class="flex flex-col md:flex-row items-center gap-8">
                         <div class="md:w-1/2 md:pr-12 hidden md:block"></div>
                         <div
-                            class="relative z-10 w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center font-extrabold shrink-0 shadow-lg shadow-indigo-600/30">
+                            class="relative z-10 w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center font-extrabold shrink-0 shadow-sm">
                             <i class="fa-solid fa-star text-sm"></i>
                         </div>
                         <div class="md:w-1/2 md:pl-12">
-                            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest block mb-1">2024 -
+                            <span class="text-xs font-bold text-[#D3AF37] uppercase tracking-widest block mb-1">2024 -
                                 Sekarang</span>
                             <h3 class="text-lg font-extrabold text-slate-800 mb-2">500+ Murid & Terus Berkembang</h3>
                             <p class="text-sm text-slate-500 leading-relaxed">Kini kami telah melayani lebih dari 500 murid
@@ -160,7 +160,7 @@
     <!-- Nilai-Nilai Kami -->
     <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
-            <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block">NILAI-NILAI KAMI</span>
+            <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">NILAI-NILAI KAMI</span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Landasan Kami Berlatih</h2>
             <p class="text-slate-500 text-sm">Nilai-nilai inti yang menjadi fondasi dalam setiap sesi latihan dan pelayanan
                 kami.</p>
@@ -170,7 +170,7 @@
             <div
                 class="bg-white rounded-3xl border border-slate-200 p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-5 text-2xl">
+                    class="w-14 h-14 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center mx-auto mb-5 text-2xl">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h3 class="font-extrabold text-slate-800 mb-2">Keamanan</h3>
@@ -180,7 +180,7 @@
             <div
                 class="bg-white rounded-3xl border border-slate-200 p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-5 text-2xl">
+                    class="w-14 h-14 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center mx-auto mb-5 text-2xl">
                     <i class="fa-solid fa-medal"></i>
                 </div>
                 <h3 class="font-extrabold text-slate-800 mb-2">Profesionalisme</h3>
@@ -190,7 +190,7 @@
             <div
                 class="bg-white rounded-3xl border border-slate-200 p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-5 text-2xl">
+                    class="w-14 h-14 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center mx-auto mb-5 text-2xl">
                     <i class="fa-solid fa-heart"></i>
                 </div>
                 <h3 class="font-extrabold text-slate-800 mb-2">Dedikasi</h3>
@@ -200,7 +200,7 @@
             <div
                 class="bg-white rounded-3xl border border-slate-200 p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-5 text-2xl">
+                    class="w-14 h-14 rounded-2xl bg-[#101828] text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center mx-auto mb-5 text-2xl">
                     <i class="fa-solid fa-users"></i>
                 </div>
                 <h3 class="font-extrabold text-slate-800 mb-2">Komunitas</h3>
@@ -211,18 +211,19 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-950 text-white text-center">
-        <div class="max-w-2xl mx-auto p-4">
-            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">Siap Bergabung Bersama Kami?</h2>
-            <p class="text-slate-300 text-sm mb-8 leading-relaxed">Daftarkan diri Anda atau anak Anda sekarang dan mulailah
+    <section class="py-20 bg-gradient-to-r from-[#0B0F17] via-[#1E1A0E] to-[#D3AF37] text-white text-center shadow-2xl border-y border-[#D3AF37]/40 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-10"></div>
+        <div class="max-w-3xl mx-auto px-6 space-y-6 py-10 relative z-10">
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 text-[#D3AF37] tracking-tight">Siap Bergabung Bersama Kami?</h2>
+            <p class="text-slate-200 text-base mb-8 leading-relaxed font-medium">Daftarkan diri Anda atau anak Anda sekarang dan mulailah
                 perjalanan renang yang luar biasa bersama Black Diamond.</p>
-            <div class="flex flex-wrap justify-center gap-4 p-4">
+            <div class="flex flex-wrap justify-center gap-4">
                 <a href="{{ route('register') }}"
-                    class="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold rounded-2xl shadow-lg shadow-amber-500/20 transition-all hover:-translate-y-1">
+                    class="px-8 py-4 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-2xl shadow-xl transition-all hover:-translate-y-1">
                     Daftar Sekarang
                 </a>
                 <a href="{{ route('contact') }}"
-                    class="px-8 py-4 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-extrabold rounded-2xl transition-all hover:-translate-y-1">
+                    class="px-8 py-4 bg-[#101828]/80 hover:bg-[#101828] border-2 border-[#D3AF37]/60 text-[#D3AF37] font-extrabold rounded-2xl transition-all hover:-translate-y-1">
                     Hubungi Kami
                 </a>
             </div>
@@ -244,7 +245,7 @@
         }
     }" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
-            <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block">TIM INSTRUKTUR KAMI</span>
+            <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">TIM INSTRUKTUR KAMI</span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Kenalan Dengan Coach Profesional
                 Kami</h2>
             <p class="text-slate-500 text-sm">Tim pelatih yang berdedikasi tinggi membantu Anda menguasai keahlian renang
@@ -269,8 +270,8 @@
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
                                 <div
-                                    class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-                                    <i class="fa-solid fa-user-tie text-blue-200 text-7xl"></i>
+                                    class="w-full h-full flex items-center justify-center bg-[#101828]">
+                                    <i class="fa-solid fa-user-tie text-[#D3AF37] text-7xl"></i>
                                 </div>
                             @endif
                             <!-- Gradient Overlay -->
@@ -284,7 +285,7 @@
                         <!-- Details -->
                         <div class="p-6 text-left">
                             <h3 class="font-extrabold text-slate-800 text-base mb-1 truncate">{{ $coach->name }}</h3>
-                            <p class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-2">Instruktur Renang
+                            <p class="text-xs text-[#D3AF37] font-bold uppercase tracking-wider mb-2">Instruktur Renang
                                 Profesional</p>
                             <!-- Removed Phone Number -->
                         </div>
@@ -346,7 +347,7 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
                     <div class="absolute bottom-6 left-6 right-6 text-white">
                         <h3 class="text-2xl font-extrabold mb-1" x-text="coach.name"></h3>
-                        <p class="text-sm text-blue-300 font-bold uppercase tracking-wider">Instruktur Renang Profesional</p>
+                        <p class="text-sm text-[#D3AF37] font-bold uppercase tracking-wider">Instruktur Renang Profesional</p>
                     </div>
                 </div>
 
@@ -356,7 +357,7 @@
                         
                         <!-- Lisensi -->
                         <div class="flex gap-4 items-start">
-                            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-id-card text-xl"></i>
                             </div>
                             <div class="flex-1">
@@ -364,7 +365,7 @@
                                 <ul class="space-y-2">
                                     <template x-for="lic in coach.licenses">
                                         <li class="flex items-start gap-2">
-                                            <i class="fa-solid fa-check text-blue-500 mt-1 text-xs"></i>
+                                            <i class="fa-solid fa-check text-[#D3AF37] mt-1 text-xs"></i>
                                             <span class="text-sm text-slate-600 leading-relaxed" x-text="lic"></span>
                                         </li>
                                     </template>
@@ -374,7 +375,7 @@
                         
                         <!-- Sertifikat -->
                         <div class="flex gap-4 items-start">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-award text-xl"></i>
                             </div>
                             <div class="flex-1">
@@ -382,7 +383,7 @@
                                 <ul class="space-y-2">
                                     <template x-for="cert in coach.certificates">
                                         <li class="flex items-start gap-2">
-                                            <i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i>
+                                            <i class="fa-solid fa-check text-[#D3AF37] mt-1 text-xs"></i>
                                             <span class="text-sm text-slate-600 leading-relaxed" x-text="cert"></span>
                                         </li>
                                     </template>
@@ -392,7 +393,7 @@
 
                         <!-- Aktif Melatih -->
                         <div class="flex gap-4 items-start">
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                            <div class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-person-swimming text-xl"></i>
                             </div>
                             <div class="flex-1">

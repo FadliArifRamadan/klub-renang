@@ -129,21 +129,23 @@
                                     <td class="px-6 py-4 text-slate-600 font-semibold">{{ $user->phone }}</td>
                                     <td class="px-6 py-4 text-xs text-slate-400 font-medium">{{ $user->created_at->format('d M Y') }}</td>
                                     <td class="px-4 py-4 text-center">
-                                        <div class="inline-flex rounded-xl shadow-sm border border-slate-200 bg-white dark:bg-boxdark" role="group">
+                                        <div class="inline-flex rounded-xl shadow-sm border border-[#D3AF37]/30 bg-[#161F30] overflow-hidden" role="group">
                                             <button type="button" x-data=""
                                                 x-on:click="$dispatch('open-modal', 'edit-user-{{ $user->id }}')"
-                                                class="px-3 py-2 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-colors rounded-l-xl border-r border-slate-150">
+                                                class="px-3 py-2 text-xs font-bold text-[#D3AF37] bg-[#D3AF37]/15 hover:bg-[#D3AF37] hover:text-[#101828] transition-colors border-r border-[#D3AF37]/30"
+                                                title="Edit Akun">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
 
                                             <button type="button" x-data=""
                                                 @if($user->id === auth()->id())
                                                     disabled
-                                                    class="px-3 py-2 text-xs font-bold text-slate-300 cursor-not-allowed rounded-r-xl"
+                                                    class="px-3 py-2 text-xs font-bold text-slate-600 cursor-not-allowed"
                                                     title="Anda tidak bisa menghapus akun Anda sendiri"
                                                 @else
                                                     x-on:click="$dispatch('open-modal', 'confirm-user-deletion-{{ $user->id }}')"
-                                                    class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors rounded-r-xl"
+                                                    class="px-3 py-2 text-xs font-bold text-rose-400 bg-rose-950/40 hover:bg-rose-600 hover:text-white transition-colors"
+                                                    title="Hapus Akun"
                                                 @endif>
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>

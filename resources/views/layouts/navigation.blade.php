@@ -1,4 +1,4 @@
-<header class="sticky top-0 z-40 flex w-full bg-white border-b border-gray-200 dark:border-gray-800 dark:bg-gray-900 transition-colors duration-300">
+<header class="sticky top-0 z-40 flex w-full bg-white border-b border-[#D3AF37]/30 dark:border-gray-800 dark:bg-gray-900 transition-colors duration-300">
     <div class="flex flex-grow items-center justify-between px-4 py-4 md:px-6">
         
         {{-- ===== LEFT: Hamburger + Page Title ===== --}}
@@ -134,7 +134,7 @@
                             {{ ucfirst(Auth::user()->role) }}
                         </span>
                     </span>
-                    <span class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0
+                    <span class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ring-2 ring-[#D3AF37]
                         @if(Auth::user()->role === 'admin') bg-purple-600
                         @elseif(Auth::user()->role === 'coach') bg-blue-600
                         @elseif(Auth::user()->role === 'parent') bg-green-600

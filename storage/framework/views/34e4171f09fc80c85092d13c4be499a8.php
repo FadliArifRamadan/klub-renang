@@ -1,19 +1,19 @@
 <?php $__env->startSection('content'); ?>
     <!-- Page Hero -->
     <section
-        class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-950 text-white overflow-hidden">
-        <div class="absolute inset-0 hero-pattern opacity-30"></div>
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-500 rounded-full blur-[120px] opacity-20"></div>
+        class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-[#D3AF37] text-[#101828] overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-15"></div>
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-amber-300 rounded-full blur-[120px] opacity-40"></div>
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <span
-                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider mb-6">
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#101828] border border-[#101828]/20 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider mb-6">
                 <i class="fa-solid fa-envelope"></i> Kontak & Dukungan
             </span>
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6 text-[#101828]">
                 Hubungi Kami
             </h1>
-            <p class="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8">
+            <p class="text-[#101828]/90 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8 font-medium">
                 Ada pertanyaan, saran, atau ingin mendaftar? Tim kami siap membantu Anda setiap hari dari pukul 06:00 hingga
                 18:00 WIB.
             </p>
@@ -27,7 +27,7 @@
             <!-- Left: Contact Info -->
             <div class="space-y-8">
                 <div>
-                    <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block mb-3">INFORMASI
+                    <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block mb-3">INFORMASI
                         KONTAK</span>
                     <h2 class="text-3xl font-extrabold text-slate-900 mb-4">Cara Menghubungi Kami</h2>
                     <p class="text-slate-500 text-sm leading-relaxed mb-4">
@@ -41,13 +41,13 @@
                     <div
                         class="bg-white rounded-2xl border border-slate-200 p-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
                         <div
-                            class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xl shadow-lg shadow-emerald-500/20">
+                            class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0 text-xl shadow-sm">
                             <i class="fa-brands fa-whatsapp"></i>
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-0.5">WhatsApp</p>
                             <a href="https://wa.me/6281234567890" target="_blank"
-                                class="font-extrabold text-slate-800 hover:text-emerald-600 transition-colors">
+                                class="font-extrabold text-slate-800 hover:text-[#D3AF37] transition-colors">
                                 +62 812-3456-7890
                             </a>
                         </div>
@@ -56,13 +56,13 @@
                     <div
                         class="bg-white rounded-2xl border border-slate-200 p-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
                         <div
-                            class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 text-xl shadow-lg shadow-blue-500/20">
+                            class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0 text-xl shadow-sm">
                             <i class="fa-solid fa-envelope"></i>
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-0.5">Email</p>
                             <a href="mailto:support@blackdiamond.club"
-                                class="font-extrabold text-slate-800 hover:text-blue-600 transition-colors">
+                                class="font-extrabold text-slate-800 hover:text-[#D3AF37] transition-colors">
                                 support@blackdiamond.club
                             </a>
                         </div>
@@ -71,7 +71,7 @@
                     <div
                         class="bg-white rounded-2xl border border-slate-200 p-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
                         <div
-                            class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 text-xl shadow-lg shadow-amber-500/20">
+                            class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0 text-xl shadow-sm">
                             <i class="fa-solid fa-clock"></i>
                         </div>
                         <div>
@@ -86,14 +86,14 @@
                 <?php if($locations->isNotEmpty()): ?>
                     <div class="mb-16">
                         <h3 class="font-extrabold text-slate-800 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-location-dot text-blue-500"></i> Lokasi Kolam Latihan
+                            <i class="fa-solid fa-location-dot text-[#D3AF37]"></i> Lokasi Kolam Latihan
                         </h3>
                         <div class="space-y-3">
                             <?php $__currentLoopData = $locations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $location): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div
                                     class="bg-white rounded-2xl border border-slate-200 p-4 flex items-start gap-3 shadow-sm">
                                     <div
-                                        class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 text-sm">
+                                        class="w-8 h-8 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0 text-sm">
                                         <i class="fa-solid fa-water"></i>
                                     </div>
                                     <div>
@@ -110,25 +110,24 @@
                 <div>
                     <h3 class="font-extrabold text-slate-800 mb-4">Ikuti Kami di Media Sosial</h3>
                     <div class="flex gap-3 items-center">
-                        <a href="#"
-                            style="width: 44px; height: 44px; aspect-ratio: 1/1; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);"
-                            class="shrink-0 rounded-xl text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md">
-                            <i class="fa-brands fa-instagram text-xl text-white"></i>
+                        <a href="#" style="width: 44px; height: 44px; aspect-ratio: 1/1;"
+                            class="shrink-0 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center hover:bg-[#D3AF37] hover:text-[#101828] transition-all shadow-sm">
+                            <i class="fa-brands fa-instagram text-xl"></i>
                         </a>
 
                         <a href="#" style="width: 44px; height: 44px; aspect-ratio: 1/1;"
-                            class="shrink-0 rounded-xl bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                            class="shrink-0 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center hover:bg-[#D3AF37] hover:text-[#101828] transition-all shadow-sm">
                             <i class="fa-brands fa-facebook text-lg"></i>
                         </a>
 
                         <a href="https://wa.me/6281234567890" target="_blank"
                             style="width: 44px; height: 44px; aspect-ratio: 1/1;"
-                            class="shrink-0 rounded-xl bg-emerald-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                            class="shrink-0 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center hover:bg-[#D3AF37] hover:text-[#101828] transition-all shadow-sm">
                             <i class="fa-brands fa-whatsapp text-lg"></i>
                         </a>
 
                         <a href="#" style="width: 44px; height: 44px; aspect-ratio: 1/1;"
-                            class="shrink-0 rounded-xl bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                            class="shrink-0 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center hover:bg-[#D3AF37] hover:text-[#101828] transition-all shadow-sm">
                             <i class="fa-brands fa-youtube text-lg"></i>
                         </a>
                     </div>
@@ -139,19 +138,22 @@
             <div class="space-y-6">
                 <!-- Quick Actions Card -->
                 <div
-                    class="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-950 text-white text-center rounded-3xl p-8 shadow-lg mb-16">
-                    <h3 class="font-extrabold text-xl mb-2">Siap Bergabung?</h3>
-                    <p class="text-blue-200 text-sm mb-6">Daftarkan diri atau anak Anda sekarang dan mulai perjalanan renang
-                        yang luar biasa.</p>
-                    <div class="space-y-3">
-                        <a href="<?php echo e(route('register')); ?>"
-                            class="w-full py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold rounded-2xl flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 text-sm">
-                            <i class="fa-solid fa-user-plus"></i> Daftar Sekarang
-                        </a>
-                        <a href="https://wa.me/6281234567890" target="_blank"
-                            class="w-full py-3 bg-white/15 hover:bg-white/20 border border-white/20 text-white font-extrabold rounded-2xl flex items-center justify-center gap-2 transition-all text-sm">
-                            <i class="fa-brands fa-whatsapp"></i> Chat via WhatsApp
-                        </a>
+                    class="bg-gradient-to-br from-[#0B0F17] via-[#1E1A0E] to-[#D3AF37] text-white text-center rounded-3xl p-8 shadow-2xl border border-[#D3AF37]/40 mb-16 relative overflow-hidden">
+                    <div class="absolute inset-0 hero-pattern opacity-10"></div>
+                    <div class="relative z-10 space-y-4">
+                        <h3 class="font-extrabold text-2xl mb-2 text-[#D3AF37]">Siap Bergabung?</h3>
+                        <p class="text-slate-200 text-sm mb-6 font-medium">Daftarkan diri atau anak Anda sekarang dan mulai perjalanan renang
+                            yang luar biasa.</p>
+                        <div class="space-y-3">
+                            <a href="<?php echo e(route('register')); ?>"
+                                class="w-full py-3.5 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-2xl flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 text-sm shadow-md">
+                                <i class="fa-solid fa-user-plus"></i> Daftar Sekarang
+                            </a>
+                            <a href="https://wa.me/6281234567890" target="_blank"
+                                class="w-full py-3.5 bg-[#101828]/80 hover:bg-[#101828] border border-[#D3AF37]/60 text-[#D3AF37] font-extrabold rounded-2xl flex items-center justify-center gap-2 transition-all text-sm">
+                                <i class="fa-brands fa-whatsapp"></i> Chat via WhatsApp
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -174,7 +176,7 @@
                                 x-transition:leave-end="opacity-0 -translate-y-2" class="px-4 pb-4" style="display: none;">
                                 <p class="text-sm text-slate-500 leading-relaxed">Biaya bergantung pada paket latihan yang
                                     dipilih. Lihat halaman <a href="<?php echo e(route('packages')); ?>"
-                                        class="text-blue-600 font-bold hover:underline">Program Paket</a> untuk detail
+                                        class="text-[#D3AF37] font-bold hover:underline">Program Paket</a> untuk detail
                                     lengkap harga setiap paket.</p>
                             </div>
                         </div>

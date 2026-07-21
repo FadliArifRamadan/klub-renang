@@ -1,5 +1,5 @@
 <aside
-    class="fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 lg:translate-x-0"
+    class="fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-[#101828] text-white h-screen transition-all duration-300 ease-in-out z-50 border-r border-[#D3AF37]/20 lg:translate-x-0"
     :class="{
         'w-[290px]': sidebarExpanded || mobileSidebarOpen || sidebarHovered,
         'w-[90px]': !sidebarExpanded && !mobileSidebarOpen && !sidebarHovered,
@@ -16,11 +16,11 @@
         <a href="{{ route('login') }}">
             <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/black_diamond_1.png') }}" alt="Logo">
+                    <img src="{{ asset('images/black_diamond_1.png') }}" alt="Logo" class="brightness-0 invert drop-shadow-[0_0_8px_rgba(211,175,55,0.4)]">
                 </div>
             </template>
             <template x-if="!sidebarExpanded && !sidebarHovered && !mobileSidebarOpen">
-                <img src="{{ asset('images/black_diamond.png') }}" alt="Logo" class="w-10 mx-auto">
+                <img src="{{ asset('images/black_diamond.png') }}" alt="Logo" class="w-10 mx-auto brightness-0 invert drop-shadow-[0_0_8px_rgba(211,175,55,0.4)]">
             </template>
         </a>
     </div>
@@ -31,7 +31,7 @@
 
                 <!-- DASHBOARD SECTION -->
                 <div>
-                    <h2 class="mb-4 text-xs uppercase flex leading-[20px] text-gray-400"
+                    <h2 class="mb-4 text-xs uppercase flex leading-[20px] text-[#D3AF37]/80 font-bold tracking-wider"
                         :class="{ 'lg:justify-center': !sidebarExpanded && !sidebarHovered }">
                         <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
                             <span>Menu Utama</span>
@@ -150,13 +150,13 @@
                                     <ul x-show="open" x-transition class="mt-2 space-y-1" style="display: none;">
                                         <li>
                                             <a href="{{ route('admin.attendances.belajar') }}"
-                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendances.belajar') ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-meta-4' }}">
+                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendances.belajar') ? 'text-[#D3AF37] bg-[#D3AF37]/15 font-bold border border-[#D3AF37]/30' : 'text-slate-300 hover:text-[#D3AF37] hover:bg-white/10' }}">
                                                 Kelas Belajar
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('admin.attendances.prestasi') }}"
-                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendances.prestasi') ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-meta-4' }}">
+                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendances.prestasi') ? 'text-[#D3AF37] bg-[#D3AF37]/15 font-bold border border-[#D3AF37]/30' : 'text-slate-300 hover:text-[#D3AF37] hover:bg-white/10' }}">
                                                 Kelas Prestasi
                                             </a>
                                         </li>
@@ -207,13 +207,13 @@
                                     <ul x-show="open" x-transition class="mt-2 space-y-1" style="display: none;">
                                         <li>
                                             <a href="{{ route('coach.attendances.belajar.index') }}"
-                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('coach.attendances.belajar.*') ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-meta-4' }}">
+                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('coach.attendances.belajar.*') ? 'text-[#D3AF37] bg-[#D3AF37]/15 font-bold border border-[#D3AF37]/30' : 'text-slate-300 hover:text-[#D3AF37] hover:bg-white/10' }}">
                                                 Kelas Belajar
                                             </a>
                                         </li>
                                         <li>
                                             <a href="{{ route('coach.attendances.prestasi.index') }}"
-                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('coach.attendances.prestasi.*') ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/20' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-meta-4' }}">
+                                                class="block py-2 pl-12 pr-4 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('coach.attendances.prestasi.*') ? 'text-[#D3AF37] bg-[#D3AF37]/15 font-bold border border-[#D3AF37]/30' : 'text-slate-300 hover:text-[#D3AF37] hover:bg-white/10' }}">
                                                 Kelas Prestasi
                                             </a>
                                         </li>
@@ -406,7 +406,7 @@
                 <!-- ADMIN MASTER DATA -->
                 @if (Auth::user()->role === 'admin')
                     <div>
-                        <h2 class="mb-4 mt-4 text-xs uppercase flex leading-[20px] text-gray-400"
+                        <h2 class="mb-4 mt-4 text-xs uppercase flex leading-[20px] text-[#D3AF37]/80 font-bold tracking-wider"
                             :class="{ 'lg:justify-center': !sidebarExpanded && !sidebarHovered }">
                             <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
                                 <span>Data Master</span>

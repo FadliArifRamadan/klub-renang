@@ -1,19 +1,19 @@
 <?php $__env->startSection('content'); ?>
     <!-- Page Hero -->
     <section
-        class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-950 text-white overflow-hidden">
-        <div class="absolute inset-0 hero-pattern opacity-30"></div>
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-500 rounded-full blur-[120px] opacity-20"></div>
+        class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-[#D3AF37] text-[#101828] overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-15"></div>
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-amber-300 rounded-full blur-[120px] opacity-40"></div>
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <span
-                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider mb-6">
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#101828] border border-[#101828]/20 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider mb-6">
                 <i class="fa-solid fa-water"></i> Kolam Renang Mitra
             </span>
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6 text-[#101828]">
                 Lokasi & Kolam Latihan
             </h1>
-            <p class="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8">
+            <p class="text-[#101828]/90 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8 font-medium">
                 Tersedia berbagai pilihan kolam renang mitra kami yang tersebar di area strategis, siap mendukung sesi
                 latihan Anda.
             </p>
@@ -49,19 +49,19 @@
                         <div class="p-6 space-y-3">
                             <h2 class="font-extrabold text-slate-800 text-lg leading-snug"><?php echo e($location->name); ?></h2>
                             <p class="text-xs text-slate-500 flex items-start gap-2 leading-relaxed">
-                                <i class="fa-solid fa-map-pin text-blue-400 mt-0.5 shrink-0"></i>
+                                <i class="fa-solid fa-map-pin text-[#D3AF37] mt-0.5 shrink-0"></i>
                                 <span><?php echo e($location->address); ?></span>
                             </p>
                             <?php if($location->phone ?? null): ?>
                                 <p class="text-xs text-slate-500 flex items-center gap-2">
-                                    <i class="fa-solid fa-phone text-blue-400 shrink-0"></i>
+                                    <i class="fa-solid fa-phone text-[#D3AF37] shrink-0"></i>
                                     <span><?php echo e($location->phone); ?></span>
                                 </p>
                             <?php endif; ?>
 
                             <div class="pt-3 border-t border-slate-100">
                                 <a href="<?php echo e(route('register')); ?>"
-                                    class="w-full py-2.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white font-bold rounded-xl flex items-center justify-center gap-2 text-xs transition-all duration-300">
+                                    class="w-full py-2.5 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-bold rounded-xl flex items-center justify-center gap-2 text-xs transition-all duration-300 shadow-sm">
                                     <i class="fa-solid fa-person-swimming"></i> Daftar di Lokasi Ini
                                 </a>
                             </div>
@@ -82,7 +82,7 @@
     <section class="py-20 bg-slate-100 border-y border-slate-200 mb-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-16 space-y-4 mt-8">
-                <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest block">FASILITAS</span>
+                <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">FASILITAS</span>
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Standar Fasilitas Kolam Mitra Kami</h2>
                 <p class="text-slate-500 text-sm">Setiap kolam renang mitra dipilih berdasarkan standar kualitas dan
                     keamanan yang ketat.</p>
@@ -90,32 +90,32 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
                 <div
                     class="bg-white rounded-2xl p-5 text-center border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-2xl text-blue-500 mb-3"><i class="fa-solid fa-droplet"></i></div>
+                    <div class="text-2xl text-[#D3AF37] mb-3"><i class="fa-solid fa-droplet"></i></div>
                     <p class="text-xs font-bold text-slate-700">Air Bersih & Terawat</p>
                 </div>
                 <div
                     class="bg-white rounded-2xl p-5 text-center border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-2xl text-blue-500 mb-3"><i class="fa-solid fa-ruler"></i></div>
+                    <div class="text-2xl text-[#D3AF37] mb-3"><i class="fa-solid fa-ruler"></i></div>
                     <p class="text-xs font-bold text-slate-700">Kolam Berstandar</p>
                 </div>
                 <div
                     class="bg-white rounded-2xl p-5 text-center border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-2xl text-blue-500 mb-3"><i class="fa-solid fa-child-reaching"></i></div>
+                    <div class="text-2xl text-[#D3AF37] mb-3"><i class="fa-solid fa-child-reaching"></i></div>
                     <p class="text-xs font-bold text-slate-700">Area Anak-Anak</p>
                 </div>
                 <div
                     class="bg-white rounded-2xl p-5 text-center border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-2xl text-blue-500 mb-3"><i class="fa-solid fa-restroom"></i></div>
+                    <div class="text-2xl text-[#D3AF37] mb-3"><i class="fa-solid fa-restroom"></i></div>
                     <p class="text-xs font-bold text-slate-700">Ruang Ganti Bersih</p>
                 </div>
                 <div
                     class="bg-white rounded-2xl p-5 text-center border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-2xl text-blue-500 mb-3"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="text-2xl text-[#D3AF37] mb-3"><i class="fa-solid fa-shield-halved"></i></div>
                     <p class="text-xs font-bold text-slate-700">Perlengkapan Safety</p>
                 </div>
                 <div
                     class="bg-white rounded-2xl p-5 text-center border border-slate-200 shadow-sm hover:shadow-md transition-all">
-                    <div class="text-2xl text-blue-500 mb-3"><i class="fa-solid fa-car"></i></div>
+                    <div class="text-2xl text-[#D3AF37] mb-3"><i class="fa-solid fa-car"></i></div>
                     <p class="text-xs font-bold text-slate-700">Area Parkir</p>
                 </div>
             </div>

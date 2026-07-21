@@ -98,7 +98,7 @@
                                                     'monthly_prestasi' => 'Bulanan Prestasi'
                                                 ];
                                             @endphp
-                                            <span class="inline-flex items-center gap-1 text-gray-700 bg-gray-100 px-2.5 py-1 rounded border border-gray-300 text-xs font-semibold whitespace-nowrap">
+                                            <span class="inline-flex items-center gap-1 text-[#D3AF37] bg-[#D3AF37]/15 px-3 py-1 rounded-md border border-[#D3AF37]/40 text-xs font-bold whitespace-nowrap">
                                                 {{ $labels[$pkgType] ?? 'Reguler' }}
                                             </span>
                                         </td>

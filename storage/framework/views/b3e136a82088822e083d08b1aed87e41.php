@@ -85,7 +85,7 @@
 
     <!-- Top Sticky Header -->
     <header
-        class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm transition-all duration-300">
+        class="fixed top-0 left-0 w-full z-50 bg-[#D3AF37] shadow-md border-b border-[#101828]/10 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Brand Logo -->
@@ -99,21 +99,21 @@
                 <!-- Desktop Navigation Menu -->
                 <nav class="hidden lg:flex items-center gap-6">
                     <a href="<?php echo e(route('welcome')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('welcome') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Home</a>
+                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('welcome') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Home</a>
                     <a href="<?php echo e(route('about')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('about') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Tentang
+                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('about') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Tentang
                         Kami</a>
                     <a href="<?php echo e(route('packages')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('packages') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Program
+                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('packages') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Program
                         Paket</a>
                     <a href="<?php echo e(route('locations')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('locations') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Kolam
+                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('locations') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Kolam
                         Latihan</a>
                     <a href="<?php echo e(route('schedule')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('schedule') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Jadwal
+                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('schedule') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Jadwal
                         Latihan</a>
                     <a href="<?php echo e(route('contact')); ?>"
-                        class="text-sm font-semibold transition-colors <?php echo e(request()->routeIs('contact') ? 'text-blue-600' : 'text-slate-650 hover:text-blue-600'); ?>">Kontak
+                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('contact') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Kontak
                         Kami</a>
                 </nav>
 
@@ -121,16 +121,16 @@
                 <div class="hidden lg:flex items-center gap-4">
                     <?php if(auth()->guard()->check()): ?>
                         <a href="<?php echo e(route('dashboard')); ?>"
-                            class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-md shadow-blue-500/20 transition-all hover:-translate-y-0.5">
+                            class="px-5 py-2.5 bg-[#101828] hover:bg-black text-[#D3AF37] text-sm font-extrabold rounded-xl shadow-md transition-all hover:-translate-y-0.5">
                             <i class="fa-solid fa-gauge-high mr-2"></i> Portal Dashboard
                         </a>
                     <?php else: ?>
                         <a href="<?php echo e(route('login')); ?>"
-                            class="text-sm font-bold text-slate-650 hover:text-blue-600 transition-colors px-4 py-2">
+                            class="text-sm font-bold text-[#101828] hover:text-black transition-colors px-4 py-2">
                             Masuk
                         </a>
                         <a href="<?php echo e(route('register')); ?>"
-                            class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-md shadow-blue-500/20 transition-all hover:-translate-y-0.5">
+                            class="px-5 py-2.5 bg-[#101828] hover:bg-black text-[#D3AF37] text-sm font-extrabold rounded-xl shadow-md transition-all hover:-translate-y-0.5">
                             Daftar Sekarang
                         </a>
                     <?php endif; ?>
@@ -139,7 +139,7 @@
                 <!-- Mobile Hamburger Menu Button -->
                 <div class="lg:hidden">
                     <button @click="mobileMenuOpen = !mobileMenuOpen"
-                        class="p-2.5 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors">
+                        class="p-2.5 rounded-xl text-[#101828] hover:bg-black/10 transition-colors">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path :class="{ 'hidden': mobileMenuOpen, 'inline-flex': !mobileMenuOpen }"
                                 class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -158,40 +158,40 @@
             x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4"
-            class="lg:hidden bg-white border-b border-slate-150 absolute top-20 left-0 w-full shadow-lg"
+            class="lg:hidden bg-[#D3AF37] border-b border-[#101828]/20 absolute top-20 left-0 w-full shadow-lg"
             style="display: none;">
             <div class="px-4 pt-2 pb-6 space-y-2">
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('welcome')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('welcome') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Home</a>
+                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('welcome') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Home</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('about')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('about') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Tentang
+                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('about') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Tentang
                     Kami</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('packages')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('packages') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Program
+                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('packages') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Program
                     Paket</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('locations')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('locations') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Kolam
+                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('locations') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Kolam
                     Latihan</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('schedule')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('schedule') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Jadwal
+                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('schedule') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Jadwal
                     Latihan</a>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('contact')); ?>"
-                    class="block px-4 py-3 text-base font-semibold rounded-xl <?php echo e(request()->routeIs('contact') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50 hover:text-blue-600'); ?>">Kontak
+                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('contact') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Kontak
                     Kami</a>
 
-                <div class="pt-4 border-t border-slate-100 flex flex-col gap-3 px-4">
+                <div class="pt-4 border-t border-[#101828]/20 flex flex-col gap-3 px-4">
                     <?php if(auth()->guard()->check()): ?>
                         <a href="<?php echo e(route('dashboard')); ?>"
-                            class="w-full text-center py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md">
+                            class="w-full text-center py-3 bg-[#101828] text-[#D3AF37] font-extrabold rounded-xl shadow-md">
                             <i class="fa-solid fa-gauge-high mr-2"></i> Portal Dashboard
                         </a>
                     <?php else: ?>
                         <a href="<?php echo e(route('login')); ?>"
-                            class="w-full text-center py-3 text-slate-700 font-bold border border-slate-200 rounded-xl hover:bg-slate-50">
+                            class="w-full text-center py-3 text-[#101828] font-bold border border-[#101828] rounded-xl hover:bg-black/10">
                             Masuk
                         </a>
                         <a href="<?php echo e(route('register')); ?>"
-                            class="w-full text-center py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md">
+                            class="w-full text-center py-3 bg-[#101828] text-[#D3AF37] font-extrabold rounded-xl shadow-md">
                             Daftar Sekarang
                         </a>
                     <?php endif; ?>
@@ -206,7 +206,7 @@
     </main>
 
     <!-- Footer Section -->
-    <footer class="bg-slate-900 text-white pt-16 pb-12 border-t border-slate-800 text-left">
+    <footer class="bg-[#D3AF37] text-[#101828] pt-16 pb-12 border-t border-[#101828]/10 text-left">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <!-- Left Info Branding -->
             <div class="space-y-4 col-span-2">
@@ -216,7 +216,7 @@
                             class="w-auto h-16 object-contain">
                     </a>
                 </div>
-                <p class="text-sm text-slate-400 leading-relaxed max-w-sm">
+                <p class="text-sm text-[#101828]/90 font-medium leading-relaxed max-w-sm">
                     Klub renang terkemuka untuk melatih keterampilan, keamanan, dan kebugaran tubuh dalam air. Kami siap
                     melatih perenang sejati.
                 </p>
@@ -224,36 +224,36 @@
 
             <!-- Center Menu Links -->
             <div class="space-y-4">
-                <h4 class="font-bold text-sm tracking-wider uppercase text-slate-400">Navigasi Halaman</h4>
-                <ul class="space-y-2.5 text-sm text-slate-300">
-                    <li><a href="<?php echo e(route('welcome')); ?>" class="hover:text-blue-400 transition-colors">Home</a></li>
-                    <li><a href="<?php echo e(route('about')); ?>" class="hover:text-blue-400 transition-colors">Tentang Kami</a>
+                <h4 class="font-extrabold text-sm tracking-wider uppercase text-[#101828]">Navigasi Halaman</h4>
+                <ul class="space-y-2.5 text-sm text-[#101828]/90 font-bold">
+                    <li><a href="<?php echo e(route('welcome')); ?>" class="hover:text-black hover:underline transition-colors">Home</a></li>
+                    <li><a href="<?php echo e(route('about')); ?>" class="hover:text-black hover:underline transition-colors">Tentang Kami</a>
                     </li>
-                    <li><a href="<?php echo e(route('packages')); ?>" class="hover:text-blue-400 transition-colors">Program
+                    <li><a href="<?php echo e(route('packages')); ?>" class="hover:text-black hover:underline transition-colors">Program
                             Paket</a></li>
-                    <li><a href="<?php echo e(route('locations')); ?>" class="hover:text-blue-400 transition-colors">Kolam
+                    <li><a href="<?php echo e(route('locations')); ?>" class="hover:text-black hover:underline transition-colors">Kolam
                             Latihan</a></li>
-                    <li><a href="<?php echo e(route('schedule')); ?>" class="hover:text-blue-400 transition-colors">Jadwal
+                    <li><a href="<?php echo e(route('schedule')); ?>" class="hover:text-black hover:underline transition-colors">Jadwal
                             Latihan</a></li>
-                    <li><a href="<?php echo e(route('contact')); ?>" class="hover:text-blue-400 transition-colors">Kontak
+                    <li><a href="<?php echo e(route('contact')); ?>" class="hover:text-black hover:underline transition-colors">Kontak
                             Kami</a></li>
                 </ul>
             </div>
 
             <!-- Right Contact Support -->
             <div class="space-y-4">
-                <h4 class="font-bold text-sm tracking-wider uppercase text-slate-400">Hubungi Kami</h4>
-                <ul class="space-y-2.5 text-sm text-slate-300">
+                <h4 class="font-extrabold text-sm tracking-wider uppercase text-[#101828]">Hubungi Kami</h4>
+                <ul class="space-y-2.5 text-sm text-[#101828]/90 font-bold">
                     <li class="flex items-center gap-2">
-                        <i class="fa-solid fa-envelope text-slate-450"></i>
+                        <i class="fa-solid fa-envelope text-[#101828]"></i>
                         <span>support@blackdiamond.club</span>
                     </li>
                     <li class="flex items-center gap-2">
-                        <i class="fa-solid fa-phone text-slate-450"></i>
+                        <i class="fa-solid fa-phone text-[#101828]"></i>
                         <span>+62 812-3456-7890</span>
                     </li>
                     <li class="flex items-center gap-2">
-                        <i class="fa-solid fa-clock text-slate-450"></i>
+                        <i class="fa-solid fa-clock text-[#101828]"></i>
                         <span>Setiap Hari (06:00 - 18:00 WIB)</span>
                     </li>
                 </ul>
@@ -261,9 +261,9 @@
         </div>
 
         <div
-            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-[#101828]/20 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#101828]/80 font-bold">
             <p>&copy; <?php echo e(date('Y')); ?> Black Diamond Swimming Club. Hak Cipta Dilindungi.</p>
-            <p>Made with <i class="fa-solid fa-heart text-red-500"></i> in Indonesia</p>
+            <p>Made with <i class="fa-solid fa-heart text-rose-600"></i> in Indonesia</p>
         </div>
     </footer>
 
