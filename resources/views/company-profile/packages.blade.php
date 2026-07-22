@@ -2,21 +2,19 @@
 
 @section('content')
     <!-- Page Hero -->
-    <section
-        class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-[#D3AF37] text-[#101828] overflow-hidden">
-        <div class="absolute inset-0 hero-pattern opacity-15"></div>
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-amber-300 rounded-full blur-[120px] opacity-40"></div>
-        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-yellow-400 rounded-full blur-[120px] opacity-40"></div>
+    <section class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-[#0B0F17] text-white overflow-hidden border-b border-[#D3AF37]/30">
+        <div class="absolute inset-0 hero-pattern opacity-10"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#D3AF37]/15 rounded-full blur-[140px] pointer-events-none"></div>
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <span
-                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#101828] border border-[#101828]/20 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider mb-6">
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D3AF37]/15 border border-[#D3AF37]/30 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider mb-6">
                 <i class="fa-solid fa-box"></i> Paket Latihan
             </span>
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6 text-[#101828]">
-                Pilih Program Paket Terbaik Anda
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6 text-white">
+                Pilih <span class="text-[#D3AF37]">Program Paket</span> Terbaik Anda
             </h1>
-            <p class="text-[#101828]/90 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8 font-medium">
+            <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8 font-normal">
                 Paket latihan terstruktur yang dirancang untuk memenuhi setiap kebutuhan dan frekuensi belajar renang Anda.
             </p>
         </div>

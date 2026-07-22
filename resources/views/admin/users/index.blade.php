@@ -31,7 +31,7 @@
             <div class="bg-white dark:bg-boxdark p-6 rounded-3xl shadow-sm border border-slate-100">
                 
                 {{-- Bagian Atas: Filter Tab Role + Form Pencarian --}}
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
                     {{-- Tab Filter Role --}}
                     <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit">
                         <a href="{{ route('admin.users.index', array_filter(['search' => $search])) }}" 
@@ -57,20 +57,32 @@
                     </div>
 
                     {{-- Form Pencarian dan Tombol Tambah --}}
-                    <div class="flex items-center gap-3 w-full md:w-auto">
-                        <form method="GET" action="{{ route('admin.users.index') }}" class="relative flex-1 md:flex-initial">
-                            @if($role)
-                                <input type="hidden" name="role" value="{{ $role }}">
-                            @endif
-                            <input type="text" name="search" value="{{ $search }}"
-                                   placeholder="Cari nama, username..." 
-                                   class="pl-9 pr-4 py-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl text-xs w-full md:w-60 shadow-sm transition-all" />
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-                        </form>
-
+                    <div class="flex flex-col items-start md:items-end gap-2.5 w-full md:w-auto">
+                        {{-- Tombol Tambah Akun diatas --}}
                         <x-primary-button type="button" class="shrink-0" x-data="" x-on:click="$dispatch('open-modal', 'create-user-modal')">
                             <i class="fa-solid fa-user-plus mr-1.5"></i> Tambah Akun
                         </x-primary-button>
+
+                        {{-- Form Pencarian dibawah --}}
+                        <form method="GET" action="{{ route('admin.users.index') }}" class="flex items-center gap-2 flex-nowrap whitespace-nowrap">
+                            @if($role)
+                                <input type="hidden" name="role" value="{{ $role }}">
+                            @endif
+                            <div class="relative flex items-center w-48 sm:w-56 shrink-0">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                </span>
+                                <input type="text" name="search" value="{{ $search }}"
+                                       placeholder="Cari nama, username..." 
+                                       class="w-full pl-9 pr-3 py-2 border-slate-200 dark:border-strokedark focus:border-[#D3AF37] focus:ring-[#D3AF37] rounded-lg text-xs bg-gray-50 dark:bg-meta-4 text-gray-900 dark:text-white placeholder-gray-400 shadow-sm transition-all" />
+                            </div>
+                            <button type="submit" class="px-3.5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-bold rounded-lg transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
+                                Cari
+                            </button>
+                            <a href="{{ route('admin.users.index', array_filter(['role' => $role])) }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
+                                <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
+                            </a>
+                        </form>
                     </div>
                 </div>
 

@@ -1,21 +1,31 @@
-<x-app-layout title="Admin - Dashboard">
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve(['title' => 'Admin - Dashboard'] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard Admin') }}
+            <?php echo e(__('Dashboard Admin')); ?>
+
         </h2>
-    </x-slot>
+     <?php $__env->endSlot(); ?>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Welcome Panel --}}
+            
             <div
                 class="bg-gradient-to-r from-[#101828] via-[#1E1E2D] to-[#101828] overflow-hidden rounded-2xl p-6 md:p-8 mb-8 border border-[#D3AF37]/30 shadow-xl relative z-10">
                 <div
                     class="absolute -right-10 -bottom-10 w-48 h-48 bg-[#D3AF37]/10 rounded-full blur-2xl pointer-events-none">
                 </div>
                 <h1 class="text-[#D3AF37] text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
-                    Dashboard, {{ Auth::user()->name }}!
+                    Dashboard, <?php echo e(Auth::user()->name); ?>!
                 </h1>
                 <p class="text-slate-300 text-sm max-w-3xl leading-relaxed font-normal">
                     Selamat datang di panel kontrol Black Diamond. Kelola verifikasi pembayaran, data murid, pelatih,
@@ -23,10 +33,10 @@
                 </p>
             </div>
 
-            {{-- Metrics Grid --}}
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
                 <!-- Card 1: Total Murid -->
-                <a href="{{ route('admin.students.index') }}"
+                <a href="<?php echo e(route('admin.students.index')); ?>"
                     class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
                     <div
                         class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
@@ -38,7 +48,7 @@
                                 class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total
                                 Murid</span>
                             <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                {{ $totalStudents }} Murid</h4>
+                                <?php echo e($totalStudents); ?> Murid</h4>
                         </div>
                         <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
                             <i class="fa-solid fa-chevron-right text-sm"></i>
@@ -47,7 +57,7 @@
                 </a>
 
                 <!-- Card 2: Total Coach -->
-                <a href="{{ route('admin.users.index', ['role' => 'coach']) }}"
+                <a href="<?php echo e(route('admin.users.index', ['role' => 'coach'])); ?>"
                     class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
                     <div
                         class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
@@ -59,7 +69,7 @@
                                 class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total
                                 Coach</span>
                             <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                {{ $totalCoaches }} Pelatih</h4>
+                                <?php echo e($totalCoaches); ?> Pelatih</h4>
                         </div>
                         <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
                             <i class="fa-solid fa-chevron-right text-sm"></i>
@@ -68,7 +78,7 @@
                 </a>
 
                 <!-- Card 3: Total Tempat Latihan -->
-                <a href="{{ route('admin.locations.index') }}"
+                <a href="<?php echo e(route('admin.locations.index')); ?>"
                     class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
                     <div
                         class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
@@ -80,7 +90,7 @@
                                 class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Tempat
                                 Latihan</span>
                             <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                {{ $totalLocations }} Lokasi</h4>
+                                <?php echo e($totalLocations); ?> Lokasi</h4>
                         </div>
                         <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
                             <i class="fa-solid fa-chevron-right text-sm"></i>
@@ -89,10 +99,10 @@
                 </a>
 
                 <!-- Card 4: Pending Payments -->
-                <a href="{{ route('admin.payments.index') }}"
+                <a href="<?php echo e(route('admin.payments.index')); ?>"
                     class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
                     <div
-                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors {{ $pendingPayments > 0 ? 'animate-pulse' : '' }}">
+                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors <?php echo e($pendingPayments > 0 ? 'animate-pulse' : ''); ?>">
                         <i class="fa-solid fa-wallet text-xl"></i>
                     </div>
                     <div class="flex items-end justify-between mt-5">
@@ -102,13 +112,13 @@
                                 Bayar</span>
                             <div class="flex items-center gap-2 mt-1">
                                 <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                    {{ $pendingPayments }} Pending</h4>
-                                @if ($pendingPayments > 0)
+                                    <?php echo e($pendingPayments); ?> Pending</h4>
+                                <?php if($pendingPayments > 0): ?>
                                     <span
                                         class="inline-flex items-center bg-rose-900/40 text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-700/50">
                                         Perlu Aksi
                                     </span>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
@@ -118,13 +128,13 @@
                 </a>
 
                 <!-- Card 5: Pending Schedule Requests -->
-                @php
+                <?php
                     $pendingScheds = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
-                @endphp
-                <a href="{{ route('admin.schedule-requests.index') }}"
+                ?>
+                <a href="<?php echo e(route('admin.schedule-requests.index')); ?>"
                     class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
                     <div
-                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors {{ $pendingScheds > 0 ? 'animate-pulse' : '' }}">
+                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors <?php echo e($pendingScheds > 0 ? 'animate-pulse' : ''); ?>">
                         <i class="fa-solid fa-calendar-check text-xl"></i>
                     </div>
                     <div class="flex items-end justify-between mt-5">
@@ -134,13 +144,13 @@
                                 Jadwal</span>
                             <div class="flex items-center gap-2 mt-1">
                                 <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                    {{ $pendingScheds }} Pending</h4>
-                                @if ($pendingScheds > 0)
+                                    <?php echo e($pendingScheds); ?> Pending</h4>
+                                <?php if($pendingScheds > 0): ?>
                                     <span
                                         class="inline-flex items-center bg-indigo-900/40 text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-700/50">
                                         Perlu Aksi
                                     </span>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
@@ -153,7 +163,7 @@
     </div>
 
 
-    {{-- Progress Chart Section --}}
+    
     <div
         class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 flex flex-col mb-8 shadow-theme-sm">
         <div
@@ -167,17 +177,17 @@
                     latihan dan indikator fisiknya.</p>
             </div>
 
-            {{-- Dropdown Pilih Murid & Tahun --}}
+            
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                 <div class="w-full sm:w-72">
                     <select id="chart_student_id"
                         class="w-full text-sm rounded-lg border-gray-200 bg-gray-50 dark:bg-gray-900 dark:border-gray-700 text-gray-800 dark:text-white/90 shadow-theme-xs focus:border-brand-300 focus:ring focus:ring-brand-500/10 p-2.5">
                         <option value="" disabled selected>-- Pilih Murid Kursus --</option>
-                        @foreach ($students as $student)
-                            <option value="{{ $student->id }}">
-                                {{ $student->name }} ({{ $student->package->name ?? 'Tanpa Paket' }})
+                        <?php $__currentLoopData = $students; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $student): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($student->id); ?>">
+                                <?php echo e($student->name); ?> (<?php echo e($student->package->name ?? 'Tanpa Paket'); ?>)
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
                 <div class="w-full sm:w-40">
@@ -190,7 +200,7 @@
             </div>
         </div>
 
-        {{-- Empty State (Belum ada murid dipilih) --}}
+        
         <div id="chart-empty-state" class="flex-1 flex flex-col items-center justify-center text-center py-16 px-4">
             <i class="fa-solid fa-chart-column text-6xl mb-4 text-gray-300 dark:text-gray-700"></i>
             <p class="font-medium text-gray-800 dark:text-white/90 text-lg">Silakan pilih murid pada dropdown untuk
@@ -199,7 +209,7 @@
                 data kekuatan, daya tahan, kelenturan, kecepatan, dan kelincahan murid.</p>
         </div>
 
-        {{-- State data kosong untuk murid terpilih --}}
+        
         <div id="chart-no-data-state" class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4">
             <i class="fa-solid fa-folder-open text-6xl mb-4 text-gray-300 dark:text-gray-700"></i>
             <p class="font-medium text-gray-800 dark:text-white/90 text-lg">Belum ada riwayat perkembangan murid ini</p>
@@ -207,7 +217,7 @@
                 pendamping untuk menginput data perkembangan fisik pertama.</p>
         </div>
 
-        {{-- State data kosong untuk tahun terpilih --}}
+        
         <div id="chart-year-empty-state"
             class="hidden flex-1 flex-col items-center justify-center text-center py-16 px-4">
             <i class="fa-regular fa-calendar-xmark text-6xl mb-4 text-gray-300 dark:text-gray-700"></i>
@@ -217,9 +227,9 @@
                 atau tunggu hingga Coach menginput data perkembangan.</p>
         </div>
 
-        {{-- Container Grafik & Detail Perkembangan --}}
+        
         <div id="chart-container" class="hidden flex-1 flex-col">
-            {{-- Container Prestasi (3 Grafik) --}}
+            
             <div id="prestasi-charts-container" class="hidden flex-col space-y-6 w-full mt-2">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div
@@ -256,11 +266,11 @@
                 </div>
             </div>
 
-            {{-- Catatan Kelas Belajar: Layout Vertical Tabs (2 Kolom) --}}
+            
             <div id="freetext-container" class="hidden mt-4 mb-6">
                 <div
                     class="flex h-[420px] border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
-                    {{-- Kolom Kiri: Sidebar Menu Bulan --}}
+                    
                     <div
                         class="w-52 min-w-[208px] bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-700 flex flex-col">
                         <div
@@ -271,10 +281,10 @@
                             </h4>
                         </div>
                         <div id="freetext-month-list" class="flex-1 overflow-y-auto p-2 space-y-1 no-scrollbar">
-                            {{-- Diisi oleh JS --}}
+                            
                         </div>
                     </div>
-                    {{-- Kolom Kanan: Detail Bulan Terpilih --}}
+                    
                     <div class="flex-1 flex flex-col min-w-0 bg-white dark:bg-gray-900">
                         <div id="freetext-detail-panel" class="flex-1 overflow-y-auto p-6 no-scrollbar">
                             <div id="freetext-detail-empty"
@@ -287,14 +297,14 @@
                                     akan ditampilkan di sini.</p>
                             </div>
                             <div id="freetext-detail-content" class="hidden text-gray-800 dark:text-white/90">
-                                {{-- Diisi oleh JS --}}
+                                
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Detail/Catatan Tambahan --}}
+            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
                 <div
                     class="md:col-span-2 bg-brand-50/50 dark:bg-brand-900/10 border border-brand-100 dark:border-brand-900/30 rounded-xl p-5">
@@ -336,7 +346,7 @@
     </div>
     </div>
 
-    {{-- Import Chart.js dari CDN --}}
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
@@ -364,7 +374,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // Data murid & perkembangan dari Laravel yang dijadikan object JS
-            const studentsArray = @json($students);
+            const studentsArray = <?php echo json_encode($students, 15, 512) ?>;
             const studentsMap = {};
             studentsArray.forEach(function(s) {
                 studentsMap[String(s.id)] = s;
@@ -994,10 +1004,20 @@
             });
 
             // Auto-select murid pertama jika ada
-            @if ($students->isNotEmpty())
-                selectDropdown.value = "{{ $students->first()->id }}";
+            <?php if($students->isNotEmpty()): ?>
+                selectDropdown.value = "<?php echo e($students->first()->id); ?>";
                 selectDropdown.dispatchEvent(new Event('change'));
-            @endif
+            <?php endif; ?>
         });
     </script>
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH D:\laragon\www\klub-renang\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>

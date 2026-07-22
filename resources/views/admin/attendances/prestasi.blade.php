@@ -16,23 +16,21 @@
                     </h3>
 
                     {{-- Search Form --}}
-                    <form action="{{ route('admin.attendances.prestasi') }}" method="GET" class="flex gap-2">
-                        <div class="relative w-full md:w-64">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <i class="fa-solid fa-search text-gray-400"></i>
-                            </div>
+                    <form action="{{ route('admin.attendances.prestasi') }}" method="GET" class="flex items-center gap-2 flex-nowrap whitespace-nowrap">
+                        <div class="relative flex items-center w-48 sm:w-60 shrink-0">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-2 dark:bg-meta-4 dark:border-strokedark dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-[#D3AF37] focus:border-[#D3AF37] block w-full pl-9 pr-3 py-2 dark:bg-meta-4 dark:border-strokedark dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Cari nama coach/atlet...">
                         </div>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-colors">
+                        <button type="submit" class="px-3.5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-bold rounded-lg transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
                             Cari
                         </button>
-                        @if(request('search'))
-                            <a href="{{ route('admin.attendances.prestasi') }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-meta-4 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-colors">
-                                Reset
-                            </a>
-                        @endif
+                        <a href="{{ route('admin.attendances.prestasi') }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
+                            <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
+                        </a>
                     </form>
                 </div>
 

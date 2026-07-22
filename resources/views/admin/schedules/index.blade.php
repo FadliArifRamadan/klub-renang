@@ -57,26 +57,24 @@
                     </div>
 
                     {{-- Form Pencarian Coach --}}
-                    <form method="GET" action="{{ route('admin.schedules.index') }}" class="flex items-center gap-2 w-full lg:w-auto">
+                    <form method="GET" action="{{ route('admin.schedules.index') }}" class="flex items-center gap-2 flex-nowrap whitespace-nowrap">
                         @if($locationId)
                             <input type="hidden" name="location_id" value="{{ $locationId }}">
                         @endif
-                        <div class="relative w-full lg:w-64">
-                            <input type="text" name="coach_name" value="{{ request('coach_name') }}" placeholder="Cari nama pelatih..." 
-                                class="w-full pl-9 pr-4 py-2 text-xs border border-gray-300 rounded-xl focus:border-blue-500 focus:ring-blue-200 focus:ring-opacity-50 text-gray-900 shadow-sm">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <div class="relative flex items-center w-48 sm:w-56 shrink-0">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                                 <i class="fa-solid fa-magnifying-glass text-xs"></i>
                             </span>
+                            <input type="text" name="coach_name" value="{{ request('coach_name') }}" placeholder="Cari nama pelatih..." 
+                                class="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 dark:border-strokedark rounded-lg bg-gray-50 dark:bg-meta-4 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D3AF37] shadow-sm">
                         </div>
-                        <button type="submit" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow transition-colors flex items-center gap-1.5 shrink-0">
-                            <i class="fa-solid fa-filter"></i> Cari
+                        <button type="submit" class="px-3.5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-bold rounded-lg transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
+                            Cari
                         </button>
-                        @if(request('coach_name'))
-                            <a href="{{ route('admin.schedules.index', $locationId ? ['location_id' => $locationId] : []) }}" 
-                                class="px-3.5 py-2 border border-gray-300 hover:bg-gray-50 text-gray-600 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0">
-                                <i class="fa-solid fa-rotate-right"></i> Reset
-                            </a>
-                        @endif
+                        <a href="{{ route('admin.schedules.index', $locationId ? ['location_id' => $locationId] : []) }}" 
+                            class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
+                            <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
+                        </a>
                     </form>
                 </div>
 

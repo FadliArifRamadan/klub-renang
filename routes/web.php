@@ -70,10 +70,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/leaves/approve/{id}', [\App\Http\Controllers\Admin\LeaveController::class, 'approve'])->name('leaves.approve');
         Route::post('/leaves/reject/{id}', [\App\Http\Controllers\Admin\LeaveController::class, 'reject'])->name('leaves.reject');
 
+        // Kelola Reschedule Murid
+        Route::get('/reschedule', [\App\Http\Controllers\Admin\RescheduleController::class, 'index'])->name('reschedule.index');
+        Route::post('/reschedule/{id}', [\App\Http\Controllers\Admin\RescheduleController::class, 'process'])->name('reschedule.process');
+
         // Kelola Murid (RESTful URI & Nama Plural)
         Route::get('/students', [\App\Http\Controllers\Admin\StudentController::class, 'index'])->name('students.index');
         Route::post('/students/suspend/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'suspend'])->name('students.suspend');
         Route::post('/students/resume/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'resume'])->name('students.resume');
+        Route::delete('/students/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'destroy'])->name('students.destroy');
 
         // Kelola Verifikasi Pembayaran (Nama Plural RESTful)
         Route::get('/payments', [\App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');

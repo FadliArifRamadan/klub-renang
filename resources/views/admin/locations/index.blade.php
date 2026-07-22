@@ -48,12 +48,12 @@
                                             <img src="{{ asset('storage/' . $location->image) }}" alt="Foto {{ $location->name }}"
                                                 class="w-16 h-12 rounded-md object-cover border-2 border-gray-200 dark:border-strokedark mx-auto">
                                         @else
-                                            <div class="w-16 h-12 rounded-md bg-blue-50 flex items-center justify-center mx-auto border-2 border-gray-200 dark:border-strokedark">
-                                                <i class="fa-solid fa-water text-blue-400 text-lg"></i>
+                                            <div class="w-16 h-12 rounded-md bg-[#D3AF37]/15 flex items-center justify-center mx-auto border-2 border-gray-200 dark:border-strokedark">
+                                                <i class="fa-solid fa-water text-[#D3AF37] text-lg"></i>
                                             </div>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-blue-600">{{ $location->name }}</td>
+                                    <td class="px-6 py-4 font-bold text-gray-900 dark:text-white">{{ $location->name }}</td>
                                     <td class="px-6 py-4">{{ $location->address }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <div class="inline-flex rounded-xl shadow-sm border border-[#D3AF37]/30 bg-[#161F30] overflow-hidden" role="group">

@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>" class="h-full">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-        <title>{{ $title ?? config('app.name', 'Black Diamond') }}</title>
+        <title><?php echo e($title ?? config('app.name', 'Black Diamond')); ?></title>
 
         <!-- Fonts & Icons -->
-        <link rel="icon" href="{{ asset('images/black_diamond_1.png') }}" type="image/x-icon">
+        <link rel="icon" href="<?php echo e(asset('images/black_diamond_1.png')); ?>" type="image/x-icon">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 
         <style>
             body {
@@ -41,37 +41,39 @@
                     <!-- Logo & Heading -->
                     <div class="text-center mb-6">
                         <a href="/" class="inline-block hover:opacity-90 transition-opacity">
-                            <img src="{{ asset('images/black_diamond_1.png') }}" alt="Black Diamond Logo" class="h-20 w-auto mx-auto object-contain brightness-0 invert drop-shadow-[0_0_12px_rgba(211,175,55,0.5)]">
+                            <img src="<?php echo e(asset('images/black_diamond_1.png')); ?>" alt="Black Diamond Logo" class="h-20 w-auto mx-auto object-contain brightness-0 invert drop-shadow-[0_0_12px_rgba(211,175,55,0.5)]">
                         </a>
                         <h2 class="text-xl font-extrabold text-[#D3AF37] mt-4 leading-tight">
-                            @if(request()->routeIs('login'))
+                            <?php if(request()->routeIs('login')): ?>
                                 Selamat Datang Kembali
-                            @elseif(request()->routeIs('register'))
+                            <?php elseif(request()->routeIs('register')): ?>
                                 Pendaftaran Akun Baru
-                            @elseif(request()->routeIs('password.request'))
+                            <?php elseif(request()->routeIs('password.request')): ?>
                                 Lupa Password Anda?
-                            @elseif(request()->routeIs('password.reset'))
+                            <?php elseif(request()->routeIs('password.reset')): ?>
                                 Atur Ulang Password
-                            @else
+                            <?php else: ?>
                                 Black Diamond Swim
-                            @endif
+                            <?php endif; ?>
                         </h2>
-                        @if(!request()->routeIs('password.request'))
+                        <?php if(!request()->routeIs('password.request')): ?>
                             <p class="text-xs text-slate-300 mt-1">
-                                @if(request()->routeIs('login'))
+                                <?php if(request()->routeIs('login')): ?>
                                     Silakan masuk untuk mengelola program renang Anda
-                                @elseif(request()->routeIs('register'))
+                                <?php elseif(request()->routeIs('register')): ?>
                                     Mulai langkah pertama Anda bersama klub renang kami
-                                @elseif(request()->routeIs('password.reset'))
+                                <?php elseif(request()->routeIs('password.reset')): ?>
                                     Silakan tentukan password baru akun Anda
-                                @endif
+                                <?php endif; ?>
                             </p>
-                        @endif
+                        <?php endif; ?>
                     </div>
 
-                    {{ $slot }}
+                    <?php echo e($slot); ?>
+
                 </div>
             </div>
         </div>
     </body>
 </html>
+<?php /**PATH D:\laragon\www\klub-renang\resources\views/layouts/guest.blade.php ENDPATH**/ ?>

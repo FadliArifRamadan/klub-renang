@@ -1,68 +1,74 @@
 <?php $__env->startSection('content'); ?>
-    <!-- Hero Section -->
-    <section
-        class="relative pt-32 pb-24 md:pt-48 md:pb-40 bg-[#D3AF37] text-[#101828] overflow-hidden">
-        <div class="absolute inset-0 hero-pattern opacity-15"></div>
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-amber-300 rounded-full blur-[120px] opacity-40"></div>
-        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-yellow-400 rounded-full blur-[120px] opacity-40"></div>
+    <!-- Hero Section (Option 1: Dark Luxury Hero) -->
+    <section class="relative pt-32 pb-28 md:pt-48 md:pb-40 bg-[#0B0F17] text-white overflow-hidden border-b border-[#D3AF37]/30">
+        <!-- Background Lighting & Ambient Glow -->
+        <div class="absolute inset-0 hero-pattern opacity-10"></div>
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#D3AF37]/15 rounded-full blur-[150px] pointer-events-none"></div>
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-[#D3AF37]/10 rounded-full blur-[120px] pointer-events-none"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <!-- Text Container -->
                 <div class="lg:col-span-7 space-y-6 text-left">
                     <span
-                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#101828] border border-[#101828]/20 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider">
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D3AF37]/15 border border-[#D3AF37]/30 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider">
                         <i class="fa-solid fa-medal"></i> Klub Renang Terbaik & Profesional
                     </span>
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-[#101828]">
-                        Wujudkan Potensi Terbaik Berenang Anda Bersama Kami
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-white">
+                        Wujudkan Potensi <span class="text-[#D3AF37]">Berenang Anda</span> Bersama Kami
                     </h1>
-                    <p class="text-[#101828]/90 text-base sm:text-lg max-w-2xl leading-relaxed font-medium">
+                    <p class="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed font-normal">
                         Kami menyediakan pelatihan berenang terstruktur bagi semua tingkatan usia dan kemampuan.
                         Didampingi oleh jajaran pelatih berpengalaman di kolam berstandar internasional.
                     </p>
                     <div class="flex flex-wrap gap-4 pt-4">
                         <a href="<?php echo e(route('packages')); ?>"
-                            class="px-8 py-4 bg-[#101828] hover:bg-black text-[#D3AF37] font-extrabold rounded-2xl shadow-xl transition-all hover:-translate-y-1">
+                            class="px-8 py-4 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-2xl shadow-xl transition-all hover:-translate-y-1">
                             Lihat Paket Program
                         </a>
                         <a href="<?php echo e(route('about')); ?>"
-                            class="px-8 py-4 border-2 border-[#101828] text-[#101828] font-extrabold rounded-2xl hover:bg-[#101828] hover:text-[#D3AF37] transition-all hover:-translate-y-1">
+                            class="px-8 py-4 bg-[#101828]/80 hover:bg-[#101828] border-2 border-[#D3AF37]/60 text-[#D3AF37] font-extrabold rounded-2xl transition-all hover:-translate-y-1">
                             Pelajari Lebih Lanjut
                         </a>
                     </div>
                 </div>
 
-                <!-- Graphic/Visual Container -->
+                <!-- Graphic/Visual Container (Glassmorphic Widget) -->
                 <div class="lg:col-span-5 hidden lg:flex justify-center relative">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-[#D3AF37]/30 to-[#D3AF37]/10 rounded-3xl blur-xl opacity-50"></div>
                     <div
-                        class="relative w-80 h-80 bg-[#101828] text-white border border-[#D3AF37]/40 rounded-3xl p-6 flex flex-col justify-between shadow-2xl backdrop-blur-sm">
-                        <!-- Simulated Card Details -->
-                        <div class="flex justify-between items-start">
-                            <div class="w-12 h-12 bg-[#D3AF37]/15 border border-[#D3AF37]/30 rounded-2xl flex items-center justify-center">
-                                <i class="fa-solid fa-water text-[#D3AF37] text-xl"></i>
+                        class="relative w-88 bg-[#101828]/90 text-white border border-[#D3AF37]/40 rounded-3xl p-8 flex flex-col justify-between shadow-2xl backdrop-blur-xl">
+                        <!-- Card Details -->
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-14 h-14 bg-[#D3AF37]/15 border border-[#D3AF37]/30 rounded-2xl flex items-center justify-center">
+                                <i class="fa-solid fa-water text-[#D3AF37] text-2xl"></i>
                             </div>
                             <span
-                                class="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold px-3 py-1 rounded-full uppercase">Pendaftaran
-                                Buka</span>
+                                class="text-xs bg-[#D3AF37]/20 border border-[#D3AF37]/40 text-[#D3AF37] font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider">
+                                Pendaftaran Buka
+                            </span>
                         </div>
-                        <div class="space-y-2">
+                        <div class="space-y-3 mb-6">
                             <p class="text-xs text-[#D3AF37] font-bold uppercase tracking-widest">Black Diamond Club</p>
-                            <h3 class="text-2xl font-extrabold text-white">Jadilah Perenang yang Andal dan Percaya Diri</h3>
+                            <h3 class="text-2xl font-extrabold text-white leading-snug">Jadilah Perenang yang <span class="text-[#D3AF37]">Andal & Percaya Diri</span></h3>
+                            <p class="text-xs text-slate-300 leading-relaxed font-normal">Sesi latihan khusus dengan metode terkini untuk anak & dewasa.</p>
                         </div>
-                        <div class="flex items-center gap-3 pt-4 border-t border-white/10">
+                        <div class="flex items-center gap-3 pt-5 border-t border-white/10">
                             <div class="flex -space-x-2">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-[#D3AF37] text-[#101828] border-2 border-slate-900 flex items-center justify-center text-[10px] font-extrabold">
-                                    A</div>
+                                    class="w-9 h-9 rounded-full bg-[#D3AF37] text-[#101828] border-2 border-[#101828] flex items-center justify-center text-xs font-extrabold shadow-md">
+                                    <i class="fa-solid fa-user"></i></div>
                                 <div
-                                    class="w-8 h-8 rounded-full bg-amber-400 text-[#101828] border-2 border-slate-900 flex items-center justify-center text-[10px] font-extrabold">
-                                    B</div>
+                                    class="w-9 h-9 rounded-full bg-[#E5C158] text-[#101828] border-2 border-[#101828] flex items-center justify-center text-xs font-extrabold shadow-md">
+                                    <i class="fa-solid fa-user"></i></div>
                                 <div
-                                    class="w-8 h-8 rounded-full bg-emerald-400 text-[#101828] border-2 border-slate-900 flex items-center justify-center text-[10px] font-extrabold">
-                                    C</div>
+                                    class="w-9 h-9 rounded-full bg-[#B89426] text-[#101828] border-2 border-[#101828] flex items-center justify-center text-xs font-extrabold shadow-md">
+                                    <i class="fa-solid fa-user"></i></div>
                             </div>
-                            <span class="text-xs text-slate-300 font-medium">500+ Murid Telah Bergabung</span>
+                            <div>
+                                <p class="text-xs text-white font-extrabold">500+ Murid Bergabung</p>
+                                <p class="text-[10px] text-[#D3AF37] font-semibold">⭐ 4.9/5 Rating Kepuasan</p>
+                            </div>
                         </div>
                     </div>
                 </div>

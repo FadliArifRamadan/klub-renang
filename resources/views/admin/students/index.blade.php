@@ -11,15 +11,37 @@
             <div class="bg-white dark:bg-boxdark overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 dark:border-strokedark">
                 <div class="p-6 text-gray-900 dark:text-white">
 
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 pb-4 border-b border-gray-200 dark:border-strokedark">
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800">Daftar Anggota Klub Renang</h3>
-                            <p class="text-xs text-gray-500">Memantau seluruh status pendaftaran, pelatih yang ditunjuk,
-                                dan paket latihan aktif secara terpusat.</p>
+                            <h3 class="text-lg font-extrabold text-gray-800 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-users text-[#D3AF37]"></i> Daftar Anggota Klub Renang
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Memantau seluruh status pendaftaran, pelatih yang ditunjuk, dan paket latihan aktif secara terpusat.</p>
                         </div>
-                        <div
-                            class="mt-3 md:mt-0 text-sm bg-blue-50 text-blue-700 font-semibold px-4 py-2 rounded-lg border border-blue-200">
-                            Total Pendaftar: {{ $students->total() }} Anak
+                        <div class="flex flex-col items-start md:items-end gap-2.5 w-full md:w-auto">
+                            {{-- Total Anak diatas --}}
+                            <div
+                                class="text-xs bg-[#D3AF37]/15 border border-[#D3AF37]/30 text-[#D3AF37] font-bold px-3.5 py-1.5 rounded-lg whitespace-nowrap shadow-sm">
+                                Total: {{ $students->total() }} Anak
+                            </div>
+
+                            {{-- Form Pencarian dibawah --}}
+                            <form method="GET" action="{{ route('admin.students.index') }}" class="flex items-center gap-2 flex-nowrap whitespace-nowrap">
+                                <div class="relative flex items-center w-48 sm:w-56 shrink-0">
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                    </span>
+                                    <input type="text" name="search" value="{{ $search ?? '' }}" 
+                                           placeholder="Cari murid / coach..." 
+                                           class="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 dark:border-strokedark rounded-lg bg-gray-50 dark:bg-meta-4 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D3AF37] shadow-sm">
+                                </div>
+                                <button type="submit" class="px-3.5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-bold rounded-lg transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
+                                    Cari
+                                </button>
+                                <a href="{{ route('admin.students.index') }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
+                                    <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
+                                </a>
+                            </form>
                         </div>
                     </div>
 
@@ -224,109 +246,140 @@
                                         </td>
 
                                         <td class="px-4 py-4 text-center">
-                                            @if ($student->status == 'active')
-                                                <button type="button" x-data=""
-                                                    x-on:click="$dispatch('open-modal', 'suspend-student-{{ $student->id }}')"
-                                                    class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap">
-                                                    <i class="fa-solid fa-pause mr-1"></i> Ijin/Sakit
-                                                </button>
+                                            <div class="flex items-center justify-center gap-2 flex-wrap">
+                                                @if ($student->status == 'active')
+                                                    <button type="button" x-data=""
+                                                        x-on:click="$dispatch('open-modal', 'suspend-student-{{ $student->id }}')"
+                                                        class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap">
+                                                        <i class="fa-solid fa-pause mr-1"></i> Ijin/Sakit
+                                                    </button>
 
-                                                {{-- Modal Suspend --}}
-                                                <x-modal name="suspend-student-{{ $student->id }}" focusable>
-                                                    <form method="POST"
-                                                        action="{{ route('admin.students.suspend', $student->id) }}"
-                                                        class="p-6 text-left">
-                                                        @csrf
-                                                        <h3 class="text-lg font-bold text-gray-800 mb-4">
-                                                            <i class="fa-solid fa-pause text-amber-500 mr-2"></i>
-                                                            Pemberhentian Sementara: {{ $student->name }}
-                                                        </h3>
-                                                        <p class="text-sm text-gray-600 mb-4">
-                                                            Murid akan diberhentikan sementara dari latihan. Sisa kuota
-                                                            dan masa aktif paket akan dibekukan (frozen) sampai murid
-                                                            diaktifkan kembali.
-                                                        </p>
+                                                    {{-- Modal Suspend --}}
+                                                    <x-modal name="suspend-student-{{ $student->id }}" focusable>
+                                                        <form method="POST"
+                                                            action="{{ route('admin.students.suspend', $student->id) }}"
+                                                            class="p-6 text-left">
+                                                            @csrf
+                                                            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">
+                                                                <i class="fa-solid fa-pause text-amber-500 mr-2"></i>
+                                                                Pemberhentian Sementara: {{ $student->name }}
+                                                            </h3>
+                                                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                                                                Murid akan diberhentikan sementara dari latihan. Sisa kuota
+                                                                dan masa aktif paket akan dibekukan (frozen) sampai murid
+                                                                diaktifkan kembali.
+                                                            </p>
 
-                                                        <div class="mt-4">
-                                                            <x-input-label for="reason-{{ $student->id }}"
-                                                                value="Pilih Alasan Pemberhentian" />
-                                                            <div class="flex items-center space-x-6 mt-2">
-                                                                <label class="inline-flex items-center cursor-pointer">
-                                                                    <input type="radio" name="reason" value="sakit"
-                                                                        checked
-                                                                        class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                                    <span
-                                                                        class="ml-2 text-sm text-gray-700 font-medium">Sakit</span>
-                                                                </label>
-                                                                <label class="inline-flex items-center cursor-pointer">
-                                                                    <input type="radio" name="reason" value="ijin"
-                                                                        class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
-                                                                    <span
-                                                                        class="ml-2 text-sm text-gray-700 font-medium">Ijin</span>
-                                                                </label>
+                                                            <div class="mt-4">
+                                                                <x-input-label for="reason-{{ $student->id }}"
+                                                                    value="Pilih Alasan Pemberhentian" />
+                                                                <div class="flex items-center space-x-6 mt-2">
+                                                                    <label class="inline-flex items-center cursor-pointer">
+                                                                        <input type="radio" name="reason" value="sakit"
+                                                                            checked
+                                                                            class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                                        <span
+                                                                            class="ml-2 text-sm text-gray-700 dark:text-gray-300 font-medium">Sakit</span>
+                                                                    </label>
+                                                                    <label class="inline-flex items-center cursor-pointer">
+                                                                        <input type="radio" name="reason" value="ijin"
+                                                                            class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500">
+                                                                        <span
+                                                                            class="ml-2 text-sm text-gray-700 dark:text-gray-300 font-medium">Ijin</span>
+                                                                    </label>
+                                                                </div>
                                                             </div>
-                                                        </div>
 
-                                                        <div class="mt-6 flex justify-end space-x-3">
-                                                            <x-secondary-button x-on:click="$dispatch('close')">
-                                                                Batal
-                                                            </x-secondary-button>
-                                                            <x-primary-button
-                                                                class="bg-amber-500 hover:bg-amber-600 text-white">
-                                                                Bekukan Paket
-                                                            </x-primary-button>
-                                                        </div>
-                                                    </form>
-                                                </x-modal>
-                                            @elseif($student->status == 'suspended')
+                                                            <div class="mt-6 flex justify-end space-x-3">
+                                                                <x-secondary-button x-on:click="$dispatch('close')">
+                                                                    Batal
+                                                                </x-secondary-button>
+                                                                <x-primary-button
+                                                                    class="bg-amber-500 hover:bg-amber-600 text-white">
+                                                                    Bekukan Paket
+                                                                </x-primary-button>
+                                                            </div>
+                                                        </form>
+                                                    </x-modal>
+                                                @elseif($student->status == 'suspended')
+                                                    <button type="button" x-data=""
+                                                        x-on:click="$dispatch('open-modal', 'resume-student-{{ $student->id }}')"
+                                                        class="px-2.5 py-1.5 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap">
+                                                        <i class="fa-solid fa-play mr-1"></i> Aktifkan
+                                                    </button>
+
+                                                    {{-- Modal Resume --}}
+                                                    <x-modal name="resume-student-{{ $student->id }}" focusable>
+                                                        <form method="POST"
+                                                            action="{{ route('admin.students.resume', $student->id) }}"
+                                                            class="p-6 text-left">
+                                                            @csrf
+                                                            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">
+                                                                <i class="fa-solid fa-play text-green-500 mr-2"></i>
+                                                                Aktifkan Kembali Latihan: {{ $student->name }}
+                                                            </h3>
+
+                                                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                                                                Masa aktif paket latihan murid ini akan diperpanjang secara
+                                                                otomatis sesuai dengan lama waktu murid tersebut ijin/sakit.
+                                                            </p>
+
+                                                            <div
+                                                                class="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg text-xs mb-4">
+                                                                <i class="fa-solid fa-info-circle mr-1"></i>
+                                                                <strong>Detail Pembekuan:</strong><br>
+                                                                - Mulai Dibekukan:
+                                                                {{ $student->suspended_at?->format('d M Y - H:i') }}<br>
+                                                                - Alasan:
+                                                                {{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }}<br>
+                                                                - Durasi Suspend:
+                                                                {{ round(now()->diffInDays($student->suspended_at)) }} Hari
+                                                            </div>
+
+                                                            <div class="mt-6 flex justify-end space-x-3">
+                                                                <x-secondary-button x-on:click="$dispatch('close')">
+                                                                    Batal
+                                                                </x-secondary-button>
+                                                                <x-primary-button
+                                                                    class="bg-green-600 hover:bg-green-700 text-white">
+                                                                    Aktifkan Latihan
+                                                                </x-primary-button>
+                                                            </div>
+                                                        </form>
+                                                    </x-modal>
+                                                @endif
+
+                                                {{-- Tombol Hapus Murid --}}
                                                 <button type="button" x-data=""
-                                                    x-on:click="$dispatch('open-modal', 'resume-student-{{ $student->id }}')"
-                                                    class="px-2.5 py-1.5 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap">
-                                                    <i class="fa-solid fa-play mr-1"></i> Aktifkan
+                                                    x-on:click="$dispatch('open-modal', 'delete-student-{{ $student->id }}')"
+                                                    class="px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg transition duration-150 shadow-sm whitespace-nowrap"
+                                                    title="Hapus Murid">
+                                                    <i class="fa-solid fa-trash-can mr-1"></i> Hapus
                                                 </button>
 
-                                                {{-- Modal Resume --}}
-                                                <x-modal name="resume-student-{{ $student->id }}" focusable>
-                                                    <form method="POST"
-                                                        action="{{ route('admin.students.resume', $student->id) }}"
-                                                        class="p-6 text-left">
+                                                {{-- Modal Delete Confirmation --}}
+                                                <x-modal name="delete-student-{{ $student->id }}" focusable>
+                                                    <form method="POST" action="{{ route('admin.students.destroy', $student->id) }}" class="p-6 text-left">
                                                         @csrf
-                                                        <h3 class="text-lg font-bold text-gray-800 mb-4">
-                                                            <i class="fa-solid fa-play text-green-500 mr-2"></i>
-                                                            Aktifkan Kembali Latihan: {{ $student->name }}
+                                                        @method('DELETE')
+                                                        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                                                            <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
+                                                            Hapus Data Murid: {{ $student->name }}
                                                         </h3>
-
-                                                        <p class="text-sm text-gray-600 mb-4">
-                                                            Masa aktif paket latihan murid ini akan diperpanjang secara
-                                                            otomatis sesuai dengan lama waktu murid tersebut ijin/sakit.
+                                                        <p class="text-xs text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                                                            Apakah Anda yakin ingin menghapus data murid <span class="font-bold text-gray-900 dark:text-white">{{ $student->name }}</span>? Data murid, pendaftaran, dan riwayat absensinya akan dihapus dari sistem secara permanen.
                                                         </p>
-
-                                                        <div
-                                                            class="bg-blue-50 border border-blue-200 text-blue-800 p-3 rounded-lg text-xs mb-4">
-                                                            <i class="fa-solid fa-info-circle mr-1"></i>
-                                                            <strong>Detail Pembekuan:</strong><br>
-                                                            - Mulai Dibekukan:
-                                                            {{ $student->suspended_at?->format('d M Y - H:i') }}<br>
-                                                            - Alasan:
-                                                            {{ $student->suspension_reason === 'sakit' ? 'Sakit' : 'Ijin' }}<br>
-                                                            - Durasi Suspend:
-                                                            {{ round(now()->diffInDays($student->suspended_at)) }} Hari
-                                                        </div>
-
-                                                        <div class="mt-6 flex justify-end space-x-3">
+                                                        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-strokedark">
                                                             <x-secondary-button x-on:click="$dispatch('close')">
                                                                 Batal
                                                             </x-secondary-button>
-                                                            <x-primary-button
-                                                                class="bg-green-600 hover:bg-green-700 text-white">
-                                                                Aktifkan Latihan
-                                                            </x-primary-button>
+                                                            <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg transition shadow-md">
+                                                                Ya, Hapus Murid
+                                                            </button>
                                                         </div>
                                                     </form>
                                                 </x-modal>
-                                            @else
-                                                <span class="text-xs text-gray-400 italic">Tidak ada aksi</span>
-                                            @endif
+                                            </div>
                                         </td>
 
                                     </tr>
