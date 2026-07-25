@@ -8,24 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            @if (session('success'))
-                <div class="flex p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
-                    <i class="fa-solid fa-circle-check mt-0.5 mr-2 text-lg"></i>
-                    <div>
-                        <span class="font-bold">Sukses!</span> {{ session('success') }}
-                    </div>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
-                    <i class="fa-solid fa-triangle-exclamation mt-0.5 mr-2 text-lg"></i>
-                    <div>
-                        <span class="font-bold">Gagal!</span> {{ session('error') }}
-                    </div>
-                </div>
-            @endif
-
             <div class="bg-white p-6 rounded-lg shadow sm:rounded-lg">
                 <div class="mb-6">
                     <h3 class="text-lg font-medium text-gray-900">Kelola Pengajuan Izin Pelatih</h3>
@@ -90,9 +72,18 @@
                                     <td class="px-6 py-4 font-bold text-gray-800">
                                         {{ $leave->coach->name }}
                                     </td>
-                                    <td class="px-6 py-4 font-semibold text-slate-700">
+                                    <td class="px-6 py-4 font-semibold text-slate-700 dark:text-slate-200">
                                         {{ $leave->leave_date->translatedFormat('d F Y') }}
                                         <div class="text-[10px] font-normal text-gray-400">Hari {{ $leave->leave_date->translatedFormat('l') }}</div>
+                                        @if($leave->schedule)
+                                            <div class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 text-[11px] font-semibold">
+                                                <i class="fa-solid fa-clock text-[10px]"></i> {{ $leave->schedule->time_range }} — {{ $leave->schedule->swimmingClass->name ?? '' }} ({{ $leave->schedule->location->name ?? '' }})
+                                            </div>
+                                        @else
+                                            <div class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-semibold">
+                                                <i class="fa-solid fa-layer-group text-[10px]"></i> Semua Sesi Hari Ini
+                                            </div>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 text-gray-600 max-w-xs truncate">
                                         {{ $leave->reason }}
@@ -179,27 +170,31 @@
                                                                 class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
                                                                 <option value="" selected>-- Latihan Diliburkan (Tidak ada pengganti) --</option>
                                                                 
-                                                                {{-- Tampilkan Pelatih Pengganti yang Direkomendasikan --}}
-                                                                @if(isset($leave->recommended_coaches) && $leave->recommended_coaches->isNotEmpty())
-                                                                    <optgroup label="Rekomendasi Pelatih (Bertugas di Jam & Lokasi yang Sama)">
-                                                                        @foreach($leave->recommended_coaches as $recCoach)
-                                                                            <option value="{{ $recCoach->id }}">{{ $recCoach->name }} (Terjadwal)</option>
-                                                                        @endforeach
-                                                                    </optgroup>
-                                                                @endif
-
-                                                                {{-- Tampilkan Pelatih yang Bertugas di Hari yang Sama --}}
-                                                                @if(isset($leave->day_coaches) && $leave->day_coaches->isNotEmpty())
-                                                                    <optgroup label="Pelatih Bertugas di Hari yang Sama (Beda Jam/Lokasi)">
-                                                                        @foreach($leave->day_coaches as $dayCoach)
-                                                                            @if(!isset($leave->recommended_coaches) || !$leave->recommended_coaches->contains('id', $dayCoach->id))
-                                                                                <option value="{{ $dayCoach->id }}">{{ $dayCoach->name }}</option>
-                                                                            @endif
+                                                                {{-- Tampilkan Pelatih Pengganti yang Terdaftar di Kelas & Hari yang Sama Persis --}}
+                                                                @if(isset($leave->eligible_substitutes) && $leave->eligible_substitutes->isNotEmpty())
+                                                                    <optgroup label="Pelatih Mengajar {{ $leave->target_class_name ?? '' }} (Hari {{ $leave->target_day_name ?? '' }})">
+                                                                        @foreach($leave->eligible_substitutes as $recCoach)
+                                                                            <option value="{{ $recCoach->id }}">{{ $recCoach->name }} (Bertugas Hari {{ $leave->target_day_name ?? '' }})</option>
                                                                         @endforeach
                                                                     </optgroup>
                                                                 @endif
                                                             </select>
-                                                            <small class="text-gray-400 mt-1 block">*Jika diliburkan, murid tidak akan dipotong kuotanya dan mendapat notifikasi libur.</small>
+                                                            @if(!isset($leave->eligible_substitutes) || $leave->eligible_substitutes->isEmpty())
+                                                                <div class="mt-3.5 p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-start gap-3 shadow-sm">
+                                                                    <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base mt-0.5 shrink-0"></i>
+                                                                    <div class="leading-relaxed">
+                                                                        <span class="font-bold text-amber-400 block mb-0.5">Informasi Pelatih Pengganti:</span>
+                                                                        <p class="text-amber-200/90">
+                                                                            Tidak ada pelatih lain yang mengajar <strong class="text-white font-semibold">{{ $leave->target_class_name ?? '' }}</strong> pada hari <strong class="text-white font-semibold">{{ $leave->target_day_name ?? '' }}</strong>.
+                                                                        </p>
+                                                                        <p class="mt-1.5 text-[11px] text-amber-300/75">
+                                                                            *Pilih opsi <strong>Latihan Diliburkan</strong> agar murid pada sesi ini otomatis masuk ke Antrean Reschedule.
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            @else
+                                                                <small class="text-gray-400 mt-1.5 block">*Jika diliburkan, murid tidak akan dipotong kuotanya dan mendapat notifikasi libur.</small>
+                                                            @endif
                                                         </div>
 
                                                         <div class="flex justify-between items-center border-t pt-4 mt-6">

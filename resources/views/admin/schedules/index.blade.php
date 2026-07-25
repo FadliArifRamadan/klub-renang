@@ -8,24 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            @if (session('success'))
-                <div class="flex p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
-                    <i class="fa-solid fa-circle-check mt-0.5 mr-2 text-lg"></i>
-                    <div>
-                        <span class="font-bold">Sukses!</span> {{ session('success') }}
-                    </div>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
-                    <i class="fa-solid fa-triangle-exclamation mt-0.5 mr-2 text-lg"></i>
-                    <div>
-                        <span class="font-bold">Gagal!</span> {{ session('error') }}
-                    </div>
-                </div>
-            @endif
-
             <div class="bg-white dark:bg-boxdark p-6 rounded-lg shadow sm:rounded-lg">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div>

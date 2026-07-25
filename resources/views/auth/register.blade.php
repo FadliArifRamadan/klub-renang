@@ -4,44 +4,44 @@
 
         <!-- Name -->
         <div>
-            <label for="name" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                <i class="fa-solid fa-address-card mr-1 text-[#D3AF37]"></i> Nama Lengkap
+            <label for="name" class="block text-xs font-black text-[#101828] uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-address-card mr-1 text-[#101828]"></i> Nama Lengkap
             </label>
             <input id="name" type="text" name="name" :value="old('name')" required autofocus autocomplete="name"
-                class="block w-full bg-[#0B0F17] border-slate-700 text-white placeholder-slate-500 focus:border-[#D3AF37] focus:ring-1 focus:ring-[#D3AF37] rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
+                class="block w-full bg-[#101828] border-[#101828] text-white placeholder-slate-400 focus:border-[#101828] focus:ring-2 focus:ring-[#101828] rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
                 placeholder="Masukkan nama lengkap Anda" />
             <x-input-error :messages="$errors->get('name')" class="mt-1" />
         </div>
 
         <!-- Username -->
         <div>
-            <label for="username" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                <i class="fa-solid fa-user mr-1 text-[#D3AF37]"></i> Username
+            <label for="username" class="block text-xs font-black text-[#101828] uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-user mr-1 text-[#101828]"></i> Username
             </label>
             <input id="username" type="text" name="username" :value="old('username')" required
-                class="block w-full bg-[#0B0F17] border-slate-700 text-white placeholder-slate-500 focus:border-[#D3AF37] focus:ring-1 focus:ring-[#D3AF37] rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
+                class="block w-full bg-[#101828] border-[#101828] text-white placeholder-slate-400 focus:border-[#101828] focus:ring-2 focus:ring-[#101828] rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
                 placeholder="Buat username akun Anda" />
             <x-input-error :messages="$errors->get('username')" class="mt-1" />
         </div>
 
         <!-- Phone Number -->
         <div>
-            <label for="phone" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                <i class="fa-solid fa-phone mr-1 text-[#D3AF37]"></i> Nomor WhatsApp / HP
+            <label for="phone" class="block text-xs font-black text-[#101828] uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-phone mr-1 text-[#101828]"></i> Nomor WhatsApp / HP
             </label>
             <input id="phone" type="text" name="phone" :value="old('phone')" required
-                class="block w-full bg-[#0B0F17] border-slate-700 text-white placeholder-slate-500 focus:border-[#D3AF37] focus:ring-1 focus:ring-[#D3AF37] rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
+                class="block w-full bg-[#101828] border-[#101828] text-white placeholder-slate-400 focus:border-[#101828] focus:ring-2 focus:ring-[#101828] rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors"
                 placeholder="Contoh: 081234567890" />
             <x-input-error :messages="$errors->get('phone')" class="mt-1" />
         </div>
 
         <!-- Role Select -->
         <div>
-            <label for="role" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                <i class="fa-solid fa-users-gear mr-1 text-[#D3AF37]"></i> Mendaftar Sebagai
+            <label for="role" class="block text-xs font-black text-[#101828] uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-users-gear mr-1 text-[#101828]"></i> Mendaftar Sebagai
             </label>
             <select id="role" name="role" required
-                class="block w-full bg-[#0B0F17] border-slate-700 text-white focus:border-[#D3AF37] focus:ring-1 focus:ring-[#D3AF37] rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors">
+                class="block w-full bg-[#101828] border-[#101828] text-white focus:border-[#101828] focus:ring-2 focus:ring-[#101828] rounded-xl px-4 py-2.5 shadow-sm text-sm transition-colors">
                 <option value="parent" class="bg-[#101828] text-white">Orang Tua (Untuk Mendaftarkan Anak)</option>
                 <option value="general" class="bg-[#101828] text-white">Umum (Untuk Mendaftarkan Diri Sendiri)</option>
             </select>
@@ -50,14 +50,14 @@
 
         <!-- Password -->
         <div>
-            <label for="password" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                <i class="fa-solid fa-lock mr-1 text-[#D3AF37]"></i> Password
+            <label for="password" class="block text-xs font-black text-[#101828] uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-lock mr-1 text-[#101828]"></i> Password
             </label>
             <div x-data="{ show: false }" class="relative">
                 <input id="password" :type="show ? 'text' : 'password'" name="password" required autocomplete="new-password"
-                    class="block w-full bg-[#0B0F17] border-slate-700 text-white placeholder-slate-500 focus:border-[#D3AF37] focus:ring-1 focus:ring-[#D3AF37] rounded-xl px-4 py-2.5 pr-10 shadow-sm text-sm transition-colors"
+                    class="block w-full bg-[#101828] border-[#101828] text-white placeholder-slate-400 focus:border-[#101828] focus:ring-2 focus:ring-[#101828] rounded-xl px-4 py-2.5 pr-10 shadow-sm text-sm transition-colors"
                     placeholder="Buat password minimal 8 karakter" />
-                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-200 transition">
+                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-white transition">
                     <i :class="show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-sm"></i>
                 </button>
             </div>
@@ -66,14 +66,14 @@
 
         <!-- Confirm Password -->
         <div>
-            <label for="password_confirmation" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                <i class="fa-solid fa-shield-check mr-1 text-[#D3AF37]"></i> Konfirmasi Password
+            <label for="password_confirmation" class="block text-xs font-black text-[#101828] uppercase tracking-wider mb-1.5">
+                <i class="fa-solid fa-shield-check mr-1 text-[#101828]"></i> Konfirmasi Password
             </label>
             <div x-data="{ show: false }" class="relative">
                 <input id="password_confirmation" :type="show ? 'text' : 'password'" name="password_confirmation" required autocomplete="new-password"
-                    class="block w-full bg-[#0B0F17] border-slate-700 text-white placeholder-slate-500 focus:border-[#D3AF37] focus:ring-1 focus:ring-[#D3AF37] rounded-xl px-4 py-2.5 pr-10 shadow-sm text-sm transition-colors"
+                    class="block w-full bg-[#101828] border-[#101828] text-white placeholder-slate-400 focus:border-[#101828] focus:ring-2 focus:ring-[#101828] rounded-xl px-4 py-2.5 pr-10 shadow-sm text-sm transition-colors"
                     placeholder="Ketik ulang password Anda" />
-                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-200 transition">
+                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-white transition">
                     <i :class="show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'" class="text-sm"></i>
                 </button>
             </div>
@@ -83,17 +83,17 @@
         <!-- Submit Button -->
         <div class="pt-2">
             <button type="submit"
-                class="w-full flex items-center justify-center gap-2 py-3 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-xl shadow-lg shadow-[#D3AF37]/20 hover:shadow-[#D3AF37]/30 transition-all hover:-translate-y-0.5 text-sm cursor-pointer">
+                class="w-full flex items-center justify-center gap-2 py-3 bg-[#101828] hover:bg-black text-[#D3AF37] font-black rounded-xl shadow-xl shadow-black/30 hover:shadow-black/50 transition-all hover:-translate-y-0.5 text-sm cursor-pointer border border-[#F5E6A3]/30">
                 Daftar Akun Baru <i class="fa-solid fa-user-plus text-xs"></i>
             </button>
         </div>
     </form>
 
     <!-- Footer Links -->
-    <div class="mt-6 pt-5 border-t border-slate-800 text-center">
-        <p class="text-xs text-slate-400">
+    <div class="mt-6 pt-5 border-t border-[#101828]/20 text-center">
+        <p class="text-xs text-[#101828]/90 font-bold">
             Sudah memiliki akun?
-            <a href="{{ route('login') }}" class="font-bold text-[#D3AF37] hover:text-[#B89426] hover:underline">
+            <a href="{{ route('login') }}" class="font-black text-[#101828] underline hover:text-black">
                 Masuk Disini
             </a>
         </p>

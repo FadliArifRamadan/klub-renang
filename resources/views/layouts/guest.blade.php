@@ -37,13 +37,13 @@
         <div class="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative z-10 w-full">
             <div class="w-full sm:max-w-md">
                 <!-- Card Container -->
-                <div class="w-full bg-[#101828]/90 backdrop-blur-xl border border-[#D3AF37]/30 shadow-2xl shadow-black/80 rounded-3xl p-6 sm:p-8">
+                <div class="w-full bg-gradient-to-br from-[#E5C158] via-[#D3AF37] to-[#B89426] border border-[#F5E6A3]/60 shadow-2xl shadow-black/90 rounded-3xl p-6 sm:p-8 text-[#101828]">
                     <!-- Logo & Heading -->
                     <div class="text-center mb-6">
                         <a href="/" class="inline-block hover:opacity-90 transition-opacity">
-                            <img src="{{ asset('images/black_diamond_1.png') }}" alt="Black Diamond Logo" class="h-20 w-auto mx-auto object-contain brightness-0 invert drop-shadow-[0_0_12px_rgba(211,175,55,0.5)]">
+                            <img src="{{ asset('images/black_diamond_1.png') }}" alt="Black Diamond Logo" class="h-20 w-auto mx-auto object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.4)]">
                         </a>
-                        <h2 class="text-xl font-extrabold text-[#D3AF37] mt-4 leading-tight">
+                        <h2 class="text-2xl font-black text-[#101828] mt-4 leading-tight tracking-wide">
                             @if(request()->routeIs('login'))
                                 Selamat Datang Kembali
                             @elseif(request()->routeIs('register'))
@@ -57,7 +57,7 @@
                             @endif
                         </h2>
                         @if(!request()->routeIs('password.request'))
-                            <p class="text-xs text-slate-300 mt-1">
+                            <p class="text-xs text-[#101828]/80 font-bold mt-1">
                                 @if(request()->routeIs('login'))
                                     Silakan masuk untuk mengelola program renang Anda
                                 @elseif(request()->routeIs('register'))

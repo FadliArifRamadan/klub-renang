@@ -56,6 +56,63 @@
                 @endif
             @endif
 
+            {{-- Notifikasi Reschedule Queue (Jadwal Diliburkan & Penjadwalan Ulang) --}}
+            @if (isset($rescheduleQueues) && $rescheduleQueues->isNotEmpty())
+                <div class="space-y-3 mb-8">
+                    @foreach ($rescheduleQueues as $rq)
+                        @if ($rq->status === 'pending')
+                            <div class="flex items-start p-4 text-sm rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 shadow-md">
+                                <div class="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl mr-3.5 shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-calendar-minus text-lg"></i>
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-amber-400 text-sm">
+                                            <i class="fa-solid fa-info-circle mr-1"></i> Informasi Sesi Latihan Diliburkan
+                                        </span>
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                            Sesi Diliburkan
+                                        </span>
+                                    </div>
+                                    <p class="mt-1 text-slate-300 text-xs leading-relaxed">
+                                        Sesi latihan Anda pada hari <strong class="text-amber-300">{{ \Carbon\Carbon::parse($rq->original_date)->locale('id')->translatedFormat('l, d F Y') }}</strong> ({{ $rq->schedule->swimmingClass->name ?? '' }} — {{ $rq->schedule->location->name ?? '' }}) <strong class="text-amber-300">diliburkan</strong> karena pelatih <strong class="text-white">{{ $rq->coachLeave->coach->name ?? 'Pelatih' }}</strong> berhalangan.
+                                    </p>
+                                    <div class="mt-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-700/50 text-[11px] text-slate-300 flex items-center gap-2">
+                                        <i class="fa-solid fa-hourglass-half text-amber-400"></i>
+                                        <span>Status: <strong>Menunggu Penjadwalan Ulang (Reschedule) oleh Admin</strong> — Kuota sesi Anda tidak dipotong.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif ($rq->status === 'rescheduled')
+                            <div class="flex items-start p-4 text-sm rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 shadow-md">
+                                <div class="p-2.5 bg-emerald-500/20 text-emerald-400 rounded-xl mr-3.5 shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-calendar-check text-lg"></i>
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-emerald-400 text-sm">
+                                            <i class="fa-solid fa-circle-check mr-1"></i> Jadwal Pengganti (Reschedule) Ditetapkan!
+                                        </span>
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                                            Reschedule Ditetapkan
+                                        </span>
+                                    </div>
+                                    <p class="mt-1 text-slate-300 text-xs leading-relaxed">
+                                        Sesi tanggal <strong class="text-slate-400 line-through">{{ \Carbon\Carbon::parse($rq->original_date)->locale('id')->translatedFormat('d F Y') }}</strong> yang sempat diliburkan telah dijadwalkan ulang oleh Admin ke:
+                                    </p>
+                                    <div class="mt-2 p-2.5 rounded-xl bg-slate-900/60 border border-emerald-500/30 text-xs text-emerald-300 flex flex-wrap items-center gap-x-4 gap-y-1">
+                                        <div><i class="fa-solid fa-calendar-day mr-1 text-emerald-400"></i> {{ \Carbon\Carbon::parse($rq->rescheduled_date)->locale('id')->translatedFormat('l, d F Y') }}</div>
+                                        <div><i class="fa-solid fa-clock mr-1 text-emerald-400"></i> {{ $rq->rescheduledSchedule->time_range ?? '' }}</div>
+                                        <div><i class="fa-solid fa-location-dot mr-1 text-emerald-400"></i> {{ $rq->rescheduledSchedule->location->name ?? '' }}</div>
+                                        <div><i class="fa-solid fa-user-tie mr-1 text-emerald-400"></i> Coach: {{ $rq->rescheduledSchedule->coach->name ?? 'Pelatih' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            @endif
+
             {{-- Notifikasi Sesi Habis --}}
             @if (isset($expiredStudents) && $expiredStudents->isNotEmpty())
                 <div class="bg-amber-50 border border-amber-300 rounded-xl p-5 mb-8 shadow-sm" x-data="{ showNotif: true }" x-show="showNotif" x-transition>

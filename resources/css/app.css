@@ -12,25 +12,25 @@
 
 @layer components {
   .menu-item {
-    @apply relative flex items-center w-full gap-3 px-3 py-2.5 font-medium rounded-xl text-theme-sm transition-all duration-200;
+    @apply relative flex items-center w-full gap-3 px-3 py-2.5 font-bold rounded-xl text-theme-sm transition-all duration-200;
   }
   .menu-item-active {
-    @apply bg-[#D3AF37] text-gray-900 font-bold shadow-md shadow-[#D3AF37]/20;
+    @apply bg-[#101828] text-[#D3AF37] font-black shadow-lg shadow-black/40 border border-[#F5E6A3]/30;
   }
   .menu-item-inactive {
-    @apply text-slate-300 hover:bg-white/10 hover:text-[#D3AF37];
+    @apply text-[#101828] hover:bg-[#101828]/15 hover:text-black font-extrabold;
   }
   .menu-item-icon {
-    @apply text-slate-400 group-hover:text-[#D3AF37];
+    @apply text-[#101828] group-hover:text-black;
   }
   .menu-item-icon-active {
-    @apply text-gray-900;
+    @apply text-[#D3AF37];
   }
   .menu-item-icon-size svg {
     @apply size-6 !important;
   }
   .menu-item-icon-inactive {
-    @apply text-[#D3AF37]/80 group-hover:text-[#D3AF37];
+    @apply text-[#101828] group-hover:text-black;
   }
 
   .menu-item-arrow {

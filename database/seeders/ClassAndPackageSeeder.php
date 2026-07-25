@@ -102,7 +102,6 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 450000,
                     'Tirta' => 450000,
                     'Pacific' => 450000,
-                    'Home Visit' => 1000000,
                 ]
             ],
             [
@@ -116,7 +115,6 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 225000,
                     'Tirta' => 225000,
                     'Pacific' => 225000,
-                    'Home Visit' => 500000,
                 ]
             ],
             [
@@ -130,7 +128,6 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 80000,
                     'Tirta' => 80000,
                     'Pacific' => 80000,
-                    'Home Visit' => 150000,
                 ]
             ],
             [
@@ -144,7 +141,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 850000,
                     'Tirta' => 850000,
                     'Pacific' => 850000,
-                    'Home Visit' => 1500000,
+                    'Home Visit' => 850000,
                 ]
             ],
             [
@@ -158,7 +155,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 425000,
                     'Tirta' => 425000,
                     'Pacific' => 425000,
-                    'Home Visit' => 800000,
+                    'Home Visit' => 425000,
                 ]
             ],
             [
@@ -172,7 +169,7 @@ class ClassAndPackageSeeder extends Seeder
                     'Star Sport' => 110000,
                     'Tirta' => 110000,
                     'Pacific' => 110000,
-                    'Home Visit' => 250000,
+                    'Home Visit' => 110000,
                 ]
             ],
         ];

@@ -11,33 +11,65 @@
         rescheduledDate: '',
         rescheduledScheduleId: '',
         notes: '',
+        allSchedules: {{ $availableSchedules->toJson() }},
+        get filteredSchedules() {
+            if (!this.selectedItem || !this.selectedItem.swimming_class_id) {
+                return [];
+            }
+            // Filter: Hanya kelas yang sama DAN bukan jadwal asal yang sedang diliburkan
+            return this.allSchedules.filter(s => 
+                s.swimming_class_id == this.selectedItem.swimming_class_id &&
+                s.id != this.selectedItem.schedule_id
+            );
+        },
+        selectSchedule(sched) {
+            this.rescheduledScheduleId = sched.id;
+            // Hitung otomatis Tanggal Pengganti ke hari terdekat berikutnya sesuai sched.day_of_week
+            if (this.selectedItem && this.selectedItem.original_date) {
+                let origStr = this.selectedItem.original_date.includes('T') 
+                    ? this.selectedItem.original_date.split('T')[0] 
+                    : this.selectedItem.original_date;
+                let origDate = new Date(origStr + 'T00:00:00');
+                
+                // Konversi JS Day (0=Sun, 1=Mon, ..., 6=Sat) ke sistem day_of_week (0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun)
+                let currentDayIndex = (origDate.getDay() + 6) % 7; 
+                let targetDayIndex = parseInt(sched.day_of_week, 10);
+                
+                let diff = targetDayIndex - currentDayIndex;
+                if (diff <= 0) {
+                    diff += 7; // Ambil hari yang sama di minggu berikutnya
+                }
+                
+                let targetDate = new Date(origDate);
+                targetDate.setDate(origDate.getDate() + diff);
+                
+                // Format YYYY-MM-DD
+                let year = targetDate.getFullYear();
+                let month = String(targetDate.getMonth() + 1).padStart(2, '0');
+                let day = String(targetDate.getDate()).padStart(2, '0');
+                this.rescheduledDate = `${year}-${month}-${day}`;
+            }
+        },
+        formatDate(dateStr) {
+            if (!dateStr) return '-';
+            let cleanStr = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+            let parts = cleanStr.split('-');
+            if (parts.length === 3) {
+                let months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                let mIndex = parseInt(parts[1], 10) - 1;
+                return parts[2] + ' ' + (months[mIndex] || parts[1]) + ' ' + parts[0];
+            }
+            return cleanStr;
+        },
         openRescheduleModal(item) {
             this.selectedItem = item;
-            this.rescheduledDate = '';
-            this.rescheduledScheduleId = '';
-            this.notes = '';
+            this.rescheduledDate = item.rescheduled_date ? (item.rescheduled_date.includes('T') ? item.rescheduled_date.split('T')[0] : item.rescheduled_date) : '';
+            this.rescheduledScheduleId = item.rescheduled_schedule_id || '';
+            this.notes = item.notes || '';
             this.openModal = true;
         }
     }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-
-            @if (session('success'))
-                <div class="flex p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
-                    <i class="fa-solid fa-circle-check mt-0.5 mr-2 text-lg"></i>
-                    <div>
-                        <span class="font-bold">Sukses!</span> {{ session('success') }}
-                    </div>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="flex p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
-                    <i class="fa-solid fa-triangle-exclamation mt-0.5 mr-2 text-lg"></i>
-                    <div>
-                        <span class="font-bold">Gagal!</span> {{ session('error') }}
-                    </div>
-                </div>
-            @endif
 
             <div class="bg-white p-6 rounded-lg shadow sm:rounded-lg">
                 <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -45,7 +77,7 @@
                         <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                             <i class="fa-solid fa-calendar-week text-[#D3AF37]"></i> Daftar Antrean Reschedule Murid
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">Daftar murid yang kelasnya diliburkan akibat pelatih izin tanpa pengganti. Tentukan jadwal pengganti untuk setiap murid secara terisolasi per kategori kelas.</p>
+                        <p class="text-xs text-gray-500 mt-1">Daftar murid yang kelasnya diliburkan akibat pelatih izin tanpa pengganti. Tentukan jadwal pengganti untuk setiap murid secara terisolasi per kelas & kategori.</p>
                     </div>
                 </div>
 
@@ -197,12 +229,12 @@
 
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-                <div class="inline-block w-full max-w-lg p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl shadow-2xl border border-gray-200">
-                    <div class="flex items-center justify-between border-b border-gray-200 pb-4 mb-4">
-                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <div class="inline-block w-full max-w-xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-boxdark rounded-2xl shadow-2xl border border-gray-200 dark:border-strokedark">
+                    <div class="flex items-center justify-between border-b border-gray-200 dark:border-strokedark pb-4 mb-4">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <i class="fa-solid fa-calendar-plus text-[#D3AF37]"></i> Atur Jadwal Pengganti
                         </h3>
-                        <button @click="openModal = false" class="text-gray-400 hover:text-gray-600">
+                        <button @click="openModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
@@ -210,42 +242,86 @@
                     <template x-if="selectedItem">
                         <form :action="'/admin/reschedule/' + selectedItem.id" method="POST" class="space-y-4">
                             @csrf
-                            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-900">
-                                <p class="font-bold mb-1" x-text="'Murid: ' + selectedItem.student.name"></p>
-                                <p x-text="'Kelas: ' + (selectedItem.swimming_class ? selectedItem.swimming_class.name : '-') + ' (' + (selectedItem.swimming_class && selectedItem.swimming_class.category ? selectedItem.swimming_class.category.name : '-') + ')'"></p>
-                                <p class="mt-1 text-amber-800" x-text="'Diliburkan pada: ' + selectedItem.original_date"></p>
+                            <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3.5 text-xs text-amber-200">
+                                <p class="font-bold mb-1 text-amber-400" x-text="'Murid: ' + selectedItem.student.name"></p>
+                                <p class="text-slate-300" x-text="'Kelas Spesifik: ' + (selectedItem.swimming_class && selectedItem.swimming_class.category ? selectedItem.swimming_class.category.name : '-') + ' — ' + (selectedItem.swimming_class ? selectedItem.swimming_class.name : '-')"></p>
+                                <p class="mt-1 text-amber-300/80" x-text="'Diliburkan pada: ' + formatDate(selectedItem.original_date)"></p>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal Pengganti <span class="text-red-500">*</span></label>
-                                <input type="date" name="rescheduled_date" x-model="rescheduledDate" required 
-                                       class="w-full text-sm border-gray-300 rounded-xl shadow-sm focus:border-[#D3AF37] focus:ring-[#D3AF37]">
+                                <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 uppercase mb-1">Pilih Sesi & Pelatih Pengganti <span class="text-red-500">*</span></label>
+                                <div class="mb-2 text-[11px] text-[#D3AF37] font-semibold flex items-center gap-1" x-show="selectedItem && selectedItem.swimming_class">
+                                    <i class="fa-solid fa-filter text-[10px]"></i> Dikunci khusus untuk kelas: <span class="underline font-bold" x-text="(selectedItem.swimming_class.category ? selectedItem.swimming_class.category.name : 'Kelas') + ' — ' + selectedItem.swimming_class.name"></span>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1">
+                                    <template x-for="sched in filteredSchedules" :key="sched.id">
+                                        <label class="flex items-start gap-3 p-3 border rounded-xl cursor-pointer transition-all duration-150 text-sm"
+                                               @click="selectSchedule(sched)"
+                                               :class="String(rescheduledScheduleId) === String(sched.id) 
+                                                   ? 'border-[#D3AF37] bg-[#D3AF37]/15 ring-1 ring-[#D3AF37]' 
+                                                   : ((sched.current_enrolled_count || 0) >= (sched.capacity_limit || 4)
+                                                       ? 'border-rose-500/30 bg-rose-500/5 hover:border-rose-500/50'
+                                                       : 'border-gray-200 dark:border-strokedark bg-white dark:bg-meta-4 hover:border-[#D3AF37]/60')">
+                                            <input type="radio" name="rescheduled_schedule_id" :value="sched.id" x-model="rescheduledScheduleId" required
+                                                   class="mt-1 rounded-full border-gray-300 text-[#D3AF37] focus:ring-[#D3AF37] h-4 w-4 shrink-0">
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center gap-1.5 flex-wrap">
+                                                    <span class="font-bold text-gray-900 dark:text-white text-xs" x-text="sched.day_name + ', ' + sched.time_range"></span>
+                                                    <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase"
+                                                          :class="sched.session_type === 'swim' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-orange-500/20 text-orange-400 border border-orange-500/30'"
+                                                          x-text="sched.session_type === 'swim' ? 'Renang' : 'Dryland'"></span>
+                                                </div>
+                                                <span class="block text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                                                    <i class="fa-solid fa-map-pin text-[#D3AF37] mr-1"></i>
+                                                    <span x-text="sched.location ? sched.location.name : 'Kolam'"></span>
+                                                </span>
+                                                <span class="block text-xs text-gray-600 dark:text-gray-300 mt-0.5 truncate">
+                                                    <i class="fa-solid fa-user-tie text-[#D3AF37] mr-1"></i>Pelatih: 
+                                                    <span class="font-semibold text-gray-800 dark:text-white" x-text="sched.coach ? sched.coach.name : 'Belum Diatur'"></span>
+                                                </span>
+                                                <span class="block text-[10px] font-extrabold mt-1.5"
+                                                      :class="(sched.current_enrolled_count || 0) >= (sched.capacity_limit || 4) ? 'text-rose-400' : 'text-emerald-400'"
+                                                      x-text="(sched.current_enrolled_count || 0) + '/' + (sched.capacity_limit || 4) + ' Terisi' + ((sched.current_enrolled_count || 0) >= (sched.capacity_limit || 4) ? ' (Penuh)' : '')"></span>
+                                            </div>
+                                        </label>
+                                    </template>
+                                </div>
+
+                                <template x-if="filteredSchedules.length === 0">
+                                    <div class="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300 flex items-start gap-2.5 mt-2">
+                                        <i class="fa-solid fa-triangle-exclamation text-rose-400 text-base mt-0.5 shrink-0"></i>
+                                        <div>
+                                            <strong class="font-bold block mb-0.5">Tidak Ada Jadwal Berkelanjutan:</strong>
+                                            Belum ada jadwal aktif lain yang terdaftar khusus untuk kelas ini. Silakan buat jadwal baru terlebih dahulu di menu <strong>Kelola Jadwal</strong>.
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Pilih Sesi & Pelatih Pengganti <span class="text-red-500">*</span></label>
-                                <select name="rescheduled_schedule_id" x-model="rescheduledScheduleId" required 
-                                        class="w-full text-sm border-gray-300 rounded-xl shadow-sm focus:border-[#D3AF37] focus:ring-[#D3AF37]">
-                                    <option value="">-- Pilih Sesi & Pelatih --</option>
-                                    @foreach($availableSchedules as $sched)
-                                        @php
-                                            $sCat = $sched->swimmingClass->category->name ?? 'Belajar';
-                                        @endphp
-                                        <option value="{{ $sched->id }}">
-                                            [{{ $sCat }}] {{ $sched->swimmingClass->name }} - {{ $sched->day_name }} ({{ $sched->time_range }}) @ {{ $sched->location->name ?? '' }} - Coach: {{ $sched->coach->name ?? 'Belum Diatur' }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 uppercase mb-1">Tanggal Pengganti <span class="text-red-500">*</span></label>
+                                <div class="relative mt-1">
+                                    <input type="date" id="rescheduled_date" name="rescheduled_date" x-model="rescheduledDate" required 
+                                           class="w-full text-sm border-gray-300 dark:border-strokedark bg-white dark:bg-meta-4 text-gray-900 dark:text-white rounded-xl shadow-sm focus:border-[#D3AF37] focus:ring-[#D3AF37] pr-10 cursor-pointer">
+                                    <button type="button" onclick="document.getElementById('rescheduled_date').showPicker()"
+                                            class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-[#D3AF37] transition-colors">
+                                        <i class="fa-solid fa-calendar-days text-sm"></i>
+                                    </button>
+                                </div>
+                                <p class="text-[11px] text-emerald-400 mt-1 italic flex items-center gap-1" x-show="rescheduledDate">
+                                    <i class="fa-solid fa-circle-info"></i> Tanggal otomatis disesuaikan ke hari terdekat: <strong x-text="formatDate(rescheduledDate)"></strong>
+                                </p>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Catatan Tambahan (Opsional)</label>
+                                <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 uppercase mb-1">Catatan Tambahan (Opsional)</label>
                                 <textarea name="notes" x-model="notes" rows="2" placeholder="Catatan untuk orang tua / pelatih..." 
-                                          class="w-full text-sm border-gray-300 rounded-xl shadow-sm focus:border-[#D3AF37] focus:ring-[#D3AF37]"></textarea>
+                                          class="w-full text-sm border-gray-300 dark:border-strokedark bg-white dark:bg-meta-4 text-gray-900 dark:text-white rounded-xl shadow-sm focus:border-[#D3AF37] focus:ring-[#D3AF37]"></textarea>
                             </div>
 
-                            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                                <button type="button" @click="openModal = false" class="px-4 py-2 text-xs font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+                            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-strokedark">
+                                <button type="button" @click="openModal = false" class="px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-meta-4 rounded-xl hover:bg-gray-200 transition">
                                     Batal
                                 </button>
                                 <button type="submit" class="px-5 py-2 text-xs font-extrabold text-[#101828] bg-[#D3AF37] hover:bg-[#B89426] rounded-xl transition shadow-md">

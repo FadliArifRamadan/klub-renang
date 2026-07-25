@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['coach_id', 'leave_date', 'reason', 'status', 'substitute_coach_id', 'rejection_reason'])]
+#[Fillable(['coach_id', 'schedule_id', 'leave_date', 'reason', 'status', 'substitute_coach_id', 'rejection_reason'])]
 class CoachLeave extends Model
 {
     protected $casts = [
@@ -17,6 +17,12 @@ class CoachLeave extends Model
     public function coach(): BelongsTo
     {
         return $this->belongsTo(User::class, 'coach_id');
+    }
+
+    // Relasi ke Jadwal Spesifik
+    public function schedule(): BelongsTo
+    {
+        return $this->belongsTo(Schedule::class, 'schedule_id');
     }
 
     // Relasi ke Pelatih Pengganti (Substitute Coach)

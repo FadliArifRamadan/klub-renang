@@ -44,4 +44,9 @@ class User extends Authenticatable
         // Hubungkan ke model Student menggunakan foreign key 'user_id' yang didaftarkan oleh Parent ini
         return $this->hasMany(Student::class, 'user_id');
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'coach_id');
+    }
 }

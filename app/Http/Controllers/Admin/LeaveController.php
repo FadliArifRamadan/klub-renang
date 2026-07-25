@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CoachLeave;
+use App\Models\RescheduleQueue;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Notifications\CoachLeaveApproved;
@@ -20,78 +21,80 @@ class LeaveController extends Controller
     {
         $status = $request->input('status', 'pending');
 
-        $query = CoachLeave::with(['coach', 'substituteCoach'])
+        $query = CoachLeave::with(['coach', 'substituteCoach', 'schedule.swimmingClass.category', 'schedule.location'])
             ->orderBy('leave_date', 'desc');
 
         if (in_array($status, ['pending', 'approved', 'rejected'])) {
             $query->where('status', $status);
         }
 
-        $leaves = $query->paginate(5)->withQueryString();
+        $leaves = $query->paginate(10)->withQueryString();
 
         // Ambil semua pelatih untuk pilihan manual
         $allCoaches = User::where('role', 'coach')->orderBy('name')->get();
-
-        // Ambil pemetaan coach ke kategori kelas yang mereka ajar (dari seluruh jadwal aktif)
-        $coachCategoryMap = DB::table('schedules')
-            ->join('swimming_classes', 'schedules.swimming_class_id', '=', 'swimming_classes.id')
-            ->join('class_categories', 'swimming_classes.class_category_id', '=', 'class_categories.id')
-            ->where('schedules.is_active', true)
-            ->whereNotNull('schedules.coach_id')
-            ->select('schedules.coach_id', 'class_categories.slug')
-            ->get();
 
         foreach ($leaves as $leave) {
             if ($leave->status === 'pending') {
                 $leaveDate = $leave->leave_date;
                 $carbonDayOfWeek = $leaveDate->dayOfWeek; // 0=Sunday, 1=Monday ...
                 $dayOfWeek = $carbonDayOfWeek === 0 ? 6 : $carbonDayOfWeek - 1; // 0=Monday ... 6=Sunday
+                $dayName = \Carbon\Carbon::parse($leaveDate)->locale('id')->translatedFormat('l');
 
-                $schedules = Schedule::where('coach_id', $leave->coach_id)
-                    ->where('day_of_week', $dayOfWeek)
-                    ->where('is_active', true)
-                    ->with('swimmingClass.category')
-                    ->get();
+                if ($leave->schedule_id) {
+                    $targetSchedule = Schedule::with('swimmingClass.category', 'location')->find($leave->schedule_id);
+                    $leave->schedules = $targetSchedule ? collect([$targetSchedule]) : collect();
+                    
+                    if ($targetSchedule && $targetSchedule->swimmingClass) {
+                        $targetClassId = $targetSchedule->swimming_class_id;
+                        $leave->target_class_name = ($targetSchedule->swimmingClass->category->name ?? 'Kelas') . ' — ' . $targetSchedule->swimmingClass->name;
+                        $leave->target_day_name = $dayName;
+                        
+                        // HANYA pelatih yang mengajar di NAMA KELAS SPESIFIK & HARI YANG SAMA (Same Class + Same Day)
+                        $eligibleCoaches = User::where('role', 'coach')
+                            ->where('id', '!=', $leave->coach_id)
+                            ->whereHas('schedules', function ($q) use ($targetClassId, $dayOfWeek) {
+                                $q->where('swimming_class_id', $targetClassId)
+                                  ->where('day_of_week', $dayOfWeek)
+                                  ->where('is_active', true);
+                            })
+                            ->orderBy('name')
+                            ->get();
 
-                $leave->schedules = $schedules;
-
-                $leavingCategories = $schedules->map(function($s) {
-                    return $s->swimmingClass->category->slug ?? null;
-                })->filter()->unique()->toArray();
-
-                $substitutes = User::where('role', 'coach')
-                    ->where('id', '!=', $leave->coach_id)
-                    ->orderBy('name')
-                    ->get();
-
-                $coachCategoryMap = [];
-                foreach ($substitutes as $coach) {
-                    $cats = Schedule::where('coach_id', $coach->id)
+                        $leave->eligible_substitutes = $eligibleCoaches;
+                    } else {
+                        $leave->target_class_name = 'Semua Kelas Hari Ini';
+                        $leave->target_day_name = $dayName;
+                        $leave->eligible_substitutes = collect();
+                    }
+                } else {
+                    $schedules = Schedule::where('coach_id', $leave->coach_id)
+                        ->where('day_of_week', $dayOfWeek)
                         ->where('is_active', true)
-                        ->join('swimming_classes', 'schedules.swimming_class_id', '=', 'swimming_classes.id')
-                        ->join('class_categories', 'swimming_classes.class_category_id', '=', 'class_categories.id')
-                        ->pluck('class_categories.slug')
-                        ->unique()
-                        ->toArray();
+                        ->with(['swimmingClass.category', 'location'])
+                        ->get();
 
-                    $coachCategoryMap[$coach->id] = $cats;
+                    $leave->schedules = $schedules;
+                    $leave->target_class_name = 'Semua Sesi Hari Ini';
+                    $leave->target_day_name = $dayName;
+
+                    $targetClassIds = $schedules->pluck('swimming_class_id')->filter()->unique()->toArray();
+
+                    if (!empty($targetClassIds)) {
+                        $eligibleCoaches = User::where('role', 'coach')
+                            ->where('id', '!=', $leave->coach_id)
+                            ->whereHas('schedules', function ($q) use ($targetClassIds, $dayOfWeek) {
+                                $q->whereIn('swimming_class_id', $targetClassIds)
+                                  ->where('day_of_week', $dayOfWeek)
+                                  ->where('is_active', true);
+                            })
+                            ->orderBy('name')
+                            ->get();
+
+                        $leave->eligible_substitutes = $eligibleCoaches;
+                    } else {
+                        $leave->eligible_substitutes = collect();
+                    }
                 }
-
-                $leave->recommended_coaches = $substitutes->filter(function($coach) use ($coachCategoryMap, $leavingCategories) {
-                    $cCats = $coachCategoryMap[$coach->id] ?? [];
-                    return count(array_intersect($leavingCategories, $cCats)) > 0;
-                });
-
-                $dayCoaches = User::where('role', 'coach')
-                    ->where('id', '!=', $leave->coach_id)
-                    ->whereHas('schedules', function($q) use ($dayOfWeek) {
-                        $q->where('day_of_week', $dayOfWeek)->where('is_active', true);
-                    })->get();
-
-                $leave->day_coaches = $dayCoaches->filter(function($coach) use ($coachCategoryMap, $leavingCategories) {
-                    $cCats = $coachCategoryMap[$coach->id] ?? [];
-                    return count(array_intersect($leavingCategories, $cCats)) > 0;
-                });
             }
         }
 
@@ -115,33 +118,46 @@ class LeaveController extends Controller
 
         if ($request->substitute_coach_id) {
             $subId = $request->substitute_coach_id;
-            
-            // Dapatkan hari latihan (Monday=0 ... Sunday=6)
+            $subCoach = User::find($subId);
             $leaveDate = $leave->leave_date;
             $carbonDayOfWeek = $leaveDate->dayOfWeek;
             $dayOfWeek = $carbonDayOfWeek === 0 ? 6 : $carbonDayOfWeek - 1;
+            $dayName = \Carbon\Carbon::parse($leaveDate)->locale('id')->translatedFormat('l');
 
-            $schedules = Schedule::where('coach_id', $leave->coach_id)
-                ->where('day_of_week', $dayOfWeek)
-                ->where('is_active', true)
-                ->get();
+            if ($leave->schedule_id) {
+                $targetSchedule = Schedule::with('swimmingClass.category')->find($leave->schedule_id);
+                if ($targetSchedule && $targetSchedule->swimmingClass) {
+                    $targetClassId = $targetSchedule->swimming_class_id;
+                    $targetClassName = ($targetSchedule->swimmingClass->category->name ?? 'Kelas') . ' (' . $targetSchedule->swimmingClass->name . ')';
 
-            $leavingCategories = $schedules->map(function($s) {
-                return $s->swimmingClass->category->slug ?? null;
-            })->filter()->unique()->toArray();
+                    // Pengecekan ketat: Pelatih pengganti HARUS mengajar swimming_class_id yang sama persis DI HARI YANG SAMA
+                    $isTeachesClassOnSameDay = Schedule::where('coach_id', $subId)
+                        ->where('swimming_class_id', $targetClassId)
+                        ->where('day_of_week', $dayOfWeek)
+                        ->where('is_active', true)
+                        ->exists();
 
-            // Kategori kelas yang diampu oleh pelatih pengganti (dari seluruh jadwal aktifnya)
-            $subCategories = Schedule::where('coach_id', $subId)
-                ->where('is_active', true)
-                ->join('swimming_classes', 'schedules.swimming_class_id', '=', 'swimming_classes.id')
-                ->join('class_categories', 'swimming_classes.class_category_id', '=', 'class_categories.id')
-                ->pluck('class_categories.slug')
-                ->unique()
-                ->toArray();
+                    if (!$isTeachesClassOnSameDay) {
+                        return redirect()->back()->with('error', "Pelatih pengganti ({$subCoach->name}) tidak memiliki jadwal mengajar di {$targetClassName} pada hari {$dayName}. Pelatih pengganti wajib bertugas di hari yang sama.");
+                    }
+                }
+            } else {
+                $schedules = Schedule::where('coach_id', $leave->coach_id)
+                    ->where('day_of_week', $dayOfWeek)
+                    ->where('is_active', true)
+                    ->get();
 
-            $hasMatch = count(array_intersect($leavingCategories, $subCategories)) > 0;
-            if (!$hasMatch && count($leavingCategories) > 0) {
-                return redirect()->back()->with('error', 'Pelatih pengganti yang dipilih tidak mengajar kategori kelas yang sama (Belajar/Prestasi) dengan jadwal pelatih yang izin.');
+                $targetClassIds = $schedules->pluck('swimming_class_id')->filter()->unique()->toArray();
+
+                $isTeachesClassOnSameDay = Schedule::where('coach_id', $subId)
+                    ->whereIn('swimming_class_id', $targetClassIds)
+                    ->where('day_of_week', $dayOfWeek)
+                    ->where('is_active', true)
+                    ->exists();
+
+                if (!$isTeachesClassOnSameDay && !empty($targetClassIds)) {
+                    return redirect()->back()->with('error', "Pelatih pengganti ({$subCoach->name}) tidak memiliki jadwal mengajar di kelas yang sama pada hari {$dayName}.");
+                }
             }
         }
 
@@ -150,17 +166,23 @@ class LeaveController extends Controller
             'substitute_coach_id' => $request->substitute_coach_id ?: null,
         ]);
 
-        // Jika tidak ada pelatih pengganti (Sesi diliburkan), masukkan semua murid pada jadwal pelatih ini ke Antrean Reschedule
+        // Jika tidak ada pelatih pengganti (Sesi diliburkan), masukkan murid pada jadwal spesifik ini ke Antrean Reschedule
         if (!$request->substitute_coach_id) {
             $leaveDate = $leave->leave_date;
             $carbonDayOfWeek = $leaveDate->dayOfWeek;
             $dayOfWeek = $carbonDayOfWeek === 0 ? 6 : $carbonDayOfWeek - 1;
 
-            $schedules = Schedule::with(['students', 'swimmingClass'])
-                ->where('coach_id', $leave->coach_id)
-                ->where('day_of_week', $dayOfWeek)
-                ->where('is_active', true)
-                ->get();
+            if ($leave->schedule_id) {
+                $schedules = Schedule::with(['students', 'swimmingClass'])
+                    ->where('id', $leave->schedule_id)
+                    ->get();
+            } else {
+                $schedules = Schedule::with(['students', 'swimmingClass'])
+                    ->where('coach_id', $leave->coach_id)
+                    ->where('day_of_week', $dayOfWeek)
+                    ->where('is_active', true)
+                    ->get();
+            }
 
             foreach ($schedules as $sched) {
                 foreach ($sched->students as $student) {
@@ -180,14 +202,13 @@ class LeaveController extends Controller
             }
         }
 
-        // Kirim notifikasi ke coach yang izin
-        $leave->load(['coach', 'substituteCoach']);
+        // Kirim notifikasi email/sistem ke Pelatih
         if ($leave->coach) {
             $leave->coach->notify(new CoachLeaveApproved($leave));
         }
 
-        $subtext = $request->substitute_coach_id ? ' dengan pelatih pengganti' : ' dan sesi latihan diliburkan (masuk antrean reschedule)';
-        return redirect()->route('admin.leaves.index')->with('success', 'Izin pelatih berhasil disetujui' . $subtext . '!');
+        return redirect()->route('admin.leaves.index')
+            ->with('success', 'Pengajuan izin pelatih berhasil disetujui.');
     }
 
     /**
@@ -196,10 +217,10 @@ class LeaveController extends Controller
     public function reject(Request $request, $id)
     {
         $request->validate([
-            'rejection_reason' => 'required|string|max:500',
+            'rejection_reason' => 'required|string|max:1000',
         ], [
-            'rejection_reason.required' => 'Alasan penolakan wajib diisi.',
-            'rejection_reason.max' => 'Alasan penolakan maksimal 500 karakter.',
+            'rejection_reason.required' => 'Alasan penolakan izin wajib diisi.',
+            'rejection_reason.max' => 'Alasan penolakan maksimal 1000 karakter.',
         ]);
 
         $leave = CoachLeave::findOrFail($id);
@@ -213,12 +234,12 @@ class LeaveController extends Controller
             'rejection_reason' => $request->rejection_reason,
         ]);
 
-        // Kirim notifikasi ke coach yang izin
-        $leave->load('coach');
+        // Kirim notifikasi email/sistem ke Pelatih
         if ($leave->coach) {
             $leave->coach->notify(new CoachLeaveRejected($leave));
         }
 
-        return redirect()->route('admin.leaves.index')->with('success', 'Izin pelatih telah ditolak!');
+        return redirect()->route('admin.leaves.index')
+            ->with('success', 'Pengajuan izin pelatih berhasil ditolak.');
     }
 }

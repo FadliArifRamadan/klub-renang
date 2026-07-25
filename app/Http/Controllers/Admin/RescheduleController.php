@@ -41,10 +41,15 @@ class RescheduleController extends Controller
 
         $queues = $query->paginate(10)->withQueryString();
 
-        // Ambil semua jadwal aktif untuk dropdown opsi reschedule
+        // Ambil semua jadwal aktif dengan appended accessors, kuota terisi, & batas kuota
         $availableSchedules = Schedule::with(['swimmingClass.category', 'location', 'coach'])
             ->where('is_active', true)
-            ->get();
+            ->get()
+            ->each(function ($sched) {
+                $sched->append(['day_name', 'time_range']);
+                $sched->current_enrolled_count = $sched->getCurrentEnrolledCount();
+                $sched->capacity_limit = $sched->swimmingClass->quota ?? 4;
+            });
 
         return view('admin.reschedule.index', compact('queues', 'status', 'category', 'availableSchedules'));
     }
@@ -69,12 +74,16 @@ class RescheduleController extends Controller
 
         $newSchedule = Schedule::with('swimmingClass.category')->findOrFail($request->rescheduled_schedule_id);
 
-        // Pastikan kategori kelas baru cocok dengan kategori kelas asal murid (Belajar vs Prestasi)
-        $origCategory = $item->swimmingClass->category->slug ?? null;
-        $newCategory = $newSchedule->swimmingClass->category->slug ?? null;
+        // Proteksi 1: Tidak boleh memilih jadwal asal yang sedang diliburkan
+        if ($item->schedule_id && $item->schedule_id == $newSchedule->id) {
+            return redirect()->back()->with('error', 'Gagal: Anda tidak bisa memilih jadwal yang sedang diliburkan sebagai jadwal pengganti.');
+        }
 
-        if ($origCategory && $newCategory && $origCategory !== $newCategory) {
-            return redirect()->back()->with('error', 'Kategori kelas tidak cocok! Murid kategori ' . ucfirst($origCategory) . ' tidak bisa dipindahkan ke jadwal kategori ' . ucfirst($newCategory) . '.');
+        // Proteksi 2: Pastikan nama kelas dan kategori jadwal baru cocok persis dengan kelas asal murid (swimming_class_id)
+        if ($item->swimming_class_id && $item->swimming_class_id != $newSchedule->swimming_class_id) {
+            $origClassName = ($item->swimmingClass->category->name ?? 'Kelas') . ' — ' . ($item->swimmingClass->name ?? '');
+            $newClassName = ($newSchedule->swimmingClass->category->name ?? 'Kelas') . ' — ' . ($newSchedule->swimmingClass->name ?? '');
+            return redirect()->back()->with('error', "Jadwal pengganti tidak cocok! Murid terdaftar di '{$origClassName}', tidak dapat di-reschedule ke '{$newClassName}'.");
         }
 
         // Update record reschedule queue
@@ -93,10 +102,9 @@ class RescheduleController extends Controller
                 'date' => $request->rescheduled_date,
             ],
             [
-                'schedule_id' => $request->rescheduled_schedule_id,
-                'coach_id' => $newSchedule->coach_id,
-                'status' => 'scheduled',
-                'notes' => 'Sesi Reschedule Pengganti (' . $item->original_date->format('d/m/Y') . ') - ' . ($request->notes ?? 'Dijadwalkan oleh Admin'),
+                'coach_id' => $newSchedule->coach_id ?? Auth::id(),
+                'location_id' => $newSchedule->location_id ?? $item->student->location_id,
+                'session_type' => $newSchedule->session_type ?? 'swim',
             ]
         );
 

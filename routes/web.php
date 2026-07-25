@@ -6,10 +6,36 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CompanyProfileController;
 
 Route::get('/', [CompanyProfileController::class, 'home'])->name('welcome');
-Route::get('/tentang-kami', [CompanyProfileController::class, 'about'])->name('about');
-Route::get('/program-paket', [CompanyProfileController::class, 'packages'])->name('packages');
+
+Route::get('/tentang-kami', function () {
+    return redirect()->route('about.vision-mission');
+})->name('about');
+
+Route::get('/tentang-kami/visi-misi', [CompanyProfileController::class, 'aboutVisionMission'])->name('about.vision-mission');
+Route::get('/tentang-kami/sejarah', [CompanyProfileController::class, 'aboutHistory'])->name('about.history');
+Route::get('/tentang-kami/tim-pelatih', [CompanyProfileController::class, 'aboutCoaches'])->name('about.coaches');
+Route::get('/program-paket', function () {
+    return redirect()->route('packages.belajar.level', 'batita');
+})->name('packages');
+
+Route::get('/program-paket/belajar', function () {
+    return redirect()->route('packages.belajar.level', 'batita');
+})->name('packages.belajar');
+
+Route::get('/program-paket/belajar/{slug}', [CompanyProfileController::class, 'packagesBelajarLevel'])->name('packages.belajar.level');
+Route::get('/program-paket/prestasi', [CompanyProfileController::class, 'packagesPrestasi'])->name('packages.prestasi');
 Route::get('/kolam-latihan', [CompanyProfileController::class, 'locations'])->name('locations');
-Route::get('/jadwal-latihan', [CompanyProfileController::class, 'schedule'])->name('schedule');
+
+Route::get('/jadwal-latihan', function () {
+    return redirect()->route('schedule.belajar.level', 'batita');
+})->name('schedule');
+
+Route::get('/jadwal-latihan/belajar', function () {
+    return redirect()->route('schedule.belajar.level', 'batita');
+})->name('schedule.belajar');
+
+Route::get('/jadwal-latihan/belajar/{slug}', [CompanyProfileController::class, 'scheduleBelajarLevel'])->name('schedule.belajar.level');
+Route::get('/jadwal-latihan/prestasi', [CompanyProfileController::class, 'schedulePrestasi'])->name('schedule.prestasi');
 Route::get('/kontak-kami', [CompanyProfileController::class, 'contact'])->name('contact');
 
 // Route khusus yang sudah LOGIN
@@ -142,6 +168,7 @@ Route::middleware('auth')->group(function () {
 
         // Izin Latihan Pelatih
         Route::get('/leaves', [\App\Http\Controllers\Coach\LeaveController::class, 'index'])->name('leaves.index');
+        Route::get('/leaves/schedules-by-date', [\App\Http\Controllers\Coach\LeaveController::class, 'getSchedulesByDate'])->name('leaves.schedules-by-date');
         Route::post('/leaves', [\App\Http\Controllers\Coach\LeaveController::class, 'store'])->name('leaves.store');
     });
 
@@ -189,7 +216,20 @@ Route::middleware('auth')->group(function () {
                 ->with(['coach', 'substituteCoach'])
                 ->get();
 
-            return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children', 'expiredStudents', 'packages', 'locations', 'schedules', 'activeLeaves'));
+            $rescheduleQueues = \App\Models\RescheduleQueue::whereIn('student_id', $children->pluck('id'))
+                ->with([
+                    'student',
+                    'schedule.swimmingClass',
+                    'schedule.location',
+                    'schedule.coach',
+                    'coachLeave.coach',
+                    'rescheduledSchedule.location',
+                    'rescheduledSchedule.coach'
+                ])
+                ->latest()
+                ->get();
+
+            return view('parent.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'children', 'expiredStudents', 'packages', 'locations', 'schedules', 'activeLeaves', 'rescheduleQueues'));
         })->name('dashboard');
 
         // Rute untuk melihat daftar anak (RESTful URI)
@@ -261,7 +301,22 @@ Route::middleware('auth')->group(function () {
                 ->with(['coach', 'substituteCoach'])
                 ->get();
 
-            return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent', 'expiredStudents', 'packages', 'locations', 'schedules', 'activeLeaves'));
+            $rescheduleQueues = $myStudent
+                ? \App\Models\RescheduleQueue::where('student_id', $myStudent->id)
+                    ->with([
+                        'student',
+                        'schedule.swimmingClass',
+                        'schedule.location',
+                        'schedule.coach',
+                        'coachLeave.coach',
+                        'rescheduledSchedule.location',
+                        'rescheduledSchedule.coach'
+                    ])
+                    ->latest()
+                    ->get()
+                : collect();
+
+            return view('general.dashboard', compact('totalStudents', 'totalCoaches', 'totalLocations', 'myStudent', 'expiredStudents', 'packages', 'locations', 'schedules', 'activeLeaves', 'rescheduleQueues'));
         })->name('dashboard');
         Route::get('/students', [\App\Http\Controllers\General\StudentController::class, 'index'])->name('students.index');
         // Routes for General user to register a package (single registration)

@@ -37,19 +37,35 @@
             @include('layouts.navigation')
 
             <div class="p-4 mx-auto max-w-screen-2xl md:p-6">
-                <!-- Flash Messages -->
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4">
-                    @if (session('success'))
-                        <div class="bg-success-50 border border-success-200 text-success-700 px-4 py-3 rounded-lg mb-2 flex items-center">
-                            <i class="fa-solid fa-check-circle mr-2 text-success-500"></i> {{ session('success') }}
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-lg mb-2 flex items-center">
-                            <i class="fa-solid fa-triangle-exclamation mr-2 text-error-500"></i> {{ session('error') }}
-                        </div>
-                    @endif
-                </div>
+                <!-- Flash Messages (Global Single Notification) -->
+                @if (session('success') || session('error') || session('status'))
+                    <div x-data="{ show: true }" x-show="show" x-transition.duration.300ms x-init="setTimeout(() => show = false, 5000)" class="mb-4">
+                        @if (session('success'))
+                            <div class="flex items-center p-4 text-sm text-emerald-800 dark:text-emerald-300 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 shadow-sm" role="alert">
+                                <i class="fa-solid fa-circle-check text-lg mr-3 text-emerald-500 shrink-0"></i>
+                                <div>
+                                    <span class="font-bold">Sukses!</span> {{ session('success') }}
+                                </div>
+                            </div>
+                        @endif
+                        @if (session('error'))
+                            <div class="flex items-center p-4 text-sm text-rose-800 dark:text-rose-300 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/60 shadow-sm" role="alert">
+                                <i class="fa-solid fa-circle-xmark text-lg mr-3 text-rose-500 shrink-0"></i>
+                                <div>
+                                    <span class="font-bold">Error!</span> {{ session('error') }}
+                                </div>
+                            </div>
+                        @endif
+                        @if (session('status'))
+                            <div class="flex items-center p-4 text-sm text-blue-800 dark:text-blue-300 rounded-2xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800/60 shadow-sm" role="alert">
+                                <i class="fa-solid fa-circle-info text-lg mr-3 text-blue-500 shrink-0"></i>
+                                <div>
+                                    {{ session('status') }}
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endif
 
                 {{ $slot }}
             </div>

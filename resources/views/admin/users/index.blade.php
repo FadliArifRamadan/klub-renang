@@ -8,26 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Alert Notifikasi Sukses --}}
-            @if (session('success'))
-                <div class="flex p-4 mb-4 text-sm text-green-800 rounded-xl bg-green-50 border border-green-200" role="alert">
-                    <i class="fa-solid fa-circle-check mt-0.5 mr-2 text-lg"></i>
-                    <div>
-                        <span class="font-bold">Sukses!</span> {{ session('success') }}
-                    </div>
-                </div>
-            @endif
-
-            {{-- Alert Notifikasi Error --}}
-            @if (session('error'))
-                <div class="flex p-4 mb-4 text-sm text-red-800 rounded-xl bg-red-50 border border-red-200" role="alert">
-                    <i class="fa-solid fa-circle-xmark mt-0.5 mr-2 text-lg"></i>
-                    <div>
-                        <span class="font-bold">Error!</span> {{ session('error') }}
-                    </div>
-                </div>
-            @endif
-
             <div class="bg-white dark:bg-boxdark p-6 rounded-3xl shadow-sm border border-slate-100">
                 
                 {{-- Bagian Atas: Filter Tab Role + Form Pencarian --}}

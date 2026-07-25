@@ -25,22 +25,60 @@ class CompanyProfileController extends Controller
     }
 
     /**
-     * Tampilkan Halaman Tentang Kami (About Us)
+     * Tampilkan Halaman Visi & Misi
      */
-    public function about()
+    public function aboutVisionMission()
     {
-        $coaches = User::where('role', 'coach')->oldest()->get();
-        return view('company-profile.about', compact('coaches'));
+        return view('company-profile.about-vision-mission');
     }
 
     /**
-     * Tampilkan Halaman Program Paket (Packages)
+     * Tampilkan Halaman Sejarah & Perjalanan
      */
-    public function packages()
+    public function aboutHistory()
     {
-        $classCategories = \App\Models\ClassCategory::with(['swimmingClasses.packages.locationPrices.location'])
-            ->get();
-        return view('company-profile.packages', compact('classCategories'));
+        return view('company-profile.about-history');
+    }
+
+    /**
+     * Tampilkan Halaman Tim Instruktur / Pelatih
+     */
+    public function aboutCoaches()
+    {
+        $coaches = User::where('role', 'coach')->oldest()->get();
+        return view('company-profile.about-coaches', compact('coaches'));
+    }
+
+    /**
+     * Tampilkan Halaman Paket Belajar Renang per Tingkatan (Batita, Balita, Anak-anak, Dewasa)
+     */
+    public function packagesBelajarLevel($slug = 'batita')
+    {
+        $allBelajarClasses = \App\Models\SwimmingClass::with(['packages.locationPrices.location', 'category'])
+            ->whereHas('category', function ($q) {
+                $q->where('slug', 'belajar');
+            })->oldest()->get();
+
+        $swimmingClass = $allBelajarClasses->first(function ($c) use ($slug) {
+            return \Illuminate\Support\Str::slug($c->name) === \Illuminate\Support\Str::slug($slug);
+        });
+
+        if (!$swimmingClass) {
+            abort(404);
+        }
+
+        return view('company-profile.packages-belajar-level', compact('swimmingClass', 'allBelajarClasses'));
+    }
+
+    /**
+     * Tampilkan Halaman Paket Renang Prestasi
+     */
+    public function packagesPrestasi()
+    {
+        $prestasiCategory = \App\Models\ClassCategory::with(['swimmingClasses.packages'])
+            ->where('slug', 'prestasi')
+            ->first();
+        return view('company-profile.packages-prestasi', compact('prestasiCategory'));
     }
 
     /**
@@ -53,13 +91,39 @@ class CompanyProfileController extends Controller
     }
 
     /**
-     * Tampilkan Halaman Jadwal Latihan (Schedule)
+     * Tampilkan Halaman Jadwal Belajar Renang per Tingkatan (Batita, Balita, Anak-anak, Dewasa)
      */
-    public function schedule()
+    public function scheduleBelajarLevel($slug = 'batita')
     {
         $locations = Location::oldest()->get();
-        $classCategories = \App\Models\ClassCategory::with(['swimmingClasses.schedules.location'])->get();
-        return view('company-profile.schedule', compact('locations', 'classCategories'));
+        $allBelajarClasses = \App\Models\SwimmingClass::whereHas('category', function ($q) {
+            $q->where('slug', 'belajar');
+        })->oldest()->get();
+
+        $swimmingClass = \App\Models\SwimmingClass::with(['schedules.location', 'category'])
+            ->get()
+            ->first(function ($c) use ($slug) {
+                return \Illuminate\Support\Str::slug($c->name) === \Illuminate\Support\Str::slug($slug);
+            });
+
+        if (!$swimmingClass) {
+            abort(404);
+        }
+
+        return view('company-profile.schedule-belajar-level', compact('swimmingClass', 'allBelajarClasses', 'locations'));
+    }
+
+    /**
+     * Tampilkan Halaman Jadwal Renang Prestasi
+     */
+    public function schedulePrestasi()
+    {
+        $locations = Location::oldest()->get();
+        $prestasiCategory = \App\Models\ClassCategory::with(['swimmingClasses.schedules.location'])
+            ->where('slug', 'prestasi')
+            ->first();
+
+        return view('company-profile.schedule-prestasi', compact('prestasiCategory', 'locations'));
     }
 
     /**

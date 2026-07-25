@@ -100,18 +100,181 @@
                 <nav class="hidden lg:flex items-center gap-6">
                     <a href="<?php echo e(route('welcome')); ?>"
                         class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('welcome') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Home</a>
-                    <a href="<?php echo e(route('about')); ?>"
-                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('about') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Tentang
-                        Kami</a>
-                    <a href="<?php echo e(route('packages')); ?>"
-                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('packages') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Program
-                        Paket</a>
+                    <!-- Dropdown Tentang Kami -->
+                    <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative">
+                        <button type="button" class="flex items-center gap-1.5 text-sm font-bold transition-colors py-2 <?php echo e(request()->routeIs('about*') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">
+                            <span>Tentang Kami</span>
+                            <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 translate-y-2"
+                            class="absolute left-0 top-full pt-2 w-60 z-50"
+                            style="display: none;">
+                            <div class="bg-[#101828] border border-[#D3AF37]/40 shadow-2xl rounded-2xl p-2 text-white overflow-hidden">
+                                <a href="<?php echo e(route('about.vision-mission')); ?>"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors <?php echo e(request()->routeIs('about.vision-mission') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                    <i class="fa-solid fa-bullseye text-[#D3AF37] w-5 text-center <?php echo e(request()->routeIs('about.vision-mission') ? 'text-[#101828]' : ''); ?>"></i>
+                                    <span>Visi & Misi</span>
+                                </a>
+                                <a href="<?php echo e(route('about.history')); ?>"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors <?php echo e(request()->routeIs('about.history') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                    <i class="fa-solid fa-timeline text-[#D3AF37] w-5 text-center <?php echo e(request()->routeIs('about.history') ? 'text-[#101828]' : ''); ?>"></i>
+                                    <span>Sejarah & Perjalanan</span>
+                                </a>
+                                <a href="<?php echo e(route('about.coaches')); ?>"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors <?php echo e(request()->routeIs('about.coaches') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                    <i class="fa-solid fa-user-tie text-[#D3AF37] w-5 text-center <?php echo e(request()->routeIs('about.coaches') ? 'text-[#101828]' : ''); ?>"></i>
+                                    <span>Tim Instruktur</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Dropdown Program Paket -->
+                    <div x-data="{ open: false, subOpen: false }" @mouseenter="open = true" @mouseleave="open = false; subOpen = false" class="relative">
+                        <button type="button" class="flex items-center gap-1.5 text-sm font-bold transition-colors py-2 <?php echo e(request()->routeIs('packages*') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">
+                            <span>Program Paket</span>
+                            <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 translate-y-2"
+                            class="absolute left-0 top-full pt-2 w-64 z-50"
+                            style="display: none;">
+                            <div class="bg-[#101828] border border-[#D3AF37]/40 shadow-2xl rounded-2xl p-2 text-white relative">
+                                <!-- Nested Submenu Trigger for Kelas Belajar -->
+                                <div class="relative" @mouseenter="subOpen = true" @mouseleave="subOpen = false">
+                                    <div class="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition-colors cursor-pointer <?php echo e(request()->routeIs('packages.belajar*') ? 'bg-[#D3AF37]/20 text-[#D3AF37]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fa-solid fa-person-swimming text-[#D3AF37] w-5 text-center"></i>
+                                            <span>Kelas Belajar Renang</span>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-right text-xs opacity-75"></i>
+                                    </div>
+
+                                    <!-- Flyout Submenu for Class Levels -->
+                                    <div x-show="subOpen"
+                                        x-transition:enter="transition ease-out duration-150"
+                                        x-transition:enter-start="opacity-0 translate-x-2"
+                                        x-transition:enter-end="opacity-100 translate-x-0"
+                                        x-transition:leave="transition ease-in duration-100"
+                                        x-transition:leave-start="opacity-100 translate-x-0"
+                                        x-transition:leave-end="opacity-0 translate-x-2"
+                                        class="absolute left-full top-0 pl-2 w-56 z-50"
+                                        style="display: none;">
+                                        <div class="bg-[#101828] border border-[#D3AF37]/40 shadow-2xl rounded-2xl p-2 text-white space-y-1">
+                                            <a href="<?php echo e(route('packages.belajar.level', 'batita')); ?>"
+                                                class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors <?php echo e(request()->is('program-paket/belajar/batita') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                                <i class="fa-solid fa-baby text-[#D3AF37] w-4 text-center <?php echo e(request()->is('program-paket/belajar/batita') ? 'text-[#101828]' : ''); ?>"></i>
+                                                <span>Tingkat Batita (1-3 Thn)</span>
+                                            </a>
+                                            <a href="<?php echo e(route('packages.belajar.level', 'balita')); ?>"
+                                                class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors <?php echo e(request()->is('program-paket/belajar/balita') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                                <i class="fa-solid fa-child text-[#D3AF37] w-4 text-center <?php echo e(request()->is('program-paket/belajar/balita') ? 'text-[#101828]' : ''); ?>"></i>
+                                                <span>Tingkat Balita (4-5 Thn)</span>
+                                            </a>
+                                            <a href="<?php echo e(route('packages.belajar.level', 'anak-anak')); ?>"
+                                                class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors <?php echo e(request()->is('program-paket/belajar/anak-anak') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                                <i class="fa-solid fa-child-reaching text-[#D3AF37] w-4 text-center <?php echo e(request()->is('program-paket/belajar/anak-anak') ? 'text-[#101828]' : ''); ?>"></i>
+                                                <span>Tingkat Anak (6-12 Thn)</span>
+                                            </a>
+                                            <a href="<?php echo e(route('packages.belajar.level', 'dewasa')); ?>"
+                                                class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors <?php echo e(request()->is('program-paket/belajar/dewasa') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                                <i class="fa-solid fa-user text-[#D3AF37] w-4 text-center <?php echo e(request()->is('program-paket/belajar/dewasa') ? 'text-[#101828]' : ''); ?>"></i>
+                                                <span>Tingkat Dewasa (13+ Thn)</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a href="<?php echo e(route('packages.prestasi')); ?>"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors <?php echo e(request()->routeIs('packages.prestasi') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                    <i class="fa-solid fa-trophy text-[#D3AF37] w-5 text-center <?php echo e(request()->routeIs('packages.prestasi') ? 'text-[#101828]' : ''); ?>"></i>
+                                    <span>Kelas Renang Prestasi</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <a href="<?php echo e(route('locations')); ?>"
                         class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('locations') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Kolam
                         Latihan</a>
-                    <a href="<?php echo e(route('schedule')); ?>"
-                        class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('schedule') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Jadwal
-                        Latihan</a>
+                    <!-- Dropdown Jadwal Latihan -->
+                    <div x-data="{ open: false, subOpen: false }" @mouseenter="open = true" @mouseleave="open = false; subOpen = false" class="relative">
+                        <button type="button" class="flex items-center gap-1.5 text-sm font-bold transition-colors py-2 <?php echo e(request()->routeIs('schedule*') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">
+                            <span>Jadwal Latihan</span>
+                            <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 translate-y-2"
+                            class="absolute left-0 top-full pt-2 w-64 z-50"
+                            style="display: none;">
+                            <div class="bg-[#101828] border border-[#D3AF37]/40 shadow-2xl rounded-2xl p-2 text-white relative">
+                                <!-- Nested Submenu Trigger for Kelas Belajar -->
+                                <div class="relative" @mouseenter="subOpen = true" @mouseleave="subOpen = false">
+                                    <div class="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition-colors cursor-pointer <?php echo e(request()->routeIs('schedule.belajar*') ? 'bg-[#D3AF37]/20 text-[#D3AF37]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fa-solid fa-person-swimming text-[#D3AF37] w-5 text-center"></i>
+                                            <span>Kelas Belajar Renang</span>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-right text-xs opacity-75"></i>
+                                    </div>
+
+                                    <!-- Flyout Submenu for Class Levels -->
+                                    <div x-show="subOpen"
+                                        x-transition:enter="transition ease-out duration-150"
+                                        x-transition:enter-start="opacity-0 translate-x-2"
+                                        x-transition:enter-end="opacity-100 translate-x-0"
+                                        x-transition:leave="transition ease-in duration-100"
+                                        x-transition:leave-start="opacity-100 translate-x-0"
+                                        x-transition:leave-end="opacity-0 translate-x-2"
+                                        class="absolute left-full top-0 pl-2 w-56 z-50"
+                                        style="display: none;">
+                                        <div class="bg-[#101828] border border-[#D3AF37]/40 shadow-2xl rounded-2xl p-2 text-white space-y-1">
+                                            <a href="<?php echo e(route('schedule.belajar.level', 'batita')); ?>"
+                                                class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors <?php echo e(request()->is('jadwal-latihan/belajar/batita') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                                <i class="fa-solid fa-baby text-[#D3AF37] w-4 text-center <?php echo e(request()->is('jadwal-latihan/belajar/batita') ? 'text-[#101828]' : ''); ?>"></i>
+                                                <span>Tingkat Batita (1-3 Thn)</span>
+                                            </a>
+                                            <a href="<?php echo e(route('schedule.belajar.level', 'balita')); ?>"
+                                                class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors <?php echo e(request()->is('jadwal-latihan/belajar/balita') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                                <i class="fa-solid fa-child text-[#D3AF37] w-4 text-center <?php echo e(request()->is('jadwal-latihan/belajar/balita') ? 'text-[#101828]' : ''); ?>"></i>
+                                                <span>Tingkat Balita (4-5 Thn)</span>
+                                            </a>
+                                            <a href="<?php echo e(route('schedule.belajar.level', 'anak-anak')); ?>"
+                                                class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors <?php echo e(request()->is('jadwal-latihan/belajar/anak-anak') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                                <i class="fa-solid fa-child-reaching text-[#D3AF37] w-4 text-center <?php echo e(request()->is('jadwal-latihan/belajar/anak-anak') ? 'text-[#101828]' : ''); ?>"></i>
+                                                <span>Tingkat Anak (6-12 Thn)</span>
+                                            </a>
+                                            <a href="<?php echo e(route('schedule.belajar.level', 'dewasa')); ?>"
+                                                class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-colors <?php echo e(request()->is('jadwal-latihan/belajar/dewasa') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                                <i class="fa-solid fa-user text-[#D3AF37] w-4 text-center <?php echo e(request()->is('jadwal-latihan/belajar/dewasa') ? 'text-[#101828]' : ''); ?>"></i>
+                                                <span>Tingkat Dewasa (13+ Thn)</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a href="<?php echo e(route('schedule.prestasi')); ?>"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors <?php echo e(request()->routeIs('schedule.prestasi') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                    <i class="fa-solid fa-trophy text-[#D3AF37] w-5 text-center <?php echo e(request()->routeIs('schedule.prestasi') ? 'text-[#101828]' : ''); ?>"></i>
+                                    <span>Kelas Renang Prestasi</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <a href="<?php echo e(route('contact')); ?>"
                         class="text-sm font-bold transition-colors <?php echo e(request()->routeIs('contact') ? 'text-[#101828] underline underline-offset-4 decoration-2 font-extrabold' : 'text-[#101828]/80 hover:text-[#101828]'); ?>">Kontak
                         Kami</a>
@@ -163,18 +326,113 @@
             <div class="px-4 pt-2 pb-6 space-y-2">
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('welcome')); ?>"
                     class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('welcome') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Home</a>
-                <a @click="mobileMenuOpen = false" href="<?php echo e(route('about')); ?>"
-                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('about') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Tentang
-                    Kami</a>
-                <a @click="mobileMenuOpen = false" href="<?php echo e(route('packages')); ?>"
-                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('packages') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Program
-                    Paket</a>
+                <div x-data="{ open: <?php echo e(request()->routeIs('about*') ? 'true' : 'false'); ?> }">
+                    <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-base font-bold rounded-xl text-[#101828] hover:bg-black/10">
+                        <span>Tentang Kami</span>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                    </button>
+                    <div x-show="open" class="pl-4 pr-2 py-1 space-y-1">
+                        <a @click="mobileMenuOpen = false" href="<?php echo e(route('about.vision-mission')); ?>"
+                            class="block px-4 py-2.5 text-sm font-bold rounded-xl <?php echo e(request()->routeIs('about.vision-mission') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
+                            <i class="fa-solid fa-bullseye mr-2"></i> Visi & Misi
+                        </a>
+                        <a @click="mobileMenuOpen = false" href="<?php echo e(route('about.history')); ?>"
+                            class="block px-4 py-2.5 text-sm font-bold rounded-xl <?php echo e(request()->routeIs('about.history') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
+                            <i class="fa-solid fa-timeline mr-2"></i> Sejarah & Perjalanan
+                        </a>
+                        <a @click="mobileMenuOpen = false" href="<?php echo e(route('about.coaches')); ?>"
+                            class="block px-4 py-2.5 text-sm font-bold rounded-xl <?php echo e(request()->routeIs('about.coaches') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
+                            <i class="fa-solid fa-user-tie mr-2"></i> Tim Instruktur
+                        </a>
+                    </div>
+                </div>
+                <div x-data="{ open: <?php echo e(request()->routeIs('packages*') ? 'true' : 'false'); ?>, subOpen: true }">
+                    <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-base font-bold rounded-xl text-[#101828] hover:bg-black/10">
+                        <span>Program Paket</span>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                    </button>
+                    <div x-show="open" class="pl-4 pr-2 py-1 space-y-1">
+                        <!-- Sub-accordion for Kelas Belajar -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between px-4 py-2.5 text-sm font-bold text-[#101828] rounded-xl hover:bg-black/10">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-person-swimming"></i> Kelas Belajar Renang
+                                </span>
+                                <button @click="subOpen = !subOpen" type="button" class="p-1 text-slate-700">
+                                    <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': subOpen }"></i>
+                                </button>
+                            </div>
+                            <div x-show="subOpen" class="pl-6 space-y-1">
+                                <a @click="mobileMenuOpen = false" href="<?php echo e(route('packages.belajar.level', 'batita')); ?>"
+                                    class="block px-3 py-2 text-xs font-bold rounded-lg <?php echo e(request()->is('program-paket/belajar/batita') ? 'bg-[#101828] text-[#D3AF37]' : 'text-slate-800 hover:bg-black/10'); ?>">
+                                    • Tingkat Batita (1-3 Thn)
+                                </a>
+                                <a @click="mobileMenuOpen = false" href="<?php echo e(route('packages.belajar.level', 'balita')); ?>"
+                                    class="block px-3 py-2 text-xs font-bold rounded-lg <?php echo e(request()->is('program-paket/belajar/balita') ? 'bg-[#101828] text-[#D3AF37]' : 'text-slate-800 hover:bg-black/10'); ?>">
+                                    • Tingkat Balita (4-5 Thn)
+                                </a>
+                                <a @click="mobileMenuOpen = false" href="<?php echo e(route('packages.belajar.level', 'anak-anak')); ?>"
+                                    class="block px-3 py-2 text-xs font-bold rounded-lg <?php echo e(request()->is('program-paket/belajar/anak-anak') ? 'bg-[#101828] text-[#D3AF37]' : 'text-slate-800 hover:bg-black/10'); ?>">
+                                    • Tingkat Anak (6-12 Thn)
+                                </a>
+                                <a @click="mobileMenuOpen = false" href="<?php echo e(route('packages.belajar.level', 'dewasa')); ?>"
+                                    class="block px-3 py-2 text-xs font-bold rounded-lg <?php echo e(request()->is('program-paket/belajar/dewasa') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
+                                    • Tingkat Dewasa (13+ Thn)
+                                </a>
+                            </div>
+                        </div>
+
+                        <a @click="mobileMenuOpen = false" href="<?php echo e(route('packages.prestasi')); ?>"
+                            class="block px-4 py-2.5 text-sm font-bold rounded-xl <?php echo e(request()->routeIs('packages.prestasi') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
+                            <i class="fa-solid fa-trophy mr-2"></i> Kelas Renang Prestasi
+                        </a>
+                    </div>
+                </div>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('locations')); ?>"
                     class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('locations') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Kolam
                     Latihan</a>
-                <a @click="mobileMenuOpen = false" href="<?php echo e(route('schedule')); ?>"
-                    class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('schedule') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Jadwal
-                    Latihan</a>
+                <div x-data="{ open: <?php echo e(request()->routeIs('schedule*') ? 'true' : 'false'); ?>, subOpen: true }">
+                    <button @click="open = !open" class="w-full flex justify-between items-center px-4 py-3 text-base font-bold rounded-xl text-[#101828] hover:bg-black/10">
+                        <span>Jadwal Latihan</span>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                    </button>
+                    <div x-show="open" class="pl-4 pr-2 py-1 space-y-1">
+                        <!-- Sub-accordion for Kelas Belajar -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between px-4 py-2.5 text-sm font-bold text-[#101828] rounded-xl hover:bg-black/10">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-person-swimming"></i> Kelas Belajar Renang
+                                </span>
+                                <button @click="subOpen = !subOpen" type="button" class="p-1 text-slate-700">
+                                    <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': subOpen }"></i>
+                                </button>
+                            </div>
+                            <div x-show="subOpen" class="pl-6 space-y-1">
+                                <a @click="mobileMenuOpen = false" href="<?php echo e(route('schedule.belajar.level', 'batita')); ?>"
+                                    class="block px-3 py-2 text-xs font-bold rounded-lg <?php echo e(request()->is('jadwal-latihan/belajar/batita') ? 'bg-[#101828] text-[#D3AF37]' : 'text-slate-800 hover:bg-black/10'); ?>">
+                                    • Tingkat Batita (1-3 Thn)
+                                </a>
+                                <a @click="mobileMenuOpen = false" href="<?php echo e(route('schedule.belajar.level', 'balita')); ?>"
+                                    class="block px-3 py-2 text-xs font-bold rounded-lg <?php echo e(request()->is('jadwal-latihan/belajar/balita') ? 'bg-[#101828] text-[#D3AF37]' : 'text-slate-800 hover:bg-black/10'); ?>">
+                                    • Tingkat Balita (4-5 Thn)
+                                </a>
+                                <a @click="mobileMenuOpen = false" href="<?php echo e(route('schedule.belajar.level', 'anak-anak')); ?>"
+                                    class="block px-3 py-2 text-xs font-bold rounded-lg <?php echo e(request()->is('jadwal-latihan/belajar/anak-anak') ? 'bg-[#101828] text-[#D3AF37]' : 'text-slate-800 hover:bg-black/10'); ?>">
+                                    • Tingkat Anak (6-12 Thn)
+                                </a>
+                                <a @click="mobileMenuOpen = false" href="<?php echo e(route('schedule.belajar.level', 'dewasa')); ?>"
+                                    class="block px-3 py-2 text-xs font-bold rounded-lg <?php echo e(request()->is('jadwal-latihan/belajar/dewasa') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
+                                    • Tingkat Dewasa (13+ Thn)
+                                </a>
+                            </div>
+                        </div>
+
+                        <a @click="mobileMenuOpen = false" href="<?php echo e(route('schedule.prestasi')); ?>"
+                            class="block px-4 py-2.5 text-sm font-bold rounded-xl <?php echo e(request()->routeIs('schedule.prestasi') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
+                            <i class="fa-solid fa-trophy mr-2"></i> Kelas Renang Prestasi
+                        </a>
+                    </div>
+                </div>
                 <a @click="mobileMenuOpen = false" href="<?php echo e(route('contact')); ?>"
                     class="block px-4 py-3 text-base font-bold rounded-xl <?php echo e(request()->routeIs('contact') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">Kontak
                     Kami</a>
