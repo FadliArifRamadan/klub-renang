@@ -12,7 +12,7 @@
                 {{-- Header --}}
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
                     <h3 class="text-base font-semibold text-gray-800 dark:text-white">
-                        <i class="fa-solid fa-clipboard-list text-blue-600 mr-2"></i>Riwayat Absensi Kelas Belajar
+                        <i class="fa-solid fa-clipboard-list text-amber-500 mr-2"></i>Riwayat Absensi Kelas Belajar
                     </h3>
 
                     {{-- Search Form --}}
@@ -28,7 +28,7 @@
                         <button type="submit" class="px-3.5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-bold rounded-lg transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
                             Cari
                         </button>
-                        <a href="{{ route('admin.attendances.belajar') }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
+                        <a href="{{ route('admin.attendances.belajar') }}" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-lg border border-slate-600 shadow-sm transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
                             <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
                         </a>
                     </form>

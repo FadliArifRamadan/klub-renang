@@ -17,16 +17,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Suntik Akun Admin Utama
+        // 1. Suntik Akun Admin Finance & Admin Operasional
         User::firstOrCreate(
-            ['username' => 'admin'],
+            ['username' => 'adminfinance'],
             [
-                'name' => 'Admin Klub',
-                'phone' => '081234567890',
-                'role' => 'admin',
-                'password' => Hash::make('password123'), // Password-nya
+                'name' => 'Admin Finance',
+                'phone' => '081234567891',
+                'role' => 'admin_finance',
+                'password' => Hash::make('password123'),
             ]
         );
+
+        User::firstOrCreate(
+            ['username' => 'adminoperasional'],
+            [
+                'name' => 'Admin Operasional',
+                'phone' => '081234567892',
+                'role' => 'admin_operasional',
+                'password' => Hash::make('password123'),
+            ]
+        );
+
+
 
         // 2. Suntik Akun Coach Uji Coba (20 Coach)
         $coachData = [

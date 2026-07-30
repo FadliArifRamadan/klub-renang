@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-lg font-medium text-gray-900">
-                        <i class="fa-solid fa-address-card text-blue-600 mr-2"></i>Daftar Kursus Saya
+                        <i class="fa-solid fa-address-card text-amber-500 mr-2"></i>Daftar Kursus Saya
                     </h3>
                 </div>
 
@@ -20,7 +20,6 @@
                             <tr>
                                 <th class="px-6 py-3 text-center w-12">No</th>
                                 <th class="px-6 py-3">Nama Peserta</th>
-                                <th class="px-6 py-3">Gender</th>
                                 <th class="px-6 py-3">Paket Kursus</th>
                                 <th class="px-6 py-3 min-w-[150px]">Jadwal Latihan</th>
                                 <th class="px-6 py-3">Coach / Pelatih</th>
@@ -39,16 +38,32 @@
                                         <div class="text-xs text-gray-400 font-normal">Lahir:
                                             {{ $student->birth_date?->format('d M Y') }}</div>
                                     </td>
-                                    <td class="px-6 py-4">{{ $student->gender_label }}</td>
                                     <td class="px-6 py-4">
                                         <span
                                             class="font-medium text-gray-800">{{ $student->package->name ?? 'Tidak Ada Paket' }}</span>
                                         <div class="text-xs text-gray-400">Total: {{ $student->package->sessions ?? 0 }}
                                             Sesi</div>
-                                        @if ($student->package_expires_at)
-                                            <div class="text-[10px] text-gray-500 mt-0.5 whitespace-nowrap">
-                                                <i class="fa-solid fa-calendar-day mr-0.5"></i>
-                                                Batas: {{ $student->package_expires_at->format('d M Y') }}
+                                        @php
+                                            $isSingleSession = ($student->package->package_type ?? '') === 'single_session' || ($student->package->sessions ?? 0) == 1 || ($student->package->active_period_months ?? 1) == 0;
+                                        @endphp
+                                        @if ($student->package_activated_at || (!$isSingleSession && $student->package_expires_at))
+                                            <div class="text-[10px] text-gray-500 mt-0.5 space-y-0.5 whitespace-nowrap">
+                                                @if ($student->package_activated_at)
+                                                    <div>
+                                                        <i class="fa-solid fa-calendar-check mr-0.5 text-blue-500"></i>
+                                                        Mulai: {{ $student->package_activated_at->format('d M Y') }}
+                                                    </div>
+                                                @endif
+                                                @if (!$isSingleSession && $student->package_expires_at)
+                                                    <div>
+                                                        <i class="fa-solid fa-calendar-day mr-0.5 text-amber-500"></i>
+                                                        Batas: {{ $student->package_expires_at->format('d M Y') }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @elseif ($isSingleSession)
+                                            <div class="text-[10px] text-amber-600 font-bold mt-0.5 whitespace-nowrap">
+                                                <i class="fa-solid fa-bolt mr-0.5"></i> Sekali Pertemuan
                                             </div>
                                         @endif
                                     </td>
@@ -64,7 +79,7 @@
                                                     @if($sched->session_type == 'dryland')
                                                         <span class="text-amber-600">Darat</span>
                                                     @else
-                                                        <span class="text-blue-600">Renang</span>
+                                                        <span class="text-cyan-600">Renang</span>
                                                     @endif
                                                 </div>
                                             </div>
@@ -79,7 +94,7 @@
                                         @forelse($coaches as $c)
                                             <div class="mb-1.5 last:mb-0">
                                                 <span
-                                                    class="inline-flex items-center bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
+                                                    class="inline-flex items-center bg-[#D3AF37]/10 text-[#D3AF37] border border-[#D3AF37]/40 text-xs font-bold px-2.5 py-1 rounded">
                                                     <i class="fa-solid fa-user-tie mr-1.5"></i>
                                                     {{ $c->name }}
                                                 </span>
@@ -87,7 +102,7 @@
                                         @empty
                                             @if ($student->coach)
                                                 <span
-                                                    class="inline-flex items-center bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded">
+                                                    class="inline-flex items-center bg-[#D3AF37]/10 text-[#D3AF37] border border-[#D3AF37]/40 text-xs font-bold px-2.5 py-1 rounded">
                                                     <i class="fa-solid fa-user-tie mr-1.5"></i>
                                                     {{ $student->coach->name }}
                                                 </span>
@@ -105,7 +120,7 @@
                                             $barColor = match (true) {
                                                 $progressPct >= 80 => 'bg-red-500',
                                                 $progressPct >= 50 => 'bg-amber-400',
-                                                default => 'bg-blue-500',
+                                                default => 'bg-amber-400',
                                             };
                                         @endphp
                                         <div class="flex items-center gap-2">
@@ -118,7 +133,7 @@
                                             </span>
                                         </div>
                                         <div class="text-xs text-gray-400 mt-1">
-                                            Sisa: <span class="font-semibold text-blue-600">{{ $student->quota_left }}
+                                            Sisa: <span class="font-semibold text-amber-600">{{ $student->quota_left }}
                                                 sesi</span>
                                         </div>
                                     </td>
@@ -140,7 +155,7 @@
                                             </span>
                                         @elseif($latestPayment && $latestPayment->status === 'pending')
                                             <span
-                                                class="bg-blue-100 text-blue-800 border border-blue-300 text-xs px-3 py-1 rounded-full font-semibold">Sedang
+                                                class="bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/40 text-xs px-3 py-1 rounded-full font-bold shadow-sm">Sedang
                                                 Diverifikasi</span>
                                         @elseif($latestPayment && $latestPayment->status === 'rejected')
                                             <span

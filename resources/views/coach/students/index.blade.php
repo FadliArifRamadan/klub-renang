@@ -57,9 +57,6 @@
                                     <td class="px-6 py-4">
                                         <div class="font-bold text-gray-900">{{ $student->name }}</div>
                                         <div class="text-xs text-gray-400 mt-0.5">
-                                            <i class="fa-solid fa-venus-mars mr-1"></i>
-                                            {{ $student->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}
-                                            &nbsp;·&nbsp;
                                             <i class="fa-solid fa-cake-candles mr-1"></i>
                                             {{ $student->birth_date?->format('d M Y') ?? '-' }}
                                         </div>
@@ -71,10 +68,20 @@
                                             {{ $student->package->name ?? 'Tidak Ada Paket' }}
                                         </span>
                                         <div class="text-xs text-gray-400">Total: {{ $totalSesi }} Sesi</div>
-                                        @if ($student->package_expires_at)
-                                            <div class="text-[10px] text-gray-500 mt-0.5">
-                                                <i class="fa-solid fa-calendar-day mr-0.5"></i>
-                                                Batas: {{ $student->package_expires_at->format('d M Y') }}
+                                        @if ($student->package_activated_at || $student->package_expires_at)
+                                            <div class="text-[10px] text-gray-500 mt-0.5 space-y-0.5">
+                                                @if ($student->package_activated_at)
+                                                    <div>
+                                                        <i class="fa-solid fa-calendar-check mr-0.5 text-blue-500"></i>
+                                                        Mulai: {{ $student->package_activated_at->format('d M Y') }}
+                                                    </div>
+                                                @endif
+                                                @if ($student->package_expires_at)
+                                                    <div>
+                                                        <i class="fa-solid fa-calendar-day mr-0.5 text-amber-500"></i>
+                                                        Batas: {{ $student->package_expires_at->format('d M Y') }}
+                                                    </div>
+                                                @endif
                                             </div>
                                         @endif
                                     </td>

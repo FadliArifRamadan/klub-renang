@@ -15,7 +15,7 @@
                     {{-- Tab Filter Role --}}
                     <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit">
                         <a href="{{ route('admin.users.index', array_filter(['search' => $search])) }}" 
-                           class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($role) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
+                           class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($role) ? 'bg-white dark:bg-boxdark text-amber-600 dark:text-[#D3AF37] shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
                             Semua
                         </a>
                         <a href="{{ route('admin.users.index', array_filter(['role' => 'admin', 'search' => $search])) }}" 
@@ -23,7 +23,7 @@
                             Admin
                         </a>
                         <a href="{{ route('admin.users.index', array_filter(['role' => 'coach', 'search' => $search])) }}" 
-                           class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ $role === 'coach' ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
+                           class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ $role === 'coach' ? 'bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
                             Coach (Pelatih)
                         </a>
                         <a href="{{ route('admin.users.index', array_filter(['role' => 'parent', 'search' => $search])) }}" 
@@ -59,7 +59,7 @@
                             <button type="submit" class="px-3.5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-bold rounded-lg transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
                                 Cari
                             </button>
-                            <a href="{{ route('admin.users.index', array_filter(['role' => $role])) }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
+                            <a href="{{ route('admin.users.index', array_filter(['role' => $role])) }}" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-lg border border-slate-600 shadow-sm transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
                                 <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
                             </a>
                         </form>
@@ -93,30 +93,58 @@
                                                 class="w-10 h-10 rounded-full object-cover border-2 border-slate-200 mx-auto shadow-sm">
                                         @else
                                             <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto border-2 border-slate-150 shadow-sm
-                                                @if($user->role === 'admin') bg-purple-550/10 text-purple-600
-                                                @elseif($user->role === 'coach') bg-blue-550/10 text-blue-600
-                                                @elseif($user->role === 'parent') bg-emerald-550/10 text-emerald-600
-                                                @else bg-amber-550/10 text-amber-600
+                                                @if($user->isAdmin()) bg-amber-500/10 text-amber-600
+                                                @elseif($user->role === 'coach') bg-blue-500/10 text-blue-600
+                                                @elseif($user->role === 'parent') bg-emerald-500/10 text-emerald-600
+                                                @else bg-slate-500/10 text-slate-600
                                                 @endif">
                                                 {{ strtoupper(substr($user->name, 0, 2)) }}
                                             </div>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-slate-800">{{ $user->name }}</td>
+                                    <td class="px-6 py-4 font-bold text-slate-800">
+                                        <div>{{ $user->name }}</div>
+                                        @if($user->role === 'coach')
+                                            <div class="mt-0.5">
+                                                @if($user->gender === 'P')
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold bg-pink-100 dark:bg-pink-900/40 text-pink-700 dark:text-pink-300 border border-pink-300 dark:border-pink-800">
+                                                        <i class="fa-solid fa-venus"></i> Perempuan
+                                                    </span>
+                                                @elseif($user->gender === 'L')
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800">
+                                                        <i class="fa-solid fa-mars"></i> Laki-laki
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                                                        Belum set gender
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4"><code class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-xs">{{ $user->username }}</code></td>
                                     <td class="px-6 py-4">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold border
-                                            @if($user->role === 'admin') bg-purple-50 text-purple-700 border-purple-200
-                                            @elseif($user->role === 'coach') bg-blue-50 text-blue-700 border-blue-200
-                                            @elseif($user->role === 'parent') bg-emerald-50 text-emerald-700 border-emerald-200
-                                            @else bg-amber-50 text-amber-700 border-amber-200
-                                            @endif">
-                                            @if($user->role === 'admin') Admin
-                                            @elseif($user->role === 'coach') Pelatih (Coach)
-                                            @elseif($user->role === 'parent') Orang Tua
-                                            @else Umum
-                                            @endif
-                                        </span>
+                                        @if($user->role === 'admin_finance')
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-500/15 text-amber-700 border border-amber-500/30">
+                                                <i class="fa-solid fa-wallet text-[10px]"></i> Admin Finance
+                                            </span>
+                                        @elseif($user->role === 'admin_operasional' || $user->role === 'admin')
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-purple-500/15 text-purple-700 border border-purple-500/30">
+                                                <i class="fa-solid fa-sliders text-[10px]"></i> Admin Operasional
+                                            </span>
+                                        @elseif($user->role === 'coach')
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30">
+                                                <i class="fa-solid fa-user-tie text-[10px]"></i> Pelatih (Coach)
+                                            </span>
+                                        @elseif($user->role === 'parent')
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
+                                                <i class="fa-solid fa-child text-[10px]"></i> Orang Tua
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-slate-100 text-slate-600 border border-slate-200">
+                                                Umum
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 text-slate-600 font-semibold">{{ $user->phone }}</td>
                                     <td class="px-6 py-4 text-xs text-slate-400 font-medium">{{ $user->created_at->format('d M Y') }}</td>
@@ -173,11 +201,22 @@
                                                             :value="old('phone', $user->phone)" required />
                                                     </div>
 
+                                                    <div x-show="userRole === 'coach'" x-transition>
+                                                        <x-input-label for="gender-{{ $user->id }}" value="Jenis Kelamin Pelatih" class="font-bold text-xs" />
+                                                        <select id="gender-{{ $user->id }}" name="gender"
+                                                                class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white dark:bg-boxdark text-sm">
+                                                            <option value="" {{ old('gender', $user->gender) == '' ? 'selected' : '' }}>-- Pilih Jenis Kelamin --</option>
+                                                            <option value="L" {{ old('gender', $user->gender) == 'L' ? 'selected' : '' }}>Laki-laki (Male)</option>
+                                                            <option value="P" {{ old('gender', $user->gender) == 'P' ? 'selected' : '' }}>Perempuan (Female)</option>
+                                                        </select>
+                                                    </div>
+
                                                     <div>
                                                         <x-input-label for="role-{{ $user->id }}" value="Role Akun" class="font-bold text-xs" />
                                                         <select id="role-{{ $user->id }}" name="role" x-model="userRole" required
                                                                 class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white dark:bg-boxdark text-sm">
-                                                            <option value="admin">Admin</option>
+                                                            <option value="admin_finance">Admin Finance</option>
+                                                            <option value="admin_operasional">Admin Operasional</option>
                                                             <option value="coach">Pelatih (Coach)</option>
                                                             <option value="parent">Orang Tua</option>
                                                             <option value="general">Umum</option>
@@ -196,17 +235,17 @@
                                                     </div>
 
                                                     {{-- Upload Foto Profil - Khusus Coach --}}
-                                                    <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-slate-50 border border-slate-150 rounded-xl space-y-3">
-                                                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                                                            <i class="fa-solid fa-image mr-1 text-slate-400"></i> Berkas Foto Coach
+                                                    <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl space-y-3 shadow-sm">
+                                                        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                                                            <i class="fa-solid fa-image mr-1 text-blue-500"></i> Berkas Foto Coach
                                                         </h4>
                                                         
                                                         @if ($user->image)
                                                             <div class="flex items-center gap-3">
                                                                 <img src="{{ asset('storage/' . $user->image) }}" alt="Foto {{ $user->name }}"
-                                                                    class="w-16 h-16 rounded-xl object-cover border-2 border-slate-200 shadow-sm">
+                                                                    class="w-16 h-16 rounded-xl object-cover border-2 border-slate-200 dark:border-slate-700 shadow-sm">
                                                                 <div>
-                                                                    <p class="text-xs font-bold text-slate-600">Foto Saat Ini</p>
+                                                                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Foto Saat Ini</p>
                                                                     <p class="text-[10px] text-slate-400">Pilih file baru untuk mengganti</p>
                                                                 </div>
                                                             </div>
@@ -219,47 +258,47 @@
                                                                 file:text-xs file:font-bold
                                                                 file:bg-blue-50 file:text-blue-700
                                                                 hover:file:bg-blue-100
-                                                                border border-slate-200 rounded-lg cursor-pointer bg-white dark:bg-boxdark" />
+                                                                border border-slate-300 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800 text-slate-900 dark:text-white" />
                                                         <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
                                                     </div>
                                                 </div>
 
                                                     {{-- Profil Coach: Lisensi, Sertifikasi, Pengalaman --}}
-                                                    <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-4">
-                                                        <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">
-                                                            <i class="fa-solid fa-id-badge mr-1"></i> Profil Coach
+                                                    <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl space-y-4 shadow-sm">
+                                                        <h4 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
+                                                            <i class="fa-solid fa-id-badge text-blue-500"></i> Profil Coach
                                                         </h4>
 
                                                         {{-- Lisensi --}}
                                                         <div x-data="{ items: {{ json_encode($user->licenses ?? []) }} }">
-                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Lisensi</label>
+                                                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Lisensi</label>
                                                             <template x-for="(item, index) in items" :key="index">
                                                                 <div class="flex items-center gap-2 mb-1.5">
-                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Lisensi C PRSI">
-                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Lisensi C PRSI">
+                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-500 hover:text-red-700 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
                                                                 </div>
                                                             </template>
-                                                            <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Lisensi</button>
+                                                            <button type="button" @click="items.push('')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-extrabold mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-circle-plus"></i> Tambah Lisensi</button>
                                                             <input type="hidden" name="licenses" :value="JSON.stringify(items)">
                                                         </div>
 
                                                         {{-- Sertifikasi --}}
                                                         <div x-data="{ items: {{ json_encode($user->certifications ?? []) }} }">
-                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Sertifikasi Keahlian</label>
+                                                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Sertifikasi Keahlian</label>
                                                             <template x-for="(item, index) in items" :key="index">
                                                                 <div class="flex items-center gap-2 mb-1.5">
-                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Sertifikat First Aid & CPR">
-                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Sertifikat First Aid & CPR">
+                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-500 hover:text-red-700 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
                                                                 </div>
                                                             </template>
-                                                            <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Sertifikasi</button>
+                                                            <button type="button" @click="items.push('')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-extrabold mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-circle-plus"></i> Tambah Sertifikasi</button>
                                                             <input type="hidden" name="certifications" :value="JSON.stringify(items)">
                                                         </div>
 
                                                         {{-- Pengalaman --}}
                                                         <div>
-                                                            <label class="block text-xs font-bold text-slate-700 mb-1">Pengalaman & Status</label>
-                                                            <input type="text" name="experience" value="{{ $user->experience }}" class="w-full text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Aktif melatih sejak 2021 di Black Diamond">
+                                                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Pengalaman & Status</label>
+                                                            <input type="text" name="experience" value="{{ $user->experience }}" class="w-full text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Aktif melatih sejak 2021 di Black Diamond">
                                                         </div>
                                                     </div>
 
@@ -356,14 +395,25 @@
                     <x-text-input id="create-phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" placeholder="Misal: 0812345..." required />
                 </div>
 
+                <div x-show="userRole === 'coach'" x-transition>
+                    <x-input-label for="create-gender" value="Jenis Kelamin Pelatih" class="font-bold text-xs" />
+                    <select id="create-gender" name="gender"
+                            class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white dark:bg-boxdark text-sm">
+                        <option value="">-- Pilih Jenis Kelamin --</option>
+                        <option value="L" {{ old('gender') == 'L' ? 'selected' : '' }}>Laki-laki (Male)</option>
+                        <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>Perempuan (Female)</option>
+                    </select>
+                </div>
+
                 <div>
                     <x-input-label for="create-role" value="Role Akun" class="font-bold text-xs" />
                     <select id="create-role" name="role" x-model="userRole" required
                             class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm bg-white dark:bg-boxdark text-sm">
+                        <option value="admin_operasional">Admin Operasional</option>
+                        <option value="admin_finance">Admin Finance</option>
+                        <option value="coach">Pelatih (Coach)</option>
                         <option value="parent">Orang Tua</option>
                         <option value="general">Umum</option>
-                        <option value="coach">Pelatih (Coach)</option>
-                        <option value="admin">Admin</option>
                     </select>
                 </div>
 
@@ -378,9 +428,9 @@
                 </div>
 
                 {{-- Upload Foto Profil - Khusus Coach --}}
-                <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-slate-50 border border-slate-150 rounded-xl space-y-3">
-                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                        <i class="fa-solid fa-image mr-1 text-slate-400"></i> Berkas Foto Coach
+                <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl space-y-3 shadow-sm">
+                    <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                        <i class="fa-solid fa-image mr-1 text-blue-500"></i> Berkas Foto Coach
                     </h4>
                     <input type="file" id="create-image" name="image" accept="image/jpeg,image/png,image/jpg,image/webp"
                         class="block w-full text-sm text-slate-500 mt-1
@@ -389,46 +439,46 @@
                             file:text-xs file:font-bold
                             file:bg-blue-50 file:text-blue-700
                             hover:file:bg-blue-100
-                            border border-slate-200 rounded-lg cursor-pointer bg-white dark:bg-boxdark" />
+                            border border-slate-300 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800 text-slate-900 dark:text-white" />
                     <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP. Maksimal: 2MB</p>
                 </div>
 
                 {{-- Profil Coach: Lisensi, Sertifikasi, Pengalaman --}}
-                <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-4">
-                    <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-wider">
-                        <i class="fa-solid fa-id-badge mr-1"></i> Profil Coach
+                <div x-show="userRole === 'coach'" x-transition class="mt-4 p-4 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl space-y-4 shadow-sm">
+                    <h4 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-id-badge text-blue-500"></i> Profil Coach
                     </h4>
 
                     {{-- Lisensi --}}
                     <div x-data="{ items: [] }">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Lisensi</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Lisensi</label>
                         <template x-for="(item, index) in items" :key="index">
                             <div class="flex items-center gap-2 mb-1.5">
-                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Lisensi C PRSI">
-                                <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Lisensi C PRSI">
+                                <button type="button" @click="items.splice(index, 1)" class="text-red-500 hover:text-red-700 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
                             </div>
                         </template>
-                        <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Lisensi</button>
+                        <button type="button" @click="items.push('')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-extrabold mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-circle-plus"></i> Tambah Lisensi</button>
                         <input type="hidden" name="licenses" :value="JSON.stringify(items)">
                     </div>
 
                     {{-- Sertifikasi --}}
                     <div x-data="{ items: [] }">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Sertifikasi Keahlian</label>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Sertifikasi Keahlian</label>
                         <template x-for="(item, index) in items" :key="index">
                             <div class="flex items-center gap-2 mb-1.5">
-                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Sertifikat First Aid & CPR">
-                                <button type="button" @click="items.splice(index, 1)" class="text-red-400 hover:text-red-600 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Sertifikat First Aid & CPR">
+                                <button type="button" @click="items.splice(index, 1)" class="text-red-500 hover:text-red-700 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
                             </div>
                         </template>
-                        <button type="button" @click="items.push('')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold mt-1"><i class="fa-solid fa-circle-plus mr-1"></i>Tambah Sertifikasi</button>
+                        <button type="button" @click="items.push('')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-extrabold mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-circle-plus"></i> Tambah Sertifikasi</button>
                         <input type="hidden" name="certifications" :value="JSON.stringify(items)">
                     </div>
 
                     {{-- Pengalaman --}}
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Pengalaman & Status</label>
-                        <input type="text" name="experience" class="w-full text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Aktif melatih sejak 2021 di Black Diamond">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Pengalaman & Status</label>
+                        <input type="text" name="experience" class="w-full text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Aktif melatih sejak 2021 di Black Diamond">
                     </div>
                 </div>
             </div>

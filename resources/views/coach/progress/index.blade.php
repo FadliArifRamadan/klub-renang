@@ -36,7 +36,7 @@
                         $options = ['Belum Berkembang', 'Mulai Terlihat', 'Berkembang Baik', 'Sangat Mahir'];
                         $defaultPbtRows = old('metrics.Personal Best Time') ?: [['gaya' => 'Gaya Bebas', 'jarak' => '50m', 'test_per_bulan' => '', 'pbt_event' => '']];
                     @endphp
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100"
+                    <div class="bg-white dark:bg-boxdark overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100 dark:border-strokedark"
                         x-data="{
                             selectedStudentId: '{{ old('student_id', '') }}',
                             categoriesMap: @js($studentCategories),
@@ -62,8 +62,8 @@
                                 row.jarak = this.distanceMap[row.gaya][0];
                             }
                         }">
-                        <h3 class="text-lg font-bold text-gray-800 border-b pb-4 mb-6 flex items-center gap-2">
-                            <i class="fa-solid fa-file-signature text-blue-600"></i>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white border-b border-gray-200 dark:border-slate-700 pb-4 mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-file-signature text-amber-500"></i>
                             <span>Input Catatan Perkembangan</span>
                         </h3>
 
@@ -72,11 +72,11 @@
 
                             {{-- Pilih Murid --}}
                             <div class="mb-4">
-                                <label for="student_id" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                <label for="student_id" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                                     Pilih Murid *
                                 </label>
                                 <select name="student_id" id="student_id" x-model="selectedStudentId"
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-900"
+                                    class="w-full rounded-md border-gray-300 dark:border-slate-700 shadow-sm focus:border-[#D3AF37] focus:ring focus:ring-[#D3AF37]/30 text-gray-900 dark:text-white bg-white dark:bg-slate-800 text-sm"
                                     required>
                                     <option value="" disabled selected>-- Pilih Murid Latihan --</option>
                                     @foreach ($students as $student)
@@ -90,20 +90,20 @@
                             {{-- Bulan & Coach --}}
                             <div class="grid grid-cols-2 gap-4 mb-4">
                                 <div>
-                                    <label for="date" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                    <label for="date" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                                         Bulan Penilaian *
                                     </label>
                                     <input type="month" name="date" id="date"
                                         value="{{ old('date', date('Y-m')) }}"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 text-sm"
+                                        class="w-full rounded-md border-gray-300 dark:border-slate-700 shadow-sm focus:border-[#D3AF37] text-gray-900 dark:text-white bg-white dark:bg-slate-800 text-sm"
                                         required>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                                         Nama Coach
                                     </label>
                                     <input type="text" value="{{ Auth::user()->name }}"
-                                        class="w-full rounded-md border-gray-300 bg-gray-50 shadow-sm text-gray-500 text-sm cursor-not-allowed"
+                                        class="w-full rounded-md border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/80 shadow-sm text-gray-500 dark:text-gray-300 text-sm cursor-not-allowed"
                                         readonly>
                                 </div>
                             </div>
@@ -450,38 +450,38 @@
                                             <i class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200"
                                                 :class="showSistemEnergi ? 'rotate-180' : ''"></i>
                                         </button>
-                                        <div x-show="showSistemEnergi" x-collapse class="p-4 space-y-3 bg-white">
+                                        <div x-show="showSistemEnergi" x-collapse class="p-4 space-y-3 bg-white dark:bg-slate-800">
                                             <p class="text-xs text-gray-400 italic mb-2">Kosongkan jika tidak ada penilaian bulan ini.</p>
                                             <div>
-                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Aerobic</label>
-                                                <input type="number" name="metrics[Sistem Energi][Aerobic]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Aerobic</label>
+                                                <input type="number" name="metrics[Sistem Energi][Aerobic]" class="w-full text-sm rounded-md border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white" placeholder="Skor...">
                                             </div>
                                             <div>
-                                                <label class="block text-xs font-semibold text-gray-600 mb-1">Anaerobic</label>
-                                                <input type="number" name="metrics[Sistem Energi][Anaerobic]" class="w-full text-sm rounded-md border-gray-300" placeholder="Skor...">
+                                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Anaerobic</label>
+                                                <input type="number" name="metrics[Sistem Energi][Anaerobic]" class="w-full text-sm rounded-md border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white" placeholder="Skor...">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </template>
 
-                            {{-- Catatan tambahan --}}
-                            <div class="mb-6 mt-6">
-                                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            {{-- Catatan Tambahan --}}
+                            <div class="mb-4">
+                                <label for="notes" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                                     Catatan Tambahan (Opsional)
                                 </label>
                                 <textarea name="notes" id="notes" rows="3" placeholder="Tulis catatan penting..."
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 text-sm">{{ old('notes') }}</textarea>
+                                    class="w-full rounded-md border-gray-300 dark:border-slate-700 shadow-sm focus:border-[#D3AF37] text-slate-900 dark:text-white bg-white dark:bg-slate-800 text-sm">{{ old('notes') }}</textarea>
                             </div>
 
                             <div x-show="classType !== null">
                                 <button type="submit"
-                                    class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-150 text-sm flex justify-center items-center gap-2">
+                                    class="w-full py-2.5 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-lg shadow-md hover:shadow-lg transition-all duration-150 text-sm flex justify-center items-center gap-2 cursor-pointer">
                                     <i class="fa-solid fa-floppy-disk"></i>
                                     Simpan Perkembangan
                                 </button>
                             </div>
-                            <div x-show="classType === null" class="text-center text-sm text-gray-500 mt-4">
+                            <div x-show="classType === null" class="text-center text-sm text-slate-500 dark:text-slate-400 mt-4">
                                 Silakan pilih murid untuk menampilkan form.
                             </div>
                         </form>
@@ -490,16 +490,16 @@
 
                 {{-- Kanan: Visualisasi History --}}
                 <div class="lg:col-span-7 flex flex-col gap-6">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100 flex-1 flex flex-col">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 mb-6 gap-4">
-                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <i class="fa-solid fa-clock-rotate-left text-blue-600"></i>
+                    <div class="bg-white dark:bg-boxdark overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100 dark:border-strokedark flex-1 flex flex-col">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 dark:border-slate-700 pb-4 mb-6 gap-4">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-clock-rotate-left text-amber-500"></i>
                                 <span>Riwayat Perkembangan Terakhir</span>
                             </h3>
 
                             <div class="w-full sm:w-64">
                                 <select id="chart_student_id"
-                                    class="w-full text-xs rounded-md border-gray-300 shadow-sm text-gray-900 font-semibold bg-gray-50">
+                                    class="w-full text-xs rounded-md border-gray-300 dark:border-slate-700 shadow-sm text-gray-900 dark:text-white font-semibold bg-gray-50 dark:bg-slate-800">
                                     <option value="" disabled selected>-- Pilih Murid --</option>
                                     @foreach ($students as $student)
                                         <option value="{{ $student->id }}">{{ $student->name }}</option>
@@ -508,9 +508,9 @@
                             </div>
                         </div>
 
-                        <div id="chart-empty-state" class="flex-1 flex flex-col items-center justify-center text-center p-12 text-gray-400">
-                            <i class="fa-solid fa-folder-open text-6xl mb-4 text-gray-200"></i>
-                            <p class="font-medium text-gray-600">Silakan pilih murid</p>
+                        <div id="chart-empty-state" class="flex-1 flex flex-col items-center justify-center text-center p-12 text-slate-400 dark:text-slate-400">
+                            <i class="fa-solid fa-folder-open text-6xl mb-4 text-slate-300 dark:text-slate-600"></i>
+                            <p class="font-bold text-slate-600 dark:text-slate-300">Silakan pilih murid</p>
                         </div>
 
                         <div id="chart-no-data-state" class="hidden flex-1 flex-col items-center justify-center text-center p-12 text-gray-400">

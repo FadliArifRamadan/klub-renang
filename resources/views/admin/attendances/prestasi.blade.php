@@ -12,7 +12,7 @@
                 {{-- Header --}}
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
                     <h3 class="text-base font-semibold text-gray-800 dark:text-white">
-                        <i class="fa-solid fa-clipboard-list text-blue-600 mr-2"></i>Riwayat Absensi Kelas Prestasi
+                        <i class="fa-solid fa-clipboard-list text-amber-500 mr-2"></i>Riwayat Absensi Kelas Prestasi
                     </h3>
 
                     {{-- Search Form --}}
@@ -28,7 +28,7 @@
                         <button type="submit" class="px-3.5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-bold rounded-lg transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
                             Cari
                         </button>
-                        <a href="{{ route('admin.attendances.prestasi') }}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
+                        <a href="{{ route('admin.attendances.prestasi') }}" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-lg border border-slate-600 shadow-sm transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
                             <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
                         </a>
                     </form>
@@ -89,7 +89,7 @@
                                         {{-- Jenis Sesi --}}
                                         <td class="px-6 py-4 text-center">
                                             @if ($att->session_type === 'swim')
-                                                <span class="inline-flex items-center gap-1 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-1 rounded border border-blue-200 dark:border-blue-800 text-xs font-semibold whitespace-nowrap">
+                                                <span class="inline-flex items-center gap-1 text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-900/30 px-2.5 py-1 rounded border border-cyan-200 dark:border-cyan-800 text-xs font-semibold whitespace-nowrap">
                                                     <i class="fa-solid fa-water"></i> Berenang
                                                 </span>
                                             @elseif ($att->session_type === 'dryland')

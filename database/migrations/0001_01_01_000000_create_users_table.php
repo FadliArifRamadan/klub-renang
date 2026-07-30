@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('username')->unique(); // Menggantikan email untuk login
             $table->string('password');
             $table->string('phone');
-            // Role: admin, coach, parent (orang tua), general (umum)
-            $table->enum('role', ['admin', 'coach', 'parent', 'general']);
+            // Role: admin, admin_finance, admin_operasional, coach, parent, general
+            $table->string('role')->default('parent');
             $table->rememberToken();
             $table->timestamps();
         });

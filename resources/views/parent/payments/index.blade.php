@@ -32,10 +32,13 @@
 
                         <div class="border rounded-xl p-5 bg-gray-50 shadow-sm relative overflow-hidden">
                             <div class="absolute top-4 right-4">
-                                @if ($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved'))
+                                @if ($student->status == 'active')
                                     <span
                                         class="bg-green-100 text-green-800 border border-green-300 text-xs px-3 py-1 rounded-full font-semibold">Lunas
                                         / Aktif</span>
+                                @elseif($student->status == 'pending_activation' || ($latestPayment && $latestPayment->status == 'approved'))
+                                    <span
+                                        class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs px-3 py-1 rounded-full font-semibold">Selesai Pembayaran</span>
                                 @elseif($latestPayment && $latestPayment->status == 'pending')
                                     <span
                                         class="bg-blue-100 text-blue-800 border border-blue-300 text-xs px-3 py-1 rounded-full font-semibold">Sedang
@@ -82,7 +85,7 @@
                                     </div>
                                     @if ($showRegFee)
                                     <div class="flex justify-between">
-                                        <span>Biaya Pendaftaran (sekali)</span>
+                                        <span>Biaya Pendaftaran</span>
                                         <span class="font-semibold text-gray-700">Rp 30.000</span>
                                     </div>
                                     @endif
@@ -91,13 +94,16 @@
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <span class="text-xs text-gray-400 block">Total Tagihan</span>
-                                        <span class="text-lg font-extrabold text-blue-600">Rp
+                                        <span class="text-lg font-extrabold text-white">Rp
                                             {{ number_format($totalBilling, 0, ',', '.') }}</span>
                                     </div>
 
-                                    @if ($student->status == 'active' || ($latestPayment && $latestPayment->status == 'approved'))
+                                    @if ($student->status == 'active')
                                         <span class="text-green-600 font-bold text-sm"><i
                                                 class="fa-solid fa-circle-check mr-1"></i> Selesai / Aktif</span>
+                                    @elseif($student->status == 'pending_activation' || ($latestPayment && $latestPayment->status == 'approved'))
+                                        <span class="text-emerald-500 font-bold text-sm"><i
+                                                class="fa-solid fa-circle-check mr-1"></i> Selesai Pembayaran</span>
                                     @elseif($latestPayment && $latestPayment->status == 'pending')
                                         <button disabled
                                             class="px-4 py-2 bg-gray-300 text-gray-500 text-xs font-bold uppercase rounded-lg cursor-not-allowed">
@@ -135,7 +141,7 @@
                                                         <p>Biaya Pendaftaran: <span class="font-bold text-gray-800">Rp 30.000</span></p>
                                                         @endif
                                                         <p class="mt-1 pt-1 border-t">Total Bayar: <span
-                                                                class="font-bold text-blue-600 text-sm">Rp
+                                                                class="font-bold text-white text-sm">Rp
                                                                 {{ number_format($totalBilling, 0, ',', '.') }}</span>
                                                         </p>
                                                     </div>

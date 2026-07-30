@@ -24,10 +24,10 @@
                         $rejectedCount = \App\Models\ScheduleChangeRequest::where('status', 'rejected')->count();
                     @endphp
                     <a href="{{ route('admin.schedule-requests.index', ['status' => 'pending']) }}" 
-                       class="py-3 px-5 border-b-2 font-semibold text-sm whitespace-nowrap transition flex items-center gap-2 {{ $status === 'pending' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300' }}">
+                       class="py-3 px-5 border-b-2 font-semibold text-sm whitespace-nowrap transition flex items-center gap-2 {{ $status === 'pending' ? 'border-amber-500 text-amber-600 dark:text-[#D3AF37]' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300' }}">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                         Pending
-                        <span class="px-2 py-0.5 text-xs rounded-full {{ $status === 'pending' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600 dark:text-gray-300' }}">
+                        <span class="px-2 py-0.5 text-xs rounded-full {{ $status === 'pending' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300' : 'bg-gray-100 text-gray-600 dark:text-gray-300' }}">
                             {{ $pendingCount }}
                         </span>
                     </a>
@@ -109,14 +109,14 @@
                                     <td class="px-4 py-4">
                                         <div class="space-y-1.5">
                                             @forelse($req->new_schedules as $newSched)
-                                                <div class="p-1.5 bg-blue-50/50 border border-blue-100 rounded-lg text-[11px]">
-                                                    <div class="font-bold text-blue-900 flex items-center justify-between">
+                                                <div class="p-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px]">
+                                                    <div class="font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between">
                                                         <span>{{ $newSched->day_name }}, {{ $newSched->time_range }}</span>
-                                                        <span class="px-1 py-0.2 rounded text-[9px] {{ $newSched->session_type === 'dryland' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800' }}">
+                                                        <span class="px-1 py-0.2 rounded text-[9px] {{ $newSched->session_type === 'dryland' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300' : 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300' }}">
                                                             {{ $newSched->session_type === 'dryland' ? 'Darat' : 'Air' }}
                                                         </span>
                                                     </div>
-                                                    <div class="text-blue-700 text-[10px] mt-0.5 flex items-center gap-1">
+                                                    <div class="text-slate-500 dark:text-slate-400 text-[10px] mt-0.5 flex items-center gap-1">
                                                         <i class="fa-solid fa-location-dot text-[9px]"></i>
                                                         {{ $newSched->location->name ?? '-' }}
                                                     </div>

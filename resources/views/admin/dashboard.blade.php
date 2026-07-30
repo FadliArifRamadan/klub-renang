@@ -14,148 +14,310 @@
                 <div
                     class="absolute -right-10 -bottom-10 w-48 h-48 bg-[#D3AF37]/10 rounded-full blur-2xl pointer-events-none">
                 </div>
-                <h1 class="text-[#D3AF37] text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
-                    Dashboard, {{ Auth::user()->name }}!
+                <h1 class="text-[#D3AF37] text-2xl md:text-3xl font-extrabold tracking-tight mb-2 flex items-center gap-2">
+                    <span>Dashboard, {{ Auth::user()->name }}!</span>
+                    <span class="text-xs bg-[#D3AF37]/20 border border-[#D3AF37]/40 text-[#D3AF37] px-3 py-1 rounded-full uppercase tracking-wider font-extrabold">
+                        {{ Auth::user()->role === 'admin_finance' ? 'Admin Finance' : 'Admin Operasional' }}
+                    </span>
                 </h1>
                 <p class="text-slate-300 text-sm max-w-3xl leading-relaxed font-normal">
-                    Selamat datang di panel kontrol Black Diamond. Kelola verifikasi pembayaran, data murid, pelatih,
-                    kolam latihan, dan paket program secara terpusat dan efisien.
+                    @if(Auth::user()->role === 'admin_finance')
+                        Selamat datang di panel kontrol Admin Finance Black Diamond. Kelola verifikasi pembayaran masuk dan riwayat absensi sesi murid secara terpusat dan efisien.
+                    @else
+                        Selamat datang di panel kontrol Admin Operasional Black Diamond. Kelola data murid, pelatih, kolam latihan, dan paket program secara terpusat dan efisien.
+                    @endif
                 </p>
             </div>
 
             {{-- Metrics Grid --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
-                <!-- Card 1: Total Murid -->
-                <a href="{{ route('admin.students.index') }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
-                    <div
-                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
-                        <i class="fa-solid fa-users text-xl"></i>
-                    </div>
-                    <div class="flex items-end justify-between mt-5">
-                        <div>
-                            <span
-                                class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total
-                                Murid</span>
-                            <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                {{ $totalStudents }} Murid</h4>
+                @if(Auth::user()->isAdminOperasional())
+                    <!-- Card 1: Total Murid -->
+                    <a href="{{ route('admin.students.index') }}"
+                        class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                        <div
+                            class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
+                            <i class="fa-solid fa-users text-xl"></i>
                         </div>
-                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
-                            <i class="fa-solid fa-chevron-right text-sm"></i>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Card 2: Total Coach -->
-                <a href="{{ route('admin.users.index', ['role' => 'coach']) }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
-                    <div
-                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
-                        <i class="fa-solid fa-user-tie text-xl"></i>
-                    </div>
-                    <div class="flex items-end justify-between mt-5">
-                        <div>
-                            <span
-                                class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total
-                                Coach</span>
-                            <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                {{ $totalCoaches }} Pelatih</h4>
-                        </div>
-                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
-                            <i class="fa-solid fa-chevron-right text-sm"></i>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Card 3: Total Tempat Latihan -->
-                <a href="{{ route('admin.locations.index') }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
-                    <div
-                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
-                        <i class="fa-solid fa-location-dot text-xl"></i>
-                    </div>
-                    <div class="flex items-end justify-between mt-5">
-                        <div>
-                            <span
-                                class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Tempat
-                                Latihan</span>
-                            <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                {{ $totalLocations }} Lokasi</h4>
-                        </div>
-                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
-                            <i class="fa-solid fa-chevron-right text-sm"></i>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Card 4: Pending Payments -->
-                <a href="{{ route('admin.payments.index') }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
-                    <div
-                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors {{ $pendingPayments > 0 ? 'animate-pulse' : '' }}">
-                        <i class="fa-solid fa-wallet text-xl"></i>
-                    </div>
-                    <div class="flex items-end justify-between mt-5">
-                        <div>
-                            <span
-                                class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Verifikasi
-                                Bayar</span>
-                            <div class="flex items-center gap-2 mt-1">
-                                <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                    {{ $pendingPayments }} Pending</h4>
-                                @if ($pendingPayments > 0)
-                                    <span
-                                        class="inline-flex items-center bg-rose-900/40 text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-700/50">
-                                        Perlu Aksi
-                                    </span>
-                                @endif
+                        <div class="flex items-end justify-between mt-5">
+                            <div>
+                                <span
+                                    class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total
+                                    Murid</span>
+                                <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
+                                    {{ $totalStudents }} Murid</h4>
+                            </div>
+                            <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
                             </div>
                         </div>
-                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
-                            <i class="fa-solid fa-chevron-right text-sm"></i>
-                        </div>
-                    </div>
-                </a>
+                    </a>
 
-                <!-- Card 5: Pending Schedule Requests -->
-                @php
-                    $pendingScheds = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
-                @endphp
-                <a href="{{ route('admin.schedule-requests.index') }}"
-                    class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
-                    <div
-                        class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors {{ $pendingScheds > 0 ? 'animate-pulse' : '' }}">
-                        <i class="fa-solid fa-calendar-check text-xl"></i>
-                    </div>
-                    <div class="flex items-end justify-between mt-5">
-                        <div>
-                            <span
-                                class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Pengajuan
-                                Jadwal</span>
-                            <div class="flex items-center gap-2 mt-1">
-                                <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90">
-                                    {{ $pendingScheds }} Pending</h4>
-                                @if ($pendingScheds > 0)
-                                    <span
-                                        class="inline-flex items-center bg-indigo-900/40 text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-700/50">
-                                        Perlu Aksi
-                                    </span>
-                                @endif
+                    <!-- Card 2: Total Coach -->
+                    <a href="{{ route('admin.users.index', ['role' => 'coach']) }}"
+                        class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                        <div
+                            class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
+                            <i class="fa-solid fa-user-tie text-xl"></i>
+                        </div>
+                        <div class="flex items-end justify-between mt-5">
+                            <div>
+                                <span
+                                    class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Total
+                                    Coach</span>
+                                <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
+                                    {{ $totalCoaches }} Pelatih</h4>
+                            </div>
+                            <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
                             </div>
                         </div>
-                        <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
-                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                    </a>
+
+                    <!-- Card 3: Total Tempat Latihan -->
+                    <a href="{{ route('admin.locations.index') }}"
+                        class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                        <div
+                            class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
+                            <i class="fa-solid fa-location-dot text-xl"></i>
                         </div>
-                    </div>
-                </a>
+                        <div class="flex items-end justify-between mt-5">
+                            <div>
+                                <span
+                                    class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Tempat
+                                    Latihan</span>
+                                <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
+                                    {{ $totalLocations }} Lokasi</h4>
+                            </div>
+                            <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+                    </a>
+                @endif
+
+                @if(Auth::user()->isAdminFinance())
+                    <!-- Card 4: Pending Payments -->
+                    <a href="{{ route('admin.payments.index') }}"
+                        class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                        <div
+                            class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors {{ $pendingPayments > 0 ? 'animate-pulse' : '' }}">
+                            <i class="fa-solid fa-wallet text-xl"></i>
+                        </div>
+                        <div class="flex items-end justify-between mt-5">
+                            <div>
+                                <span
+                                    class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Verifikasi
+                                    Bayar</span>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90">
+                                        {{ $pendingPayments }} Pending</h4>
+                                    @if ($pendingPayments > 0)
+                                        <span
+                                            class="inline-flex items-center bg-rose-900/40 text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-700/50">
+                                            Perlu Aksi
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Card 5: Riwayat Absensi -->
+                    <a href="{{ route('admin.attendances.belajar') }}"
+                        class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                        <div
+                            class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors">
+                            <i class="fa-solid fa-clipboard-list text-xl"></i>
+                        </div>
+                        <div class="flex items-end justify-between mt-5">
+                            <div>
+                                <span
+                                    class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Riwayat Absensi</span>
+                                <h4 class="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">Audit Kehadiran</h4>
+                            </div>
+                            <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+                    </a>
+                @endif
+
+                @if(Auth::user()->isAdminOperasional())
+                    <!-- Card 6: Pending Schedule Requests -->
+                    @php
+                        $pendingScheds = \App\Models\ScheduleChangeRequest::where('status', 'pending')->count();
+                    @endphp
+                    <a href="{{ route('admin.schedule-requests.index') }}"
+                        class="group rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 transition-all duration-200 hover:border-[#D3AF37] hover:-translate-y-0.5 hover:shadow-md">
+                        <div
+                            class="flex items-center justify-center w-12 h-12 bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 rounded-xl transition-colors {{ $pendingScheds > 0 ? 'animate-pulse' : '' }}">
+                            <i class="fa-solid fa-calendar-check text-xl"></i>
+                        </div>
+                        <div class="flex items-end justify-between mt-5">
+                            <div>
+                                <span
+                                    class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Pengajuan
+                                    Jadwal</span>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <h4 class="font-bold text-gray-800 text-title-sm dark:text-white/90">
+                                        {{ $pendingScheds }} Pending</h4>
+                                    @if ($pendingScheds > 0)
+                                        <span
+                                            class="inline-flex items-center bg-indigo-900/40 text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-700/50">
+                                            Perlu Aksi
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="text-gray-300 group-hover:text-[#D3AF37] dark:text-gray-600 transition-colors">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </div>
+                        </div>
+                    </a>
+                @endif
             </div>
         </div>
     </div>
 
 
-    {{-- Progress Chart Section --}}
-    <div
-        class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 flex flex-col mb-8 shadow-theme-sm">
+    @if(Auth::user()->isAdminFinance())
+        {{-- Finance Analytics & Quick Verification Section --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {{-- Left 2-Cols: Recent Pending Payments Table --}}
+            <div class="lg:col-span-2 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 shadow-theme-sm">
+                <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-4 mb-5">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white/90 flex items-center gap-2">
+                            <i class="fa-solid fa-wallet text-[#D3AF37]"></i>
+                            Verifikasi Pembayaran Terbaru
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Daftar pembayaran masuk yang memerlukan verifikasi.</p>
+                    </div>
+                    <a href="{{ route('admin.payments.index') }}" class="text-xs font-extrabold text-[#D3AF37] hover:underline flex items-center gap-1">
+                        Lihat Semua <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                @php
+                    $recentPendingPayments = \App\Models\Payment::with(['student.user', 'student.package'])
+                        ->where('status', 'pending')
+                        ->latest()
+                        ->take(5)
+                        ->get();
+                @endphp
+
+                @if($recentPendingPayments->isNotEmpty())
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left text-slate-600 dark:text-slate-300">
+                            <thead class="bg-slate-50 dark:bg-slate-800/60 uppercase text-[10px] font-extrabold text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="px-4 py-3">Murid / Orang Tua</th>
+                                    <th class="px-4 py-3">Paket</th>
+                                    <th class="px-4 py-3">Nominal</th>
+                                    <th class="px-4 py-3 text-center">Status</th>
+                                    <th class="px-4 py-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                @foreach($recentPendingPayments as $pay)
+                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                        <td class="px-4 py-3.5">
+                                            <p class="font-bold text-slate-800 dark:text-white text-xs">{{ $pay->student->name ?? 'Murid Tidak Ditemukan' }}</p>
+                                            <p class="text-[10px] text-slate-400">Ortu: {{ $pay->student->user->name ?? '-' }}</p>
+                                        </td>
+                                        <td class="px-4 py-3.5 font-semibold text-slate-700 dark:text-slate-300">
+                                            {{ $pay->student->package->name ?? 'Paket' }}
+                                        </td>
+                                        <td class="px-4 py-3.5 font-extrabold text-[#D3AF37]">
+                                            Rp {{ number_format($pay->amount, 0, ',', '.') }}
+                                        </td>
+                                        <td class="px-4 py-3.5 text-center">
+                                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">
+                                                Pending
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3.5 text-center">
+                                            <a href="{{ route('admin.payments.index') }}" class="px-3 py-1.5 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-[11px] font-extrabold rounded-lg shadow-sm transition-all inline-flex items-center gap-1">
+                                                <i class="fa-solid fa-check"></i> Process
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-circle-check text-4xl mb-3 text-emerald-400"></i>
+                        <p class="text-sm font-bold text-slate-600 dark:text-slate-300">Tidak ada pembayaran pending saat ini</p>
+                        <p class="text-xs text-slate-400">Semua bukti transfer pembayaran masuk telah diverifikasi.</p>
+                    </div>
+                @endif
+            </div>
+
+            {{-- Right 1-Col: Monthly Revenue Summary Card --}}
+            <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 shadow-theme-sm flex flex-col justify-between">
+                <div>
+                    <div class="border-b border-gray-200 dark:border-gray-800 pb-4 mb-5">
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white/90 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-emerald-500"></i>
+                            Ringkasan Keuangan
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Estimasi pendapatan klub terverifikasi.</p>
+                    </div>
+
+                    @php
+                        $thisMonthApprovedRevenue = \App\Models\Payment::where('status', 'approved')
+                            ->whereMonth('created_at', now()->month)
+                            ->whereYear('created_at', now()->year)
+                            ->sum('amount');
+
+                        $totalApprovedRevenue = \App\Models\Payment::where('status', 'approved')->sum('amount');
+                        $pendingPaymentCount = \App\Models\Payment::where('status', 'pending')->count();
+                    @endphp
+
+                    <div class="space-y-4">
+                        <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-5 rounded-2xl border border-[#D3AF37]/30 text-white shadow-md">
+                            <span class="text-[10px] font-bold text-[#D3AF37] uppercase tracking-widest block mb-1">Pendapatan Bulan Ini</span>
+                            <h4 class="text-2xl font-black text-[#D3AF37]">Rp {{ number_format($thisMonthApprovedRevenue, 0, ',', '.') }}</h4>
+                            <p class="text-[10px] text-slate-300 mt-1">Berdasarkan transaksi terverifikasi bulan {{ now()->translatedFormat('F Y') }}</p>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs text-slate-500 font-semibold block">Total Akumulasi Pendapatan</span>
+                                <span class="text-base font-extrabold text-slate-800 dark:text-white">Rp {{ number_format($totalApprovedRevenue, 0, ',', '.') }}</span>
+                            </div>
+                            <i class="fa-solid fa-coins text-[#D3AF37] text-xl"></i>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs text-slate-500 font-semibold block">Transaksi Pending</span>
+                                <span class="text-base font-extrabold text-amber-600">{{ $pendingPaymentCount }} Pembayaran</span>
+                            </div>
+                            <i class="fa-solid fa-clock-rotate-left text-amber-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
+                    <a href="{{ route('admin.payments.index') }}" class="w-full py-3 bg-[#101828] hover:bg-black text-[#D3AF37] text-xs font-extrabold rounded-xl flex items-center justify-center gap-2 shadow-md transition-all">
+                        <i class="fa-solid fa-receipt"></i> Buka Menu Pembayaran
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(Auth::user()->isAdminOperasional())
+        {{-- Progress Chart Section --}}
+        <div
+            class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 flex flex-col mb-8 shadow-theme-sm">
         <div
             class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 dark:border-gray-800 pb-5 mb-6 gap-4">
             <div>
@@ -994,10 +1156,11 @@
             });
 
             // Auto-select murid pertama jika ada
-            @if ($students->isNotEmpty())
+            @if (isset($students) && $students->isNotEmpty())
                 selectDropdown.value = "{{ $students->first()->id }}";
                 selectDropdown.dispatchEvent(new Event('change'));
             @endif
         });
     </script>
+    @endif
 </x-app-layout>

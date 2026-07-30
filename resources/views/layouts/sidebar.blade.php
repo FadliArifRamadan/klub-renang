@@ -43,15 +43,18 @@
 
                     <ul class="flex flex-col gap-2">
                         <li>
-                            <a href="{{ route(Auth::user()->role . '.dashboard') }}"
-                                class="menu-item group {{ request()->routeIs(Auth::user()->role . '.dashboard') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                            @php
+                                $dashRoute = Auth::user()->isAdmin() ? 'admin.dashboard' : Auth::user()->role . '.dashboard';
+                            @endphp
+                            <a href="{{ route($dashRoute) }}"
+                                class="menu-item group {{ request()->routeIs('admin.dashboard') || request()->routeIs(Auth::user()->role . '.dashboard') ? 'menu-item-active' : 'menu-item-inactive' }}"
                                 :class="{
                                     'lg:justify-center': !sidebarExpanded && !
                                         sidebarHovered,
                                     'lg:justify-start': sidebarExpanded || sidebarHovered
                                 }">
                                 <span
-                                    class="menu-item-icon-size {{ request()->routeIs(Auth::user()->role . '.dashboard') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                    class="menu-item-icon-size {{ request()->routeIs('admin.dashboard') || request()->routeIs(Auth::user()->role . '.dashboard') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
                                     <i class="fa-solid fa-gauge-high text-xl w-6 text-center"></i>
                                 </span>
                                 <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
@@ -60,109 +63,117 @@
                             </a>
                         </li>
 
-                        <!-- ADMIN -->
-                        @if (Auth::user()->role === 'admin')
-                            <li>
-                                <a href="{{ route('admin.payments.index') }}"
-                                    class="menu-item group {{ request()->routeIs('admin.payments.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
-                                    :class="{
-                                        'lg:justify-center': !sidebarExpanded && !
-                                            sidebarHovered,
-                                        'lg:justify-start': sidebarExpanded || sidebarHovered
-                                    }">
-                                    <span
-                                        class="menu-item-icon-size {{ request()->routeIs('admin.payments.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
-                                        <i class="fa-solid fa-wallet text-xl w-6 text-center"></i>
-                                    </span>
-                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                        <span class="menu-item-text">Verifikasi Pembayaran</span>
-                                    </template>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('admin.schedule-requests.index') }}"
-                                    class="menu-item group {{ request()->routeIs('admin.schedule-requests.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
-                                    :class="{
-                                        'lg:justify-center': !sidebarExpanded && !
-                                            sidebarHovered,
-                                        'lg:justify-start': sidebarExpanded || sidebarHovered
-                                    }">
-                                    <span
-                                        class="menu-item-icon-size {{ request()->routeIs('admin.schedule-requests.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
-                                        <i class="fa-solid fa-calendar-check text-xl w-6 text-center"></i>
-                                    </span>
-                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                        <span class="menu-item-text flex-1">Pengajuan Jadwal</span>
-                                    </template>
-                                    @php
-                                        $pendingSchedCount = \App\Models\ScheduleChangeRequest::where(
-                                            'status',
-                                            'pending',
-                                        )->count();
-                                    @endphp
-                                    @if ($pendingSchedCount > 0)
-                                        <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                            <span
-                                                class="bg-brand-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-auto">
-                                                {{ $pendingSchedCount }}
-                                            </span>
-                                        </template>
-                                    @endif
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('admin.students.index') }}"
-                                    class="menu-item group {{ request()->routeIs('admin.students.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
-                                    :class="{
-                                        'lg:justify-center': !sidebarExpanded && !
-                                            sidebarHovered,
-                                        'lg:justify-start': sidebarExpanded || sidebarHovered
-                                    }">
-                                    <span
-                                        class="menu-item-icon-size {{ request()->routeIs('admin.students.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
-                                        <i class="fa-solid fa-users text-xl w-6 text-center"></i>
-                                    </span>
-                                    <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                        <span class="menu-item-text">Kelola Murid</span>
-                                    </template>
-                                </a>
-                            </li>
-                            <li x-data="{ open: {{ request()->routeIs('admin.attendances.*') ? 'true' : 'false' }} }">
-                                <a href="#" @click.prevent="open = !open"
-                                    class="menu-item group w-full flex justify-between items-center {{ request()->routeIs('admin.attendances.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
-                                    :class="{
-                                        'lg:justify-center': !sidebarExpanded && !sidebarHovered,
-                                        'lg:justify-start': sidebarExpanded || sidebarHovered
-                                    }">
-                                    <div class="flex items-center">
-                                        <span class="menu-item-icon-size {{ request()->routeIs('admin.attendances.*') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
-                                            <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
+                        <!-- ADMIN (FINANCE & OPERASIONAL) -->
+                        @if (Auth::user()->isAdmin())
+                            @if (Auth::user()->isAdminFinance())
+                                <li>
+                                    <a href="{{ route('admin.payments.index') }}"
+                                        class="menu-item group {{ request()->routeIs('admin.payments.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                        :class="{
+                                            'lg:justify-center': !sidebarExpanded && !
+                                                sidebarHovered,
+                                            'lg:justify-start': sidebarExpanded || sidebarHovered
+                                        }">
+                                        <span
+                                            class="menu-item-icon-size {{ request()->routeIs('admin.payments.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                            <i class="fa-solid fa-wallet text-xl w-6 text-center"></i>
                                         </span>
                                         <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                            <span class="menu-item-text ml-3">Riwayat Absensi</span>
+                                            <span class="menu-item-text">Verifikasi Pembayaran</span>
                                         </template>
-                                    </div>
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if (Auth::user()->isAdminOperasional())
+                                <li>
+                                    <a href="{{ route('admin.schedule-requests.index') }}"
+                                        class="menu-item group {{ request()->routeIs('admin.schedule-requests.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                        :class="{
+                                            'lg:justify-center': !sidebarExpanded && !
+                                                sidebarHovered,
+                                            'lg:justify-start': sidebarExpanded || sidebarHovered
+                                        }">
+                                        <span
+                                            class="menu-item-icon-size {{ request()->routeIs('admin.schedule-requests.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                            <i class="fa-solid fa-calendar-check text-xl w-6 text-center"></i>
+                                        </span>
+                                        <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                            <span class="menu-item-text flex-1">Pengajuan Jadwal</span>
+                                        </template>
+                                        @php
+                                            $pendingSchedCount = \App\Models\ScheduleChangeRequest::where(
+                                                'status',
+                                                'pending',
+                                            )->count();
+                                        @endphp
+                                        @if ($pendingSchedCount > 0)
+                                            <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                                <span
+                                                    class="bg-brand-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-auto">
+                                                    {{ $pendingSchedCount }}
+                                                </span>
+                                            </template>
+                                        @endif
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.students.index') }}"
+                                        class="menu-item group {{ request()->routeIs('admin.students.index') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                        :class="{
+                                            'lg:justify-center': !sidebarExpanded && !
+                                                sidebarHovered,
+                                            'lg:justify-start': sidebarExpanded || sidebarHovered
+                                        }">
+                                        <span
+                                            class="menu-item-icon-size {{ request()->routeIs('admin.students.index') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                            <i class="fa-solid fa-users text-xl w-6 text-center"></i>
+                                        </span>
+                                        <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                            <span class="menu-item-text">Kelola Murid</span>
+                                        </template>
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if (Auth::user()->isAdminFinance())
+                                <li x-data="{ open: {{ request()->routeIs('admin.attendances.*') ? 'true' : 'false' }} }">
+                                    <a href="#" @click.prevent="open = !open"
+                                        class="menu-item group w-full flex justify-between items-center {{ request()->routeIs('admin.attendances.*') ? 'menu-item-active' : 'menu-item-inactive' }}"
+                                        :class="{
+                                            'lg:justify-center': !sidebarExpanded && !sidebarHovered,
+                                            'lg:justify-start': sidebarExpanded || sidebarHovered
+                                        }">
+                                        <div class="flex items-center">
+                                            <span class="menu-item-icon-size {{ request()->routeIs('admin.attendances.*') ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}">
+                                                <i class="fa-solid fa-clipboard-list text-xl w-6 text-center"></i>
+                                            </span>
+                                            <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                                <span class="menu-item-text ml-3">Riwayat Absensi</span>
+                                            </template>
+                                        </div>
+                                        <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
+                                            <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{'rotate-180': open}"></i>
+                                        </template>
+                                    </a>
                                     <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="{'rotate-180': open}"></i>
+                                        <ul x-show="open" x-transition class="mt-2 space-y-1" style="display: none;">
+                                            <li>
+                                                <a href="{{ route('admin.attendances.belajar') }}"
+                                                    class="block py-2 pl-12 pr-4 text-sm rounded-lg transition-colors {{ request()->routeIs('admin.attendances.belajar') ? 'bg-[#101828] text-[#D3AF37] font-black border border-[#F5E6A3]/30 shadow-md' : 'text-[#101828] hover:text-black hover:bg-[#101828]/15 font-bold' }}">
+                                                    Kelas Belajar
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('admin.attendances.prestasi') }}"
+                                                    class="block py-2 pl-12 pr-4 text-sm rounded-lg transition-colors {{ request()->routeIs('admin.attendances.prestasi') ? 'bg-[#101828] text-[#D3AF37] font-black border border-[#F5E6A3]/30 shadow-md' : 'text-[#101828] hover:text-black hover:bg-[#101828]/15 font-bold' }}">
+                                                    Kelas Prestasi
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </template>
-                                </a>
-                                <template x-if="sidebarExpanded || sidebarHovered || mobileSidebarOpen">
-                                    <ul x-show="open" x-transition class="mt-2 space-y-1" style="display: none;">
-                                        <li>
-                                            <a href="{{ route('admin.attendances.belajar') }}"
-                                                class="block py-2 pl-12 pr-4 text-sm rounded-lg transition-colors {{ request()->routeIs('admin.attendances.belajar') ? 'bg-[#101828] text-[#D3AF37] font-black border border-[#F5E6A3]/30 shadow-md' : 'text-[#101828] hover:text-black hover:bg-[#101828]/15 font-bold' }}">
-                                                Kelas Belajar
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="{{ route('admin.attendances.prestasi') }}"
-                                                class="block py-2 pl-12 pr-4 text-sm rounded-lg transition-colors {{ request()->routeIs('admin.attendances.prestasi') ? 'bg-[#101828] text-[#D3AF37] font-black border border-[#F5E6A3]/30 shadow-md' : 'text-[#101828] hover:text-black hover:bg-[#101828]/15 font-bold' }}">
-                                                Kelas Prestasi
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </template>
-                            </li>
+                                </li>
+                            @endif
                         @endif
 
                         <!-- COACH -->
@@ -404,7 +415,7 @@
                 </div>
 
                 <!-- ADMIN MASTER DATA -->
-                @if (Auth::user()->role === 'admin')
+                @if (Auth::user()->isAdminOperasional())
                     <div>
                         <h2 class="mb-4 mt-4 text-xs uppercase flex leading-[20px] text-[#101828] font-black tracking-wider"
                             :class="{ 'lg:justify-center': !sidebarExpanded && !sidebarHovered }">

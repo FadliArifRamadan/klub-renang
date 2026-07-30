@@ -21,8 +21,12 @@ class UserController extends Controller
         $query = User::query();
 
         // Filter role
-        if ($role && in_array($role, ['admin', 'coach', 'parent', 'general'])) {
-            $query->where('role', $role);
+        if ($role) {
+            if ($role === 'admin') {
+                $query->whereIn('role', ['admin_finance', 'admin_operasional', 'admin']);
+            } else {
+                $query->where('role', $role);
+            }
         }
 
         // Pencarian teks
@@ -34,7 +38,7 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->oldest('name')->paginate(5)->withQueryString();
+        $users = $query->oldest('name')->paginate(10)->withQueryString();
 
         return view('admin.users.index', compact('users', 'role', 'search'));
     }
@@ -48,7 +52,8 @@ class UserController extends Controller
             'name'     => 'required|string|max:255|unique:users,name',
             'username' => 'required|string|max:255|unique:users,username',
             'phone'    => 'required|string|max:15',
-            'role'     => 'required|string|in:admin,coach,parent,general',
+            'gender'   => 'nullable|in:L,P',
+            'role'     => 'required|string|in:admin_finance,admin_operasional,coach,parent,general',
             'password' => 'required|string|min:8',
             'image'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
@@ -57,6 +62,7 @@ class UserController extends Controller
             'name'     => $request->name,
             'username' => $request->username,
             'phone'    => $request->phone,
+            'gender'   => $request->gender,
             'role'     => $request->role,
             'password' => Hash::make($request->password),
         ];
@@ -85,7 +91,8 @@ class UserController extends Controller
             'name'     => 'required|string|max:255|unique:users,name,' . $user->id,
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'phone'    => 'required|string|max:15',
-            'role'     => 'required|string|in:admin,coach,parent,general',
+            'gender'   => 'nullable|in:L,P',
+            'role'     => 'required|string|in:admin_finance,admin_operasional,coach,parent,general',
             'password' => 'nullable|string|min:8',
             'image'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
@@ -94,6 +101,7 @@ class UserController extends Controller
             'name'     => $request->name,
             'username' => $request->username,
             'phone'    => $request->phone,
+            'gender'   => $request->gender,
             'role'     => $request->role,
         ];
 

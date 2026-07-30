@@ -70,15 +70,18 @@ class PaymentController extends Controller
         // Simpan data ke tabel payments
         $payment = Payment::create([
             'student_id' => $student->id,
+            'student_name' => $student->name,
+            'user_name' => Auth::user()->name,
+            'package_name' => $student->package->name ?? '-',
             'payment_type' => $paymentType,
             'amount' => $amount,
             'receipt_path' => $imageName,
             'status' => 'pending',
         ]);
 
-        // Kirim notifikasi ke semua Admin
+        // Kirim notifikasi ke Admin Finance & Admin Operasional
         $payment->load('student');
-        $admins = User::where('role', 'admin')->get();
+        $admins = User::whereIn('role', ['admin_finance', 'admin_operasional', 'admin'])->get();
         foreach ($admins as $admin) {
             $admin->notify(new PaymentSubmitted($payment, Auth::user()->name));
         }

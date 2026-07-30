@@ -41,7 +41,7 @@
                                         {{ $class->name }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $class->category->slug == 'prestasi' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800' }}">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $class->category->slug == 'prestasi' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300' }}">
                                             {{ $class->category->name }}
                                         </span>
                                     </td>

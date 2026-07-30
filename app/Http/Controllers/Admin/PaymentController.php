@@ -14,23 +14,57 @@ use Illuminate\Support\Facades\DB;
 class PaymentController extends Controller
 {
     /**
-     * Menampilkan daftar ajuan pembayaran masuk ke Admin
+     * Menampilkan daftar ajuan pembayaran masuk dan riwayat transaksi ke Admin Finance
      */
-    public function index()
+    public function index(Request $request)
     {
         // Jalankan pengecekan paket kedaluwarsa secara otomatis
         Student::checkAndExpirePackages();
 
-        // Ambil data payment yang statusnya 'pending' beserta relasi student (eager loaded)
-        $payments = Payment::where('status', 'pending')
-            ->with(['student.coach', 'student.package'])
-            ->oldest()
-            ->paginate(5);
+        $activeTab = $request->get('tab', 'pending');
 
-        // Ambil daftar Coach (User dengan role coach)
+        // 1. Data Payment Pending (Menunggu Verifikasi)
+        $pendingPayments = Payment::where('status', 'pending')
+            ->with(['student.user', 'student.coach', 'student.package', 'student.schedules.location'])
+            ->oldest()
+            ->paginate(15, ['*'], 'pending_page');
+
+        // 2. Data Riwayat Payment (History: Approved & Rejected)
+        $historyQuery = Payment::whereIn('status', ['approved', 'rejected'])
+            ->with(['student.user', 'student.coach', 'student.package', 'student.schedules.location']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $historyQuery->where(function ($q) use ($search) {
+                $q->where('student_name', 'like', "%{$search}%")
+                  ->orWhere('user_name', 'like', "%{$search}%")
+                  ->orWhereHas('student', function ($sq) use ($search) {
+                      $sq->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($uq) use ($search) {
+                            $uq->where('name', 'like', "%{$search}%");
+                        });
+                  });
+            });
+        }
+
+        if ($request->filled('history_status')) {
+            $historyQuery->where('status', $request->history_status);
+        }
+
+        if ($request->filled('month')) {
+            $historyQuery->whereMonth('created_at', $request->month);
+        }
+
+        if ($request->filled('year')) {
+            $historyQuery->whereYear('created_at', $request->year);
+        }
+
+        $historyPayments = $historyQuery->latest('updated_at')->paginate(15, ['*'], 'history_page');
+
+        // Ambil daftar Coach
         $coaches = User::where('role', 'coach')->oldest('name')->get();
 
-        return view('admin.payments.index', compact('payments', 'coaches'));
+        return view('admin.payments.index', compact('pendingPayments', 'historyPayments', 'coaches', 'activeTab'));
     }
 
     /**
@@ -42,27 +76,22 @@ class PaymentController extends Controller
         Student::checkAndExpirePackages();
 
         $student = Student::findOrFail($student_id);
-
-        // Hitung batas waktu paket
         $package = $student->package;
-        $activeMonths = $package ? $package->active_period_months : 1;
-        $packageActivatedAt = now();
-        $packageExpiresAt = now()->addMonths($activeMonths);
 
         // Bungkus dalam transaksi database untuk menjamin integritas data ganda
-        DB::transaction(function () use ($student, $package, $packageActivatedAt, $packageExpiresAt) {
+        DB::transaction(function () use ($student, $package) {
             $student->update([
-                'status'   => 'active',
+                'status'   => 'pending_activation',
                 'quota_left' => $package ? $package->sessions : 0,
                 'registration_fee_paid' => true,
-                'package_activated_at' => $packageActivatedAt,
-                'package_expires_at' => $packageExpiresAt,
+                'package_activated_at' => null,
+                'package_expires_at' => null,
                 'became_inactive_at' => null,
                 'suspended_at' => null,
                 'suspension_reason' => null,
             ]);
 
-            // 2. Update status di tabel payments milik anak ini menjadi 'approved'
+            // Update status di tabel payments milik anak ini menjadi 'approved'
             $payment = Payment::where('student_id', $student->id)->latest()->first();
             if ($payment) {
                 $payment->update(['status' => 'approved']);
@@ -75,9 +104,19 @@ class PaymentController extends Controller
         $owner = User::find($student->user_id);
         if ($owner) {
             $owner->notify(new PaymentApproved($student->name, $chosen_coach->name ?? 'Admin'));
+            if ($owner->phone) {
+                $msg = "Halo Bapak/Ibu {$owner->name},\n\nPembayaran untuk murid *{$student->name}* telah berhasil diverifikasi oleh Admin Finance.\n\nStatus murid saat ini: *Menunggu Konfirmasi Tanggal Mulai Latihan* oleh Admin Operasional. Terima kasih! 🏊";
+                \App\Services\WhatsappService::send($owner->phone, $msg);
+            }
         }
 
-        return redirect()->back()->with('success', "Pembayaran untuk {$student->name} berhasil diverifikasi dan akun murid telah aktif.");
+        // Kirim notifikasi ke Admin Operasional
+        $opsAdmins = User::whereIn('role', ['admin_operasional', 'admin'])->get();
+        foreach ($opsAdmins as $ops) {
+            $ops->notify(new \App\Notifications\PaymentApproved($student->name, $chosen_coach->name ?? 'Admin'));
+        }
+
+        return redirect()->back()->with('success', "Pembayaran untuk {$student->name} berhasil diverifikasi. Status murid kini Menunggu Aktivasi Tanggal Latihan oleh Admin Operasional.");
     }
 
     /**

@@ -18,7 +18,20 @@ class AttendanceController extends Controller
             ->with(['student.swimmingClass.category', 'student.package', 'coach', 'location'])
             ->orderBy('date')
             ->orderBy('created_at')
-            ->paginate(5);
+            ->paginate(10)
+            ->withQueryString();
+
+        foreach ($attendances as $att) {
+            $att->session_count = Attendance::where('student_id', $att->student_id)
+                ->where(function ($q) use ($att) {
+                    $q->where('date', '<', $att->date)
+                      ->orWhere(function ($q2) use ($att) {
+                          $q2->where('date', $att->date)
+                             ->where('id', '<=', $att->id);
+                      });
+                })
+                ->count();
+        }
 
         return view('parent.attendances.index', compact('attendances'));
     }

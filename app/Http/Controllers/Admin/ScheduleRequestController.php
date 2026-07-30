@@ -63,6 +63,18 @@ class ScheduleRequestController extends Controller
             }
         }
 
+        // Validasi kesamaan tarif harga lokasi untuk Paket Regular 8 Sesi
+        if (count($scheduleRequest->new_schedule_ids) > 1 && $package && ($package->sessions == 8 || str_contains(strtolower($package->name), '8 sesi'))) {
+            $selectedSchedules = \App\Models\Schedule::whereIn('id', $scheduleRequest->new_schedule_ids)->get();
+            $locationPrices = [];
+            foreach ($selectedSchedules as $sched) {
+                $locationPrices[] = $package->getPriceForLocation($sched->location_id);
+            }
+            if (count(array_unique($locationPrices)) > 1) {
+                return redirect()->back()->with('error', 'Gagal menyetujui! Untuk Paket Regular 8 Sesi, seluruh lokasi latihan yang dipilih harus memiliki tarif harga paket yang sama.');
+            }
+        }
+
         // Lakukan sinkronisasi jadwal baru pada pivot table student_schedules
         $student->schedules()->sync($scheduleRequest->new_schedule_ids);
 

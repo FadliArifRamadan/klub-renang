@@ -13,45 +13,75 @@
                 </h3>
 
                 @if($attendances instanceof \Illuminate\Pagination\LengthAwarePaginator && $attendances->count() > 0)
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                    <div class="overflow-x-auto border sm:rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm text-left text-gray-500">
+                            <thead class="bg-gray-50 text-xs text-gray-700 uppercase border-b">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Sesi</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tempat Latihan</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coach</th>
+                                    <th class="px-4 py-3 text-center w-12">No</th>
+                                    <th class="px-6 py-3">Tanggal</th>
+                                    <th class="px-6 py-3">Tempat Latihan</th>
+                                    <th class="px-6 py-3">Nama Coach</th>
+                                    <th class="px-6 py-3">Nama Peserta</th>
+                                    <th class="px-6 py-3 text-center">Jenis Sesi</th>
+                                    <th class="px-6 py-3 text-center">Jumlah</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($attendances as $index => $att)
-                                    <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $attendances->firstItem() + $index }}
+                                    @php
+                                        $categorySlug = $att->student->swimmingClass->category->slug ?? '';
+                                        $isPrestasi = ($categorySlug === 'prestasi');
+                                        $pkgType = $att->student->package->package_type ?? '';
+                                        $labels = [
+                                            'regular' => 'Reguler',
+                                            'private' => 'Private',
+                                            'single_session' => 'Single Session',
+                                            'monthly_prestasi' => 'Bulanan Prestasi'
+                                        ];
+                                    @endphp
+                                    <tr class="hover:bg-gray-50 transition-colors duration-150 border-b">
+                                        {{-- No --}}
+                                        <td class="px-4 py-4 text-center whitespace-nowrap text-sm text-gray-500 font-semibold">
+                                            {{ ($attendances->currentPage() - 1) * $attendances->perPage() + $loop->iteration }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+
+                                        {{-- Tanggal --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                                             {{ \Carbon\Carbon::parse($att->date)->translatedFormat('l, d M Y') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            @php
-                                                $categorySlug = $att->student->swimmingClass->category->slug ?? '';
-                                                $pkgType = $att->student->package->package_type ?? '';
-                                                $labels = [
-                                                    'regular' => 'Reguler',
-                                                    'private' => 'Private',
-                                                    'single_session' => 'Single Session',
-                                                    'monthly_prestasi' => 'Bulanan Prestasi'
-                                                ];
-                                            @endphp
-                                            @if($categorySlug === 'prestasi')
+
+                                        {{-- Tempat Latihan --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                            <span class="inline-flex items-center gap-1.5 text-xs">
+                                                <i class="fa-solid fa-location-dot text-gray-400"></i>
+                                                {{ $att->location->name ?? '-' }}
+                                            </span>
+                                        </td>
+
+                                        {{-- Nama Coach --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                                            {{ $att->coach->name ?? '-' }}
+                                        </td>
+
+                                        {{-- Nama Peserta --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+                                            {{ $att->student->name ?? '-' }}
+                                        </td>
+
+                                        {{-- Jenis Sesi --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                            @if($isPrestasi)
                                                 @if($att->session_type === 'swim')
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
-                                                        <i class="fa-solid fa-person-swimming mr-1"></i> Berenang
+                                                    <span class="inline-flex items-center gap-1 text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-900/30 px-2.5 py-1 rounded border border-cyan-200 dark:border-cyan-800 text-xs font-semibold whitespace-nowrap">
+                                                        <i class="fa-solid fa-water"></i> Berenang
                                                     </span>
                                                 @elseif($att->session_type === 'dryland')
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-300">
-                                                        <i class="fa-solid fa-dumbbell mr-1"></i> Latihan Darat
+                                                    <span class="inline-flex items-center gap-1 text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30 px-2.5 py-1 rounded border border-orange-200 dark:border-orange-800 text-xs font-semibold whitespace-nowrap">
+                                                        <i class="fa-solid fa-person-running"></i> Latihan Darat
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-900/30 px-2.5 py-1 rounded border border-cyan-200 dark:border-cyan-800 text-xs font-semibold whitespace-nowrap">
+                                                        <i class="fa-solid fa-water"></i> Berenang
                                                     </span>
                                                 @endif
                                             @else
@@ -60,11 +90,16 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                            {{ $att->location->name ?? '-' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                            {{ $att->coach->name ?? '-' }}
+
+                                        {{-- Jumlah --}}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                            @if($isPrestasi)
+                                                <span class="inline-flex items-center justify-center px-2.5 py-1 text-xs font-semibold leading-none text-green-700 bg-green-50 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800 rounded whitespace-nowrap">
+                                                    Ke-{{ $att->session_count ?? 1 }}
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-400">-</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

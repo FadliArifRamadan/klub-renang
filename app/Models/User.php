@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Student;
 
-#[Fillable(['name', 'username', 'phone', 'role', 'password', 'image', 'licenses', 'certifications', 'experience'])]
+#[Fillable(['name', 'username', 'phone', 'gender', 'role', 'password', 'image', 'licenses', 'certifications', 'experience'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -48,5 +48,20 @@ class User extends Authenticatable
     public function schedules()
     {
         return $this->hasMany(Schedule::class, 'coach_id');
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['admin', 'admin_finance', 'admin_operasional']);
+    }
+
+    public function isAdminFinance(): bool
+    {
+        return in_array($this->role, ['admin', 'admin_finance']);
+    }
+
+    public function isAdminOperasional(): bool
+    {
+        return in_array($this->role, ['admin', 'admin_operasional']);
     }
 }

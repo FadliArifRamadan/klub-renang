@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['user_id', 'name', 'birth_date', 'gender', 'package_id', 'swimming_class_id', 'location_id', 'secondary_location_id', 'coach_id', 'quota_left', 'registration_fee_paid', 'status', 'package_activated_at', 'package_expires_at', 'became_inactive_at', 'suspended_at', 'suspension_reason'])]
+#[Fillable(['user_id', 'name', 'birth_date', 'gender', 'coach_gender_preference', 'parent_phone', 'family_card_image', 'student_image', 'package_id', 'swimming_class_id', 'location_id', 'secondary_location_id', 'coach_id', 'quota_left', 'registration_fee_paid', 'status', 'package_activated_at', 'package_expires_at', 'became_inactive_at', 'suspended_at', 'suspension_reason'])]
 class Student extends Model
 {
     protected function casts(): array

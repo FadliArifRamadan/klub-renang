@@ -61,12 +61,15 @@ Route::middleware('auth')->group(function () {
 
     // Jembatan Rute /dashboard Sentral berdasarkan Role
     Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
-        $role = $request->user()->role;
-        return redirect()->route($role . '.dashboard');
+        $user = $request->user();
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route($user->role . '.dashboard');
     })->name('dashboard');
 
-    // 1. KELOMPOK ROUTE ADMIN
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+    // 1. KELOMPOK ROUTE ADMIN (Finance & Operasional)
+    Route::middleware('role:admin,admin_finance,admin_operasional')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', function () {
             // Jalankan pengecekan paket kedaluwarsa secara otomatis
             \App\Models\Student::checkAndExpirePackages();
@@ -102,6 +105,7 @@ Route::middleware('auth')->group(function () {
 
         // Kelola Murid (RESTful URI & Nama Plural)
         Route::get('/students', [\App\Http\Controllers\Admin\StudentController::class, 'index'])->name('students.index');
+        Route::post('/students/activate/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'activate'])->name('students.activate');
         Route::post('/students/suspend/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'suspend'])->name('students.suspend');
         Route::post('/students/resume/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'resume'])->name('students.resume');
         Route::delete('/students/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'destroy'])->name('students.destroy');

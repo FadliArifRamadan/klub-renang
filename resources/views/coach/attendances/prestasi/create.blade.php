@@ -130,9 +130,6 @@
                                             <td class="px-6 py-4 font-semibold text-gray-900">
                                                 <label for="student-{{ $student->id }}" class="cursor-pointer block">
                                                     {{ $student->name }}
-                                                    <span class="text-xs text-gray-400 font-normal block mt-0.5">
-                                                        {{ $student->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}
-                                                    </span>
                                                 </label>
                                             </td>
 
@@ -182,10 +179,10 @@
                                         </tr>
                                     @endforeach
                                     <tr id="empty-state-row" style="display: none;">
-                                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 bg-gray-50/50">
-                                            <i class="fa-solid fa-calendar-xmark text-3xl mb-3 text-gray-400"></i>
-                                            <p class="font-medium text-gray-600">Tidak ada jadwal atlet pada tanggal dan sesi ini.</p>
-                                            <p class="text-xs mt-1 text-gray-400">Silakan pilih tanggal atau jenis sesi yang lain.</p>
+                                        <td colspan="6" class="px-6 py-12 text-center text-slate-400 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+                                            <i class="fa-solid fa-calendar-xmark text-4xl mb-3 text-slate-400 dark:text-slate-500"></i>
+                                            <p class="font-bold text-sm text-slate-700 dark:text-slate-200">Tidak ada jadwal atlet pada tanggal dan sesi ini.</p>
+                                            <p class="text-xs mt-1 text-slate-500 dark:text-slate-400">Silakan pilih tanggal atau jenis sesi yang lain.</p>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -193,13 +190,13 @@
                         </div>
 
                         {{-- Action Buttons --}}
-                        <div class="flex justify-end gap-3">
+                        <div class="flex justify-end gap-3 mt-6">
                             <a href="{{ route('coach.attendances.prestasi.index') }}"
-                                class="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 border rounded-lg font-medium transition-all text-sm flex items-center gap-1.5">
+                                class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white border border-slate-600 rounded-lg font-bold transition-all text-sm flex items-center gap-1.5 shadow-sm">
                                 <i class="fa-solid fa-arrow-left"></i> Batal
                             </a>
                             <button type="submit"
-                                class="px-5 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold shadow-md transition-all text-sm flex items-center gap-1.5">
+                                class="px-5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] rounded-lg font-extrabold shadow-md transition-all text-sm flex items-center gap-1.5 cursor-pointer">
                                 <i class="fa-solid fa-floppy-disk"></i> Simpan Absensi
                             </button>
                         </div>

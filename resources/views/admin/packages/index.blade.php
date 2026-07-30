@@ -49,7 +49,7 @@
                                     <td class="px-6 py-4 text-center">
                                         @switch($package->package_type)
                                             @case('regular')
-                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Regular (1:4)</span>
+                                                <span class="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs font-semibold px-2.5 py-0.5 rounded">Regular (1:4)</span>
                                                 @break
                                             @case('private')
                                                 <span class="bg-teal-100 text-teal-800 text-xs font-semibold px-2.5 py-0.5 rounded">Private (1:1)</span>

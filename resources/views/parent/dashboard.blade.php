@@ -128,39 +128,38 @@
 
             {{-- Notifikasi Sesi Habis --}}
             @if (isset($expiredStudents) && $expiredStudents->isNotEmpty())
-                <div class="bg-amber-50 border border-amber-300 rounded-xl p-5 mb-8 shadow-sm" x-data="{ showNotif: true }" x-show="showNotif" x-transition>
+                <div class="bg-amber-500/10 dark:bg-amber-900/20 border border-amber-300/50 dark:border-amber-800/50 rounded-xl p-5 mb-8 shadow-sm" x-data="{ showNotif: true }" x-show="showNotif" x-transition>
                     <div class="flex items-start justify-between">
                         <div class="flex items-start gap-3 w-full">
-                            <div class="p-2 bg-amber-100 text-amber-600 rounded-lg mt-0.5 shrink-0">
+                            <div class="p-2 bg-amber-500/20 text-amber-600 dark:text-[#D3AF37] rounded-lg mt-0.5 shrink-0">
                                 <i class="fa-solid fa-bell text-lg"></i>
                             </div>
                             <div class="w-full">
-                                <h4 class="font-bold text-amber-800 text-sm">
-                                    <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                                <h4 class="font-bold text-white text-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
                                     Sesi Latihan Telah Habis!
                                 </h4>
-                                <p class="text-xs text-amber-700 mt-1 leading-relaxed">
+                                <p class="text-xs text-white/90 dark:text-slate-200 mt-1 leading-relaxed">
                                     Beberapa anak Anda telah menghabiskan seluruh kuota sesi latihannya. Silakan lakukan daftar ulang paket latihan di bawah ini.
                                 </p>
                                 <div class="mt-3 space-y-2 max-w-2xl">
                                     @foreach ($expiredStudents as $expStudent)
-                                        <div class="flex flex-wrap items-center gap-2 bg-white/60 border border-amber-200 rounded-lg px-3 py-2">
-                                            <div class="flex items-center gap-2">
+                                        <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-800/80 border border-amber-200/60 dark:border-slate-700 rounded-lg px-4 py-2.5 shadow-sm">
+                                            <div class="flex items-center gap-2 flex-wrap">
                                                 <i class="fa-solid fa-child text-amber-500"></i>
-                                                <span class="font-semibold text-sm text-gray-800">{{ $expStudent->name }}</span>
-                                                <span class="text-xs text-gray-500">—</span>
-                                                <span class="text-xs text-gray-600">{{ $expStudent->package->name ?? 'Paket' }}</span>
-                                                <span class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-200">
+                                                <span class="font-bold text-sm text-slate-800 dark:text-white">{{ $expStudent->name }}</span>
+                                                <span class="text-xs text-slate-400">—</span>
+                                                <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">{{ $expStudent->package->name ?? 'Paket' }}</span>
+                                                <span class="bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-200 dark:border-red-800/50">
                                                     Sesi Habis
                                                 </span>
                                             </div>
                                             <button type="button" x-data="" x-on:click="$dispatch('open-modal', 'renew-student-{{ $expStudent->id }}')"
-                                                class="ml-auto px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold rounded-lg shadow-sm transition flex items-center gap-1">
-                                                <i class="fa-solid fa-rotate-right"></i> Daftar Ulang
+                                                class="px-3.5 py-1.5 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-extrabold rounded-lg shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                                                <i class="fa-solid fa-rotate-right text-[10px]"></i> Daftar Ulang
                                             </button>
                                         </div>
 
-                                        {{-- Modal Daftar Ulang --}}
                                         {{-- Modal Daftar Ulang --}}
                                         <x-modal name="renew-student-{{ $expStudent->id }}" maxWidth="2xl" focusable>
                                             <form method="POST" action="{{ route('parent.students.renew', $expStudent->id) }}" enctype="multipart/form-data" class="p-6 text-left"
@@ -169,6 +168,7 @@
                                                     allSchedules: {{ $schedules->toJson() }},
                                                     classId: '{{ $expStudent->swimming_class_id }}',
                                                     packageId: '{{ $expStudent->package_id }}',
+                                                    coachGenderPref: '{{ $expStudent->coach_gender_preference ?? 'any' }}',
                                                     shouldPayRegFee: {{ $expStudent->shouldPayRegistrationFee() ? 'true' : 'false' }},
                                                     classCategorySlug: '{{ $expStudent->swimmingClass->category->slug ?? '' }}',
                                                     selectedScheduleIds: [
@@ -197,16 +197,17 @@
                                                          return '';
                                                      },
                                                      get maxSlots() {
-                                                         if (this.classCategorySlug === 'prestasi') return 999;
-                                                         if (!this.packageId) return 1;
-                                                         const pkg = this.allPackages.find(p => p.id == this.packageId);
-                                                         if (!pkg) return 1;
-                                                         const sessions = pkg.sessions || 4;
-                                                         if (sessions <= 4) return 1;
-                                                         if (sessions <= 8) return 2;
-                                                         if (sessions <= 12) return 3;
-                                                         return 4;
-                                                     },
+                                                          if (this.classCategorySlug === 'prestasi') return 999;
+                                                          if (!this.packageId) return 1;
+                                                          const pkg = this.allPackages.find(p => p.id == this.packageId);
+                                                          if (!pkg) return 1;
+                                                          if (pkg.package_type === 'single_session') return 1;
+                                                          const sessions = pkg.sessions || 4;
+                                                          if (sessions <= 4) return 1;
+                                                          if (sessions <= 8) return 2;
+                                                          if (sessions <= 12) return 3;
+                                                          return 4;
+                                                      },
                                                      get filteredPackages() {
                                                          if (!this.classId) return [];
                                                          return this.allPackages.filter(p => p.swimming_class_id == this.classId);
@@ -227,16 +228,70 @@
                                                      },
                                                      get filteredSchedules() {
                                                          if (!this.classId) return [];
-                                                         return this.allSchedules.filter(s => s.swimming_class_id == this.classId);
+                                                         let list = this.allSchedules.filter(s => s.swimming_class_id == this.classId);
+
+                                                         if (this.coachGenderPref && this.coachGenderPref !== 'any') {
+                                                             list = list.filter(s => {
+                                                                 const gender = s.coach?.gender || s.coach_gender;
+                                                                 return gender === this.coachGenderPref;
+                                                             });
+                                                         }
+
+                                                         if (this.packageId) {
+                                                             const pkg = this.allPackages.find(p => p.id == this.packageId);
+                                                             if (pkg) {
+                                                                 const pkgName = (pkg.name || '').toLowerCase();
+                                                                 const pkgType = (pkg.package_type || '').toLowerCase();
+                                                                 const isPrivate = pkgType.includes('private') || pkgName.includes('private');
+
+                                                                 if (!isPrivate) {
+                                                                     list = list.filter(s => {
+                                                                         const locName = (s.location?.name || '').toLowerCase();
+                                                                         return !locName.includes('home visit') && s.location_id != 6;
+                                                                     });
+                                                                 }
+                                                             }
+                                                         } else {
+                                                             list = list.filter(s => {
+                                                                 const locName = (s.location?.name || '').toLowerCase();
+                                                                 return !locName.includes('home visit') && s.location_id != 6;
+                                                             });
+                                                         }
+
+                                                         return list;
                                                      },
                                                      isScheduleDisabled(sched) {
-                                                         const limit = this.getScheduleCapacityLimit(sched);
-                                                         const isFull = (sched.current_enrolled_count || 0) >= limit;
-                                                         const isChecked = this.selectedScheduleIds.includes(String(sched.id));
-                                                         if (isFull && !isChecked) return true;
-                                                         if (this.selectedScheduleIds.length >= this.maxSlots && !isChecked) return true;
-                                                         return false;
-                                                     },
+                                                          const limit = this.getScheduleCapacityLimit(sched);
+                                                          const isFull = (sched.current_enrolled_count || 0) >= limit;
+                                                          const isChecked = this.selectedScheduleIds.includes(String(sched.id));
+                                                          if (isFull && !isChecked) return true;
+                                                          if (this.selectedScheduleIds.length >= this.maxSlots && !isChecked) return true;
+                                                          if (!isChecked && this.isSchedulePriceMismatch(sched)) return true;
+                                                          return false;
+                                                      },
+                                                      getPackageLocationPrice(pkg, locationId) {
+                                                          if (!pkg || !locationId) return 0;
+                                                          if (pkg.is_location_based) {
+                                                              const lp = (pkg.location_prices || []).find(l => l.location_id == locationId);
+                                                              return lp ? Number(lp.price) : 0;
+                                                          }
+                                                          return Number(pkg.price || 0);
+                                                      },
+                                                      isSchedulePriceMismatch(sched) {
+                                                          if (!this.selectedScheduleIds.length || !sched) return false;
+                                                          const pkgId = this.packageId;
+                                                          if (!pkgId) return false;
+                                                          const pkg = this.allPackages.find(p => p.id == pkgId);
+                                                          if (!pkg || !(pkg.sessions == 8 || (pkg.name || '').toLowerCase().includes('8 sesi'))) return false;
+
+                                                          const firstSchedId = this.selectedScheduleIds[0];
+                                                          const firstSched = this.allSchedules.find(s => String(s.id) === String(firstSchedId));
+                                                          if (!firstSched) return false;
+
+                                                          const firstPrice = this.getPackageLocationPrice(pkg, firstSched.location_id);
+                                                          const targetPrice = this.getPackageLocationPrice(pkg, sched.location_id);
+                                                          return firstPrice !== targetPrice;
+                                                      },
                                                      toggleSchedule(schedId) {
                                                          const id = String(schedId);
                                                          const idx = this.selectedScheduleIds.indexOf(id);
@@ -249,6 +304,23 @@
                                                          }
                                                      },
                                                      onPackageChange() {
+                                                         if (this.packageId) {
+                                                             const pkg = this.allPackages.find(p => p.id == this.packageId);
+                                                             if (pkg) {
+                                                                 const pkgName = (pkg.name || '').toLowerCase();
+                                                                 const pkgType = (pkg.package_type || '').toLowerCase();
+                                                                 const isPrivate = pkgType.includes('private') || pkgName.includes('private');
+
+                                                                 if (!isPrivate) {
+                                                                     this.selectedScheduleIds = this.selectedScheduleIds.filter(id => {
+                                                                         const sched = this.allSchedules.find(s => String(s.id) === String(id));
+                                                                         if (!sched) return false;
+                                                                         const locName = (sched.location?.name || '').toLowerCase();
+                                                                         return !locName.includes('home visit') && sched.location_id != 6;
+                                                                     });
+                                                                 }
+                                                             }
+                                                         }
                                                          if (this.selectedScheduleIds.length > this.maxSlots) {
                                                              this.selectedScheduleIds = this.selectedScheduleIds.slice(0, this.maxSlots);
                                                          }
@@ -282,34 +354,97 @@
                                                 @csrf
                                                 <input type="hidden" name="swimming_class_id" value="{{ $expStudent->swimming_class_id }}">
 
-                                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                                    <i class="fa-solid fa-rotate-right text-amber-500"></i>
+                                                <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2 border-b dark:border-slate-700 pb-3">
+                                                    <i class="fa-solid fa-rotate-right text-[#D3AF37]"></i>
                                                     Daftar Ulang Paket Latihan - {{ $expStudent->name }}
                                                 </h3>
 
+                                                <!-- Nama Lengkap Anak -->
+                                                <div class="mb-4">
+                                                    <x-input-label for="name-{{ $expStudent->id }}" value="Nama Lengkap Anak *" />
+                                                    <x-text-input id="name-{{ $expStudent->id }}" class="block mt-1 w-full text-sm" type="text" name="name"
+                                                        value="{{ $expStudent->name }}" required />
+                                                </div>
+
+                                                <!-- Tanggal Lahir & Jenis Kelamin -->
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                    <div>
+                                                        <x-input-label for="birth_date-{{ $expStudent->id }}" value="Tanggal Lahir *" />
+                                                        <x-text-input id="birth_date-{{ $expStudent->id }}" class="block mt-1 w-full text-sm" type="date" name="birth_date"
+                                                            value="{{ $expStudent->birth_date?->format('Y-m-d') }}" required />
+                                                    </div>
+
+                                                    <div>
+                                                        <x-input-label for="gender-{{ $expStudent->id }}" value="Jenis Kelamin *" />
+                                                        <select id="gender-{{ $expStudent->id }}" name="gender" required
+                                                            class="block mt-1 w-full text-sm rounded-lg border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm focus:border-[#D3AF37]">
+                                                            <option value="L" {{ $expStudent->gender == 'L' || $expStudent->gender == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                                            <option value="P" {{ $expStudent->gender == 'P' || $expStudent->gender == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Preferensi Gender Pelatih -->
+                                                <div class="mb-4">
+                                                    <x-input-label value="Preferensi Gender Pelatih" />
+                                                    <div class="grid grid-cols-3 gap-2.5 mt-1.5">
+                                                        <label class="flex items-center justify-center gap-1.5 p-2 border rounded-xl cursor-pointer transition text-xs font-semibold"
+                                                            :class="coachGenderPref === 'any' ? 'border-[#D3AF37] bg-[#D3AF37]/10 text-[#D3AF37] font-bold ring-1 ring-[#D3AF37]/50' : 'border-gray-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-gray-300'">
+                                                            <input type="radio" name="coach_gender_preference" value="any" x-model="coachGenderPref" class="hidden" />
+                                                            <i class="fa-solid fa-users text-[#D3AF37]"></i>
+                                                            <span>Bebas (Siapa Saja)</span>
+                                                        </label>
+                                                        <label class="flex items-center justify-center gap-1.5 p-2 border rounded-xl cursor-pointer transition text-xs font-semibold"
+                                                            :class="coachGenderPref === 'L' ? 'border-[#D3AF37] bg-[#D3AF37]/10 text-[#D3AF37] font-bold ring-1 ring-[#D3AF37]/50' : 'border-gray-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-gray-300'">
+                                                            <input type="radio" name="coach_gender_preference" value="L" x-model="coachGenderPref" class="hidden" />
+                                                            <i class="fa-solid fa-mars text-cyan-500"></i>
+                                                            <span>Pelatih Laki-laki</span>
+                                                        </label>
+                                                        <label class="flex items-center justify-center gap-1.5 p-2 border rounded-xl cursor-pointer transition text-xs font-semibold"
+                                                            :class="coachGenderPref === 'P' ? 'border-[#D3AF37] bg-[#D3AF37]/10 text-[#D3AF37] font-bold ring-1 ring-[#D3AF37]/50' : 'border-gray-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-gray-300'">
+                                                            <input type="radio" name="coach_gender_preference" value="P" x-model="coachGenderPref" class="hidden" />
+                                                            <i class="fa-solid fa-venus text-pink-500"></i>
+                                                            <span>Pelatih Perempuan</span>
+                                                        </label>
+                                                    </div>
+                                                    <!-- Peringatan Jika Tidak Ada Pelatih Tersedia untuk Gender yang Dipilih -->
+                                                    <div x-show="coachGenderPref !== 'any' && classId && filteredSchedules.length === 0" x-transition
+                                                         class="mt-2.5 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-600 dark:text-amber-400 text-xs flex items-center gap-2.5">
+                                                         <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base shrink-0"></i>
+                                                         <div>
+                                                             <p class="font-bold">Tidak ada pelatih <span x-text="coachGenderPref === 'L' ? 'Laki-laki' : 'Perempuan'"></span> yang tersedia untuk jadwal kelas ini.</p>
+                                                             <p class="text-[11px] opacity-90 mt-0.5">Silakan ubah preferensi ke "Bebas (Siapa Saja)" untuk melihat jadwal pelatih lain.</p>
+                                                         </div>
+                                                     </div>
+                                                </div>
+
+                                                <!-- Nomor HP / WA Wali -->
+                                                <div class="mb-4">
+                                                    <x-input-label value="Nomor HP / WhatsApp Orang Tua" />
+                                                    <x-text-input class="block mt-1 w-full bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 cursor-not-allowed text-sm" type="text" value="{{ Auth::user()->phone }}" readonly disabled />
+                                                </div>
+
+                                                <!-- Upload Berkas khusus Prestasi -->
+                                                <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-3" x-show="classCategorySlug === 'prestasi'" x-transition>
+                                                    <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl">
+                                                        <x-input-label value="Perbarui Foto KK (Opsional)" class="text-amber-500 dark:text-amber-400 font-bold text-xs" />
+                                                        <input type="file" name="family_card_image" accept="image/*,.pdf"
+                                                            class="block w-full text-xs text-slate-600 dark:text-slate-300 mt-1 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer" />
+                                                    </div>
+
+                                                    <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl">
+                                                        <x-input-label value="Perbarui Foto Murid (Opsional)" class="text-amber-500 dark:text-amber-400 font-bold text-xs" />
+                                                        <input type="file" name="student_image" accept="image/*"
+                                                            class="block w-full text-xs text-slate-600 dark:text-slate-300 mt-1 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer" />
+                                                    </div>
+                                                </div>
+
                                                 @if($expStudent->swimmingClass)
-                                                    <div class="mb-4 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 text-xs text-blue-700 flex items-center gap-2">
+                                                    <div class="mb-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-lg px-3 py-2 text-xs text-blue-700 dark:text-blue-300 flex items-center gap-2">
                                                         <i class="fa-solid fa-layer-group"></i>
                                                         <span>Kelas: <strong>{{ $expStudent->swimmingClass->name }}</strong></span>
                                                     </div>
                                                 @endif
-
-                                                <!-- Tanggal Lahir -->
-                                                <div class="mb-4">
-                                                    <x-input-label for="birth_date-{{ $expStudent->id }}" value="Tanggal Lahir" />
-                                                    <x-text-input id="birth_date-{{ $expStudent->id }}" class="block mt-1 w-full text-sm" type="date" name="birth_date"
-                                                        value="{{ $expStudent->birth_date?->format('Y-m-d') }}" required />
-                                                </div>
-
-                                                <!-- Jenis Kelamin -->
-                                                <div class="mb-4">
-                                                    <x-input-label for="gender-{{ $expStudent->id }}" value="Jenis Kelamin" />
-                                                    <select id="gender-{{ $expStudent->id }}" name="gender" required
-                                                        class="block mt-1 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                        <option value="L" {{ $expStudent->gender == 'L' || $expStudent->gender == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                                                        <option value="P" {{ $expStudent->gender == 'P' || $expStudent->gender == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                                                    </select>
-                                                </div>
 
                                                 <!-- Paket Kursus (filtered by class) -->
                                                 <div class="mb-4">
@@ -352,6 +487,11 @@
                                                                     <span class="block text-[10px] font-bold mt-0.5"
                                                                         :class="(sched.current_enrolled_count || 0) >= getScheduleCapacityLimit(sched) ? 'text-red-500' : 'text-blue-600'"
                                                                         x-text="(sched.current_enrolled_count || 0) + '/' + getScheduleCapacityLimit(sched) + ' Terisi' + ((sched.current_enrolled_count || 0) >= getScheduleCapacityLimit(sched) ? ' (Penuh)' : '')"></span>
+                                                                    <template x-if="isSchedulePriceMismatch(sched) && !selectedScheduleIds.includes(String(sched.id))">
+                                                                        <span class="block text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-0.5">
+                                                                            <i class="fa-solid fa-triangle-exclamation mr-0.5"></i>Beda tarif lokasi paket
+                                                                        </span>
+                                                                    </template>
                                                                 </div>
                                                             </label>
                                                         </template>
@@ -362,23 +502,23 @@
 
                                                 <!-- Ringkasan Pembayaran -->
                                                 <div class="mb-4" x-show="packageId" x-transition>
-                                                    <div class="bg-gradient-to-br from-slate-50 to-blue-50 border border-blue-100 rounded-xl p-4 shadow-sm">
-                                                        <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                                                            <i class="fa-solid fa-calculator text-blue-500"></i> Ringkasan Pembayaran
+                                                    <div class="bg-[#101828] border border-[#D3AF37]/30 rounded-2xl p-4 shadow-md">
+                                                        <h4 class="text-xs uppercase font-extrabold text-[#D3AF37] tracking-wider mb-3 flex items-center gap-2">
+                                                            <i class="fa-solid fa-calculator text-[#D3AF37]"></i> Ringkasan Pembayaran
                                                         </h4>
                                                         <div class="space-y-2 text-sm">
-                                                            <div class="flex justify-between">
-                                                                <span class="text-gray-500">Paket Kursus</span>
-                                                                <span class="font-semibold text-gray-800" x-text="formatPrice(calculatedPrice)"></span>
+                                                            <div class="flex justify-between items-center text-slate-300">
+                                                                <span class="text-slate-300 font-medium text-xs">Paket Kursus</span>
+                                                                <span class="font-bold text-white text-sm" x-text="formatPrice(calculatedPrice)"></span>
                                                             </div>
-                                                            <div class="flex justify-between" x-show="shouldPayRegFee">
-                                                                <span class="text-gray-500">Biaya Pendaftaran <span class="text-[10px]">(> 3 bulan tidak aktif)</span></span>
-                                                                <span class="font-semibold text-gray-800">Rp 30.000</span>
+                                                            <div class="flex justify-between items-center text-slate-300" x-show="shouldPayRegFee">
+                                                                <span class="text-slate-300 font-medium text-xs">Biaya Pendaftaran <span class="text-[10px] text-slate-400">(> 3 bulan tidak aktif)</span></span>
+                                                                <span class="font-bold text-white text-sm">Rp 30.000</span>
                                                             </div>
-                                                            <hr class="border-blue-200 !my-3" />
-                                                            <div class="flex justify-between text-base">
-                                                                <span class="font-bold text-gray-800">Total Bayar</span>
-                                                                <span class="font-extrabold text-blue-600 text-lg" x-text="formatPrice(totalAmount)"></span>
+                                                            <hr class="border-slate-800 my-2.5 border-dashed" />
+                                                            <div class="flex justify-between items-center text-base pt-0.5">
+                                                                <span class="font-extrabold text-white text-sm">Total Bayar</span>
+                                                                <span class="font-black text-[#D3AF37] text-lg tracking-tight" x-text="formatPrice(totalAmount)"></span>
                                                             </div>
                                                         </div>
                                                     </div>

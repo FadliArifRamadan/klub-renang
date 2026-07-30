@@ -27,12 +27,12 @@
                     {{-- Tab Filter Lokasi --}}
                     <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-100 w-fit">
                         <a href="{{ route('admin.schedules.index', ['coach_name' => request('coach_name')]) }}" 
-                            class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($locationId) ? 'bg-white dark:bg-boxdark text-blue-600 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
+                            class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ empty($locationId) ? 'bg-white dark:bg-boxdark text-amber-600 dark:text-[#D3AF37] shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-800' }}">
                             Semua
                         </a>
                         @foreach($locations as $loc)
                             <a href="{{ route('admin.schedules.index', ['location_id' => $loc->id, 'coach_name' => request('coach_name')]) }}" 
-                                class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ $locationId == $loc->id ? 'bg-blue-100 text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
+                                class="px-4 py-2 text-xs font-bold rounded-xl transition-all {{ $locationId == $loc->id ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
                                 {{ $loc->name }}
                             </a>
                         @endforeach
@@ -53,8 +53,7 @@
                         <button type="submit" class="px-3.5 py-2 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] text-xs font-bold rounded-lg transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
                             Cari
                         </button>
-                        <a href="{{ route('admin.schedules.index', $locationId ? ['location_id' => $locationId] : []) }}" 
-                            class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
+                        <a href="{{ route('admin.schedules.index', $locationId ? ['location_id' => $locationId] : []) }}" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-lg border border-slate-600 shadow-sm transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0">
                             <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
                         </a>
                     </form>
@@ -103,7 +102,7 @@
                                                 <i class="fa-solid fa-person-running mr-1"></i> Dryland (Darat)
                                             </span>
                                         @else
-                                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                            <span class="bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300 text-xs font-semibold px-2.5 py-0.5 rounded">
                                                 <i class="fa-solid fa-water-ladder mr-1"></i> Swim (Renang)
                                             </span>
                                         @endif
