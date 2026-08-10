@@ -26,11 +26,21 @@ return new class extends Migration
 
     private function addIndexIfNotExist(string $table, string $column, string $indexName): void
     {
-        $indexes = DB::select("SHOW INDEX FROM {$table} WHERE Key_name = ?", [$indexName]);
-        if (empty($indexes)) {
-            Schema::table($table, function (Blueprint $table) use ($column, $indexName) {
-                $table->index($column, $indexName);
-            });
+        if (DB::getDriverName() === 'mysql') {
+            $indexes = DB::select("SHOW INDEX FROM {$table} WHERE Key_name = ?", [$indexName]);
+            if (empty($indexes)) {
+                Schema::table($table, function (Blueprint $table) use ($column, $indexName) {
+                    $table->index($column, $indexName);
+                });
+            }
+        } else {
+            try {
+                Schema::table($table, function (Blueprint $table) use ($column, $indexName) {
+                    $table->index($column, $indexName);
+                });
+            } catch (\Exception $e) {
+                // Ignore if index already exists
+            }
         }
     }
 

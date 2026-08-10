@@ -19,10 +19,12 @@ class AttendanceController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->whereHas('coach', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })->orWhereHas('student', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('coach', function($cq) use ($search) {
+                    $cq->where('name', 'like', "%{$search}%");
+                })->orWhereHas('student', function($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%");
+                });
             });
         }
 
@@ -45,10 +47,12 @@ class AttendanceController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->whereHas('coach', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })->orWhereHas('student', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('coach', function($cq) use ($search) {
+                    $cq->where('name', 'like', "%{$search}%");
+                })->orWhereHas('student', function($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%");
+                });
             });
         }
 
