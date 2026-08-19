@@ -10,6 +10,8 @@ class StudentActivated extends Notification
 {
     use Queueable;
 
+    public string $senderType = 'operasional';
+
     public function __construct(
         public string $studentName,
         public string $startDateStr,

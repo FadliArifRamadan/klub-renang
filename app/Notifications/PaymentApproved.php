@@ -11,6 +11,8 @@ class PaymentApproved extends Notification
 {
     use Queueable;
 
+    public string $senderType = 'finance';
+
     public function __construct(
         public string $studentName,
         public string $coachName,

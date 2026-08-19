@@ -113,8 +113,8 @@ class LeaveController extends Controller
                 ]);
 
                 // Kirim notifikasi ke Admin Operasional
-                $admins = User::whereIn('role', ['admin_operasional', 'admin_finance', 'admin'])->get();
-                foreach ($admins as $admin) {
+                $opsAdmins = User::where('role', 'admin_operasional')->get();
+                foreach ($opsAdmins as $admin) {
                     $admin->notify(new CoachLeaveSubmitted($leave, Auth::user()->name));
                 }
 

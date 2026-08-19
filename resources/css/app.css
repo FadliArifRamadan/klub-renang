@@ -671,15 +671,21 @@ nav[role="navigation"] a:hover:not([aria-current="page"]) {
 }
 
 /* Inputs, Selects, and Textareas */
-input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], select, textarea {
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], select, textarea {
   background-color: #161F30 !important;
   color: #F8FAFC !important;
   border-color: rgba(211, 175, 55, 0.3) !important;
+  color-scheme: dark;
 }
 
-input[type="text"]:focus, select:focus, textarea:focus {
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="time"]:focus, select:focus, textarea:focus {
   border-color: #D3AF37 !important;
   box-shadow: 0 0 0 2px rgba(211, 175, 55, 0.25) !important;
+}
+
+select option {
+  background-color: #161F30 !important;
+  color: #F8FAFC !important;
 }
 
 /* Tables -> Dark Table Headers and Rows */

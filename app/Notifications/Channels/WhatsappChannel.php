@@ -27,6 +27,9 @@ class WhatsappChannel
             return;
         }
 
-        WhatsappService::send($phone, $message);
+        // Deteksi senderType dari kelas notifikasi (default: 'operasional')
+        $senderType = property_exists($notification, 'senderType') ? $notification->senderType : 'operasional';
+
+        WhatsappService::send($phone, $message, $senderType);
     }
 }

@@ -12,6 +12,8 @@ class PaymentSubmitted extends Notification
 {
     use Queueable;
 
+    public string $senderType = 'finance';
+
     public function __construct(
         public Payment $payment,
         public string $submitterName,

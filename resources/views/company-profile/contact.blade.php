@@ -2,9 +2,12 @@
 
 @section('content')
     <!-- Page Hero -->
-    <section class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-[#0B0F17] text-white overflow-hidden border-b border-[#D3AF37]/30">
+    <section
+        class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-[#0B0F17] text-white overflow-hidden border-b border-[#D3AF37]/30">
         <div class="absolute inset-0 hero-pattern opacity-10"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#D3AF37]/15 rounded-full blur-[140px] pointer-events-none"></div>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#D3AF37]/15 rounded-full blur-[140px] pointer-events-none">
+        </div>
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <span
@@ -15,8 +18,8 @@
                 Hubungi <span class="text-[#D3AF37]">Kami</span>
             </h1>
             <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8 font-normal">
-                Ada pertanyaan, saran, atau ingin mendaftar? Tim kami siap membantu Anda setiap hari dari pukul 06:00 hingga
-                18:00 WIB.
+                Ada pertanyaan, saran, atau ingin mendaftar? Tim kami siap membantu Anda setiap hari dari pukul 08:00 hingga
+                20:00 WIB.
             </p>
         </div>
     </section>
@@ -47,9 +50,9 @@
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-0.5">WhatsApp</p>
-                            <a href="https://wa.me/6281234567890" target="_blank"
+                            <a href="https://wa.me/6287771575859" target="_blank"
                                 class="font-extrabold text-slate-800 hover:text-[#D3AF37] transition-colors">
-                                +62 812-3456-7890
+                                +62 877-7157-5859
                             </a>
                         </div>
                     </div>
@@ -78,7 +81,7 @@
                         <div>
                             <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-0.5">Jam Operasional
                             </p>
-                            <p class="font-extrabold text-slate-800">Setiap Hari: 06:00 – 18:00 WIB</p>
+                            <p class="font-extrabold text-slate-800">Setiap Hari: 08:00 – 20:00 WIB</p>
                         </div>
                     </div>
                 </div>
@@ -111,25 +114,16 @@
                 <div>
                     <h3 class="font-extrabold text-slate-800 mb-4">Ikuti Kami di Media Sosial</h3>
                     <div class="flex gap-3 items-center">
-                        <a href="#" style="width: 44px; height: 44px; aspect-ratio: 1/1;"
+                        <a href="https://www.instagram.com/blackdiamondswimfins/" target="_blank"
+                            style="width: 44px; height: 44px; aspect-ratio: 1/1;"
                             class="shrink-0 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center hover:bg-[#D3AF37] hover:text-[#101828] transition-all shadow-sm">
                             <i class="fa-brands fa-instagram text-xl"></i>
                         </a>
 
-                        <a href="#" style="width: 44px; height: 44px; aspect-ratio: 1/1;"
-                            class="shrink-0 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center hover:bg-[#D3AF37] hover:text-[#101828] transition-all shadow-sm">
-                            <i class="fa-brands fa-facebook text-lg"></i>
-                        </a>
-
-                        <a href="https://wa.me/6281234567890" target="_blank"
+                        <a href="https://wa.me/6287771575859" target="_blank"
                             style="width: 44px; height: 44px; aspect-ratio: 1/1;"
                             class="shrink-0 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center hover:bg-[#D3AF37] hover:text-[#101828] transition-all shadow-sm">
                             <i class="fa-brands fa-whatsapp text-lg"></i>
-                        </a>
-
-                        <a href="#" style="width: 44px; height: 44px; aspect-ratio: 1/1;"
-                            class="shrink-0 rounded-xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center hover:bg-[#D3AF37] hover:text-[#101828] transition-all shadow-sm">
-                            <i class="fa-brands fa-youtube text-lg"></i>
                         </a>
                     </div>
                 </div>
@@ -143,7 +137,8 @@
                     <div class="absolute inset-0 hero-pattern opacity-10"></div>
                     <div class="relative z-10 space-y-4">
                         <h3 class="font-extrabold text-2xl mb-2 text-[#D3AF37]">Siap Bergabung?</h3>
-                        <p class="text-slate-200 text-sm mb-6 font-medium">Daftarkan diri atau anak Anda sekarang dan mulai perjalanan renang
+                        <p class="text-slate-200 text-sm mb-6 font-medium">Daftarkan diri atau anak Anda sekarang dan mulai
+                            perjalanan renang
                             yang luar biasa.</p>
                         <div class="space-y-3">
                             <a href="{{ route('register') }}"

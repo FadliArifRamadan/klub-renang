@@ -18,6 +18,7 @@ class HomeVisitSeeder extends Seeder
      */
     public function run(): void
     {
+        return;
         // 1. Ensure Location Home Visit exists
         $homeVisit = Location::firstOrCreate(
             ['name' => 'Home Visit'],

@@ -16,6 +16,7 @@ class ClassAndPackageSeeder extends Seeder
      */
     public function run(): void
     {
+        return;
         // 1. Seed Locations
         $locations = [
             'Taman Wahidin' => ['address' => 'Jl. Wahidin, Cirebon'],
@@ -328,7 +329,7 @@ class ClassAndPackageSeeder extends Seeder
         $coachCount = $coaches->count();
 
         foreach ($scheduleData as $index => $sd) {
-            $assignedCoach = $coaches[$index % $coachCount] ?? null;
+            $assignedCoach = $coachCount > 0 ? $coaches[$index % $coachCount] : null;
 
             \App\Models\Schedule::updateOrCreate([
                 'swimming_class_id' => $sd['class']->id,

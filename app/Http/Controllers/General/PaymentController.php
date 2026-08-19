@@ -81,10 +81,10 @@ class PaymentController extends Controller
             'status' => 'pending',
         ]);
 
-        // Kirim notifikasi ke Admin Finance & Admin Operasional
+        // Kirim notifikasi ke Admin Finance
         $payment->load('student');
-        $admins = User::whereIn('role', ['admin_finance', 'admin_operasional', 'admin'])->get();
-        foreach ($admins as $admin) {
+        $financeAdmins = User::where('role', 'admin_finance')->get();
+        foreach ($financeAdmins as $admin) {
             $admin->notify(new PaymentSubmitted($payment, Auth::user()->name));
         }
 

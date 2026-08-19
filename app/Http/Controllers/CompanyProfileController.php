@@ -64,7 +64,22 @@ class CompanyProfileController extends Controller
         });
 
         if (!$swimmingClass) {
-            abort(404);
+            $levelMap = [
+                'batita'    => ['name' => 'Batita', 'min' => 1, 'max' => 3],
+                'balita'    => ['name' => 'Balita', 'min' => 4, 'max' => 5],
+                'anak-anak' => ['name' => 'Anak-anak', 'min' => 6, 'max' => 12],
+                'dewasa'    => ['name' => 'Dewasa', 'min' => 13, 'max' => null],
+            ];
+            $slugLower = strtolower($slug);
+            $info = $levelMap[$slugLower] ?? ['name' => ucfirst($slug), 'min' => 1, 'max' => null];
+
+            $swimmingClass = new \App\Models\SwimmingClass([
+                'name' => $info['name'],
+                'age_min' => $info['min'],
+                'age_max' => $info['max'],
+                'description' => "Kelas Belajar Renang tingkat {$info['name']}.",
+            ]);
+            $swimmingClass->setRelation('packages', collect());
         }
 
         return view('company-profile.packages-belajar-level', compact('swimmingClass', 'allBelajarClasses'));
@@ -107,7 +122,22 @@ class CompanyProfileController extends Controller
             });
 
         if (!$swimmingClass) {
-            abort(404);
+            $levelMap = [
+                'batita'    => ['name' => 'Batita', 'min' => 1, 'max' => 3],
+                'balita'    => ['name' => 'Balita', 'min' => 4, 'max' => 5],
+                'anak-anak' => ['name' => 'Anak-anak', 'min' => 6, 'max' => 12],
+                'dewasa'    => ['name' => 'Dewasa', 'min' => 13, 'max' => null],
+            ];
+            $slugLower = strtolower($slug);
+            $info = $levelMap[$slugLower] ?? ['name' => ucfirst($slug), 'min' => 1, 'max' => null];
+
+            $swimmingClass = new \App\Models\SwimmingClass([
+                'name' => $info['name'],
+                'age_min' => $info['min'],
+                'age_max' => $info['max'],
+                'description' => "Kelas Belajar Renang tingkat {$info['name']}.",
+            ]);
+            $swimmingClass->setRelation('schedules', collect());
         }
 
         return view('company-profile.schedule-belajar-level', compact('swimmingClass', 'allBelajarClasses', 'locations'));

@@ -35,13 +35,20 @@ class WhatsappService
 
     /**
      * Kirim pesan WhatsApp melalui Fonnte
+     * @param string $target
+     * @param string $message
+     * @param string $senderType 'finance' | 'operasional'
      */
-    public static function send($target, $message)
+    public static function send($target, $message, $senderType = 'operasional')
     {
-        $token = env('FONNTE_TOKEN');
+        $token = match ($senderType) {
+            'finance' => env('FONNTE_TOKEN_FINANCE') ?: env('FONNTE_TOKEN'),
+            'operasional' => env('FONNTE_TOKEN_OPERASIONAL') ?: env('FONNTE_TOKEN'),
+            default => env('FONNTE_TOKEN')
+        };
 
         if (empty($token)) {
-            Log::warning("WhatsApp Notification skipped: FONNTE_TOKEN is not set in .env");
+            Log::warning("WhatsApp Notification skipped: FONNTE_TOKEN ({$senderType}) is not set in .env");
             return false;
         }
 
@@ -62,14 +69,14 @@ class WhatsappService
             ]);
 
             if ($response->successful()) {
-                Log::info("WhatsApp sent successfully to {$formattedTarget}");
+                Log::info("WhatsApp ({$senderType}) sent successfully to {$formattedTarget}");
                 return true;
             } else {
-                Log::error("WhatsApp send failed to {$formattedTarget}. Error: " . $response->body());
+                Log::error("WhatsApp ({$senderType}) send failed to {$formattedTarget}. Error: " . $response->body());
                 return false;
             }
         } catch (\Exception $e) {
-            Log::error("WhatsApp send exception to {$formattedTarget}: " . $e->getMessage());
+            Log::error("WhatsApp ({$senderType}) send exception to {$formattedTarget}: " . $e->getMessage());
             return false;
         }
     }
