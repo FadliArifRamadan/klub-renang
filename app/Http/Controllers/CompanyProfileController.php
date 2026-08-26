@@ -50,6 +50,16 @@ class CompanyProfileController extends Controller
     }
 
     /**
+     * Tampilkan Halaman Founders
+     */
+    public function aboutFounders()
+    {
+        $founders = \App\Models\Founder::where('is_active', true)
+            ->orderBy('order')->get();
+        return view('company-profile.about-founders', compact('founders'));
+    }
+
+    /**
      * Tampilkan Halaman Paket Belajar Renang per Tingkatan (Batita, Balita, Anak-anak, Dewasa)
      */
     public function packagesBelajarLevel($slug = 'batita')

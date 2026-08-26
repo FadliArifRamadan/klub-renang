@@ -49,13 +49,14 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255|unique:users,name',
-            'username' => 'required|string|max:255|unique:users,username',
-            'phone'    => 'required|string|max:15',
-            'gender'   => 'nullable|in:L,P',
-            'role'     => 'required|string|in:admin_finance,admin_operasional,coach,parent,general',
-            'password' => 'required|string|min:8',
-            'image'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'name'           => 'required|string|max:255|unique:users,name',
+            'username'       => 'required|string|max:255|unique:users,username',
+            'phone'          => 'required|string|max:15',
+            'gender'         => 'nullable|in:L,P',
+            'role'           => 'required|string|in:admin_finance,admin_operasional,coach,parent,general',
+            'password'       => 'required|string|min:8',
+            'image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'license_files.*' => 'nullable|file|mimes:pdf,jpeg,png,jpg,webp|max:5120',
         ]);
 
         $data = [
@@ -72,7 +73,21 @@ class UserController extends Controller
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('coaches', 'public');
             }
-            $data['licenses'] = $request->licenses ? json_decode($request->licenses, true) : [];
+
+            // Proses lisensi: nama + file scan
+            $licenseNames = $request->licenses ? json_decode($request->licenses, true) : [];
+            $licenseFiles = $request->file('license_files', []);
+            $licenses = [];
+            foreach ($licenseNames as $i => $name) {
+                if (empty($name)) continue;
+                $license = ['name' => $name, 'file' => null];
+                if (isset($licenseFiles[$i]) && $licenseFiles[$i]->isValid()) {
+                    $license['file'] = $licenseFiles[$i]->store('licenses', 'public');
+                }
+                $licenses[] = $license;
+            }
+            $data['licenses'] = $licenses;
+
             $data['certifications'] = $request->certifications ? json_decode($request->certifications, true) : [];
             $data['experience'] = $request->experience;
         }
@@ -88,13 +103,14 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name'     => 'required|string|max:255|unique:users,name,' . $user->id,
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-            'phone'    => 'required|string|max:15',
-            'gender'   => 'nullable|in:L,P',
-            'role'     => 'required|string|in:admin_finance,admin_operasional,coach,parent,general',
-            'password' => 'nullable|string|min:8',
-            'image'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'name'           => 'required|string|max:255|unique:users,name,' . $user->id,
+            'username'       => 'required|string|max:255|unique:users,username,' . $user->id,
+            'phone'          => 'required|string|max:15',
+            'gender'         => 'nullable|in:L,P',
+            'role'           => 'required|string|in:admin_finance,admin_operasional,coach,parent,general',
+            'password'       => 'nullable|string|min:8',
+            'image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'license_files.*' => 'nullable|file|mimes:pdf,jpeg,png,jpg,webp|max:5120',
         ]);
 
         $data = [
@@ -119,7 +135,51 @@ class UserController extends Controller
                 }
                 $data['image'] = $request->file('image')->store('coaches', 'public');
             }
-            $data['licenses'] = $request->licenses ? json_decode($request->licenses, true) : [];
+
+            // Proses lisensi: nama + file scan
+            $licenseNames = $request->licenses ? json_decode($request->licenses, true) : [];
+            $licenseFiles = $request->file('license_files', []);
+            $existingFiles = $request->existing_license_files ? json_decode($request->existing_license_files, true) : [];
+            $licenses = [];
+
+            // Kumpulkan file lama yang masih dipakai untuk menentukan mana yang harus dihapus
+            $keepFiles = [];
+
+            foreach ($licenseNames as $i => $name) {
+                if (empty($name)) continue;
+                $license = ['name' => $name, 'file' => null];
+
+                // Cek apakah ada file baru di-upload untuk index ini
+                if (isset($licenseFiles[$i]) && $licenseFiles[$i]->isValid()) {
+                    // Hapus file lama jika ada dan diganti dengan file baru
+                    if (isset($existingFiles[$i]) && $existingFiles[$i]) {
+                        Storage::disk('public')->delete($existingFiles[$i]);
+                    }
+                    $license['file'] = $licenseFiles[$i]->store('licenses', 'public');
+                } elseif (isset($existingFiles[$i]) && $existingFiles[$i]) {
+                    // Pertahankan file lama
+                    $license['file'] = $existingFiles[$i];
+                    $keepFiles[] = $existingFiles[$i];
+                }
+
+                $licenses[] = $license;
+            }
+
+            // Hapus file lama yang sudah tidak terpakai (item lisensi dihapus)
+            $oldLicenses = $user->licenses ?? [];
+            foreach ($oldLicenses as $oldLicense) {
+                $oldFile = is_array($oldLicense) ? ($oldLicense['file'] ?? null) : null;
+                if ($oldFile && !in_array($oldFile, $keepFiles)) {
+                    // Cek apakah file ini bukan file yang baru disimpan
+                    $newFiles = array_column($licenses, 'file');
+                    if (!in_array($oldFile, $newFiles)) {
+                        Storage::disk('public')->delete($oldFile);
+                    }
+                }
+            }
+
+            $data['licenses'] = $licenses;
+
             $data['certifications'] = $request->certifications ? json_decode($request->certifications, true) : [];
             $data['experience'] = $request->experience;
         } else {
@@ -128,6 +188,8 @@ class UserController extends Controller
                 Storage::disk('public')->delete($user->image);
                 $data['image'] = null;
             }
+            // Hapus semua file lisensi
+            $this->deleteLicenseFiles($user);
             $data['licenses'] = null;
             $data['certifications'] = null;
             $data['experience'] = null;
@@ -153,8 +215,25 @@ class UserController extends Controller
             Storage::disk('public')->delete($user->image);
         }
 
+        // Hapus semua file lisensi dari storage
+        $this->deleteLicenseFiles($user);
+
         $user->delete();
 
         return redirect()->back()->with('success', 'Akun pengguna berhasil dihapus!');
+    }
+
+    /**
+     * Hapus semua file lisensi coach dari storage
+     */
+    private function deleteLicenseFiles(User $user): void
+    {
+        $licenses = $user->licenses ?? [];
+        foreach ($licenses as $license) {
+            $file = is_array($license) ? ($license['file'] ?? null) : null;
+            if ($file) {
+                Storage::disk('public')->delete($file);
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.company-profile', ['title' => 'Tim Instruktur - Black Diamond Swimming Club'])
+@extends('layouts.company-profile', ['title' => 'Founders - Black Diamond Swimming Club'])
 
 @section('content')
     <!-- Page Hero -->
@@ -9,23 +9,23 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <span
                 class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D3AF37]/15 border border-[#D3AF37]/30 text-[#D3AF37] text-xs font-extrabold uppercase tracking-wider mb-6">
-                <i class="fa-solid fa-user-tie"></i> Tim Instruktur
+                <i class="fa-solid fa-crown"></i> Founders
             </span>
             <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6 text-white">
-                Pelatih <span class="text-[#D3AF37]">Profesional</span> Kami
+                Para <span class="text-[#D3AF37]">Pendiri</span> Kami
             </h1>
             <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8 font-normal">
-                Tim pelatih berlisensi yang berdedikasi tinggi membantu Anda menguasai keahlian renang dengan terstruktur, sabar, dan aman.
+                Mengenal lebih dekat para visioner di balik berdirinya Black Diamond Swimming Club yang berdedikasi untuk mengembangkan olahraga renang Indonesia.
             </p>
         </div>
     </section>
 
-    <!-- Tim Instruktur Section -->
+    <!-- Founders Section -->
     <section x-data="{ 
         showModal: false, 
-        coach: { name: '', image: '', licenses: [], certificates: [], active: '' },
+        founder: { name: '', position: '', image: '', bio: '', social_media: {} },
         openModal(data) {
-            this.coach = data;
+            this.founder = data;
             this.showModal = true;
             document.body.style.overflow = 'hidden';
         },
@@ -35,33 +35,30 @@
         }
     }" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
-            <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">PROFIL INSTRUKTUR</span>
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Kenalan Dengan Coach Kami</h2>
-            <p class="text-slate-500 text-sm">Klik pada kartu profil pelatih untuk melihat rincian lisensi dan sertifikasi keahlian.</p>
+            <span class="text-xs font-extrabold text-[#D3AF37] uppercase tracking-widest block">PROFIL FOUNDERS</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Kenalan Dengan Pendiri Kami</h2>
+            <p class="text-slate-500 text-sm">Klik pada kartu profil untuk melihat informasi lebih lanjut tentang para pendiri.</p>
         </div>
 
-        @if ($coaches->isNotEmpty())
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                @foreach ($coaches as $coach)
+        @if ($founders->isNotEmpty())
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-{{ $founders->count() >= 4 ? '4' : $founders->count() }} gap-8 {{ $founders->count() < 4 ? 'max-w-4xl mx-auto' : '' }}">
+                @foreach ($founders as $founder)
                     <div @click="openModal({
-                            name: '{{ addslashes($coach->name) }}',
-                            image: '{{ $coach->image ? asset('storage/' . $coach->image) : '' }}',
-                            licenses: {{ Js::from(collect($coach->licenses ?? [])->map(function ($lic) {
-                                if (is_string($lic)) return ['name' => $lic, 'file' => null];
-                                return $lic;
-                            })->values()) }},
-                            certificates: {{ Js::from($coach->certifications ?? []) }},
-                            active: {{ Js::from($coach->experience ?? 'Belum ada informasi pengalaman') }}
+                            name: '{{ addslashes($founder->name) }}',
+                            position: '{{ addslashes($founder->position) }}',
+                            image: '{{ $founder->image ? asset('storage/' . $founder->image) : '' }}',
+                            bio: {{ Js::from($founder->bio ?? 'Belum ada informasi bio.') }},
+                            social_media: {{ Js::from($founder->social_media ?? []) }}
                         })"
                         class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
                         <!-- Photo Container -->
                         <div class="relative h-72 bg-slate-100 overflow-hidden">
-                            @if ($coach->image)
-                                <img src="{{ asset('storage/' . $coach->image) }}" alt="Foto {{ $coach->name }}"
+                            @if ($founder->image)
+                                <img src="{{ asset('storage/' . $founder->image) }}" alt="Foto {{ $founder->name }}"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-[#101828]">
-                                    <i class="fa-solid fa-user-tie text-[#D3AF37] text-7xl"></i>
+                                    <i class="fa-solid fa-crown text-[#D3AF37] text-7xl"></i>
                                 </div>
                             @endif
                             <!-- Gradient Overlay -->
@@ -70,21 +67,21 @@
 
                         <!-- Details -->
                         <div class="p-6 text-left">
-                            <h3 class="font-extrabold text-slate-800 text-base mb-1 truncate">{{ $coach->name }}</h3>
-                            <p class="text-xs text-[#D3AF37] font-bold uppercase tracking-wider mb-2">Instruktur Renang Profesional</p>
+                            <h3 class="font-extrabold text-slate-800 text-base mb-1 truncate">{{ $founder->name }}</h3>
+                            <p class="text-xs text-[#D3AF37] font-bold uppercase tracking-wider mb-2">{{ $founder->position }}</p>
                         </div>
                     </div>
                 @endforeach
             </div>
         @else
             <div class="bg-white rounded-3xl p-16 text-center text-slate-400 border border-slate-200 shadow-sm">
-                <i class="fa-solid fa-user-tie text-5xl mb-4 text-slate-300"></i>
-                <p class="font-bold text-slate-500 text-lg mb-2">Daftar Pelatih Belum Tersedia</p>
-                <p class="text-sm text-slate-400">Kami sedang merekrut pelatih terbaik untuk bergabung bersama tim kami.</p>
+                <i class="fa-solid fa-crown text-5xl mb-4 text-slate-300"></i>
+                <p class="font-bold text-slate-500 text-lg mb-2">Daftar Founders Belum Tersedia</p>
+                <p class="text-sm text-slate-400">Informasi tentang para pendiri akan segera ditampilkan.</p>
             </div>
         @endif
 
-        <!-- Coach Details Modal -->
+        <!-- Founder Details Modal -->
         <div x-show="showModal" 
              x-cloak
              style="display: none;"
@@ -119,18 +116,18 @@
 
                 <!-- Modal Left (Photo) -->
                 <div class="relative h-64 md:h-auto md:w-1/2 bg-slate-100 overflow-hidden shrink-0">
-                    <template x-if="coach.image">
-                        <img :src="coach.image" :alt="'Foto ' + coach.name" class="w-full h-full object-cover">
+                    <template x-if="founder.image">
+                        <img :src="founder.image" :alt="'Foto ' + founder.name" class="w-full h-full object-cover">
                     </template>
-                    <template x-if="!coach.image">
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-                            <i class="fa-solid fa-user-tie text-blue-200 text-7xl"></i>
+                    <template x-if="!founder.image">
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#101828] to-[#1a2744]">
+                            <i class="fa-solid fa-crown text-[#D3AF37] text-7xl"></i>
                         </div>
                     </template>
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
                     <div class="absolute bottom-6 left-6 right-6 text-white">
-                        <h3 class="text-2xl font-extrabold mb-1" x-text="coach.name"></h3>
-                        <p class="text-sm text-[#D3AF37] font-bold uppercase tracking-wider">Instruktur Renang Profesional</p>
+                        <h3 class="text-2xl font-extrabold mb-1" x-text="founder.name"></h3>
+                        <p class="text-sm text-[#D3AF37] font-bold uppercase tracking-wider" x-text="founder.position"></p>
                     </div>
                 </div>
 
@@ -138,58 +135,53 @@
                 <div class="p-6 sm:p-8 md:p-10 overflow-y-auto md:w-1/2 max-h-[80vh]">
                     <div class="space-y-8">
                         
-                        <!-- Lisensi -->
+                        <!-- Bio -->
                         <div class="flex gap-4 items-start">
                             <div class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-id-card text-xl"></i>
+                                <i class="fa-solid fa-quote-left text-xl"></i>
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-base font-extrabold text-slate-800 mb-2">Lisensi</h4>
-                                <ul class="space-y-2">
-                                    <template x-for="lic in coach.licenses">
-                                        <li class="flex items-start gap-2">
-                                            <i class="fa-solid fa-check text-[#D3AF37] mt-1 text-xs"></i>
-                                            <div class="flex-1">
-                                                <span class="text-sm text-slate-600 leading-relaxed" x-text="lic.name"></span>
-                                                <template x-if="lic.file">
-                                                    <a :href="'/storage/' + lic.file" target="_blank"
-                                                       class="inline-flex items-center gap-1 ml-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 hover:bg-[#D3AF37]/25 transition-colors">
-                                                        <i class="fa-solid fa-file-arrow-down text-[9px]"></i> Lihat Dokumen
-                                                    </a>
-                                                </template>
-                                            </div>
-                                        </li>
-                                    </template>
-                                </ul>
+                                <h4 class="text-base font-extrabold text-slate-800 mb-2">Tentang</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed" x-text="founder.bio"></p>
                             </div>
                         </div>
                         
-                        <!-- Sertifikat -->
+                        <!-- Social Media -->
                         <div class="flex gap-4 items-start">
                             <div class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-award text-xl"></i>
+                                <i class="fa-solid fa-share-nodes text-xl"></i>
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-base font-extrabold text-slate-800 mb-2">Sertifikasi Keahlian</h4>
-                                <ul class="space-y-2">
-                                    <template x-for="cert in coach.certificates">
-                                        <li class="flex items-start gap-2">
-                                            <i class="fa-solid fa-check text-[#D3AF37] mt-1 text-xs"></i>
-                                            <span class="text-sm text-slate-600 leading-relaxed" x-text="cert"></span>
-                                        </li>
+                                <h4 class="text-base font-extrabold text-slate-800 mb-3">Sosial Media</h4>
+                                <div class="flex flex-wrap gap-3">
+                                    <template x-if="founder.social_media.instagram">
+                                        <a :href="founder.social_media.instagram.startsWith('http') ? founder.social_media.instagram : 'https://instagram.com/' + founder.social_media.instagram.replace('@', '')" 
+                                           target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-pink-600 border border-pink-200 hover:from-purple-500/20 hover:to-pink-500/20 transition-colors">
+                                            <i class="fa-brands fa-instagram"></i>
+                                            <span x-text="founder.social_media.instagram"></span>
+                                        </a>
                                     </template>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Aktif Melatih -->
-                        <div class="flex gap-4 items-start">
-                            <div class="w-12 h-12 rounded-2xl bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-person-swimming text-xl"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="text-base font-extrabold text-slate-800 mb-1">Pengalaman & Status</h4>
-                                <p class="text-sm text-slate-600 leading-relaxed" x-text="coach.active"></p>
+                                    <template x-if="founder.social_media.linkedin">
+                                        <a :href="founder.social_media.linkedin.startsWith('http') ? founder.social_media.linkedin : 'https://linkedin.com/in/' + founder.social_media.linkedin" 
+                                           target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 transition-colors">
+                                            <i class="fa-brands fa-linkedin"></i>
+                                            <span>LinkedIn</span>
+                                        </a>
+                                    </template>
+                                    <template x-if="founder.social_media.tiktok">
+                                        <a :href="founder.social_media.tiktok.startsWith('http') ? founder.social_media.tiktok : 'https://tiktok.com/@' + founder.social_media.tiktok.replace('@', '')" 
+                                           target="_blank"
+                                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
+                                            <i class="fa-brands fa-tiktok"></i>
+                                            <span x-text="founder.social_media.tiktok"></span>
+                                        </a>
+                                    </template>
+                                    <template x-if="!founder.social_media.instagram && !founder.social_media.linkedin && !founder.social_media.tiktok">
+                                        <p class="text-sm text-slate-400">Belum ada informasi sosial media.</p>
+                                    </template>
+                                </div>
                             </div>
                         </div>
 
@@ -203,7 +195,7 @@
     <section class="py-16 my-16 md:my-24 max-w-7xl mx-4 sm:mx-6 lg:mx-auto bg-gradient-to-r from-[#0B0F17] via-[#1E1A0E] to-[#D3AF37] text-white text-center shadow-2xl rounded-3xl border border-[#D3AF37]/40 relative overflow-hidden">
         <div class="absolute inset-0 hero-pattern opacity-10"></div>
         <div class="max-w-3xl mx-auto px-6 space-y-6 py-6 relative z-10">
-            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 text-[#D3AF37] tracking-tight">Berlatih Bersama Pelatih Terbaik!</h2>
+            <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 text-[#D3AF37] tracking-tight">Bergabung Bersama Black Diamond!</h2>
             <p class="text-slate-200 text-base mb-8 leading-relaxed font-medium">Daftarkan diri Anda atau anak Anda sekarang dan mulailah perjalanan renang yang luar biasa bersama Black Diamond.</p>
             <div class="flex flex-wrap justify-center gap-4">
                 <a href="{{ route('register') }}"

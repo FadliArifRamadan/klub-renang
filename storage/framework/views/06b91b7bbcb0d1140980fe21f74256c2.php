@@ -1,6 +1,4 @@
-@extends('layouts.company-profile', ['title' => 'Tim Instruktur - Black Diamond Swimming Club'])
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <!-- Page Hero -->
     <section class="relative pt-32 pb-20 md:pt-44 md:pb-32 bg-[#0B0F17] text-white overflow-hidden border-b border-[#D3AF37]/30">
         <div class="absolute inset-0 hero-pattern opacity-10"></div>
@@ -40,49 +38,50 @@
             <p class="text-slate-500 text-sm">Klik pada kartu profil pelatih untuk melihat rincian lisensi dan sertifikasi keahlian.</p>
         </div>
 
-        @if ($coaches->isNotEmpty())
+        <?php if($coaches->isNotEmpty()): ?>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                @foreach ($coaches as $coach)
+                <?php $__currentLoopData = $coaches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $coach): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div @click="openModal({
-                            name: '{{ addslashes($coach->name) }}',
-                            image: '{{ $coach->image ? asset('storage/' . $coach->image) : '' }}',
-                            licenses: {{ Js::from(collect($coach->licenses ?? [])->map(function ($lic) {
+                            name: '<?php echo e(addslashes($coach->name)); ?>',
+                            image: '<?php echo e($coach->image ? asset('storage/' . $coach->image) : ''); ?>',
+                            licenses: <?php echo e(Js::from(collect($coach->licenses ?? [])->map(function ($lic) {
                                 if (is_string($lic)) return ['name' => $lic, 'file' => null];
                                 return $lic;
-                            })->values()) }},
-                            certificates: {{ Js::from($coach->certifications ?? []) }},
-                            active: {{ Js::from($coach->experience ?? 'Belum ada informasi pengalaman') }}
+                            })->values())); ?>,
+                            certificates: <?php echo e(Js::from($coach->certifications ?? [])); ?>,
+                            active: <?php echo e(Js::from($coach->experience ?? 'Belum ada informasi pengalaman')); ?>
+
                         })"
                         class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
                         <!-- Photo Container -->
                         <div class="relative h-72 bg-slate-100 overflow-hidden">
-                            @if ($coach->image)
-                                <img src="{{ asset('storage/' . $coach->image) }}" alt="Foto {{ $coach->name }}"
+                            <?php if($coach->image): ?>
+                                <img src="<?php echo e(asset('storage/' . $coach->image)); ?>" alt="Foto <?php echo e($coach->name); ?>"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            @else
+                            <?php else: ?>
                                 <div class="w-full h-full flex items-center justify-center bg-[#101828]">
                                     <i class="fa-solid fa-user-tie text-[#D3AF37] text-7xl"></i>
                                 </div>
-                            @endif
+                            <?php endif; ?>
                             <!-- Gradient Overlay -->
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent"></div>
                         </div>
 
                         <!-- Details -->
                         <div class="p-6 text-left">
-                            <h3 class="font-extrabold text-slate-800 text-base mb-1 truncate">{{ $coach->name }}</h3>
+                            <h3 class="font-extrabold text-slate-800 text-base mb-1 truncate"><?php echo e($coach->name); ?></h3>
                             <p class="text-xs text-[#D3AF37] font-bold uppercase tracking-wider mb-2">Instruktur Renang Profesional</p>
                         </div>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-        @else
+        <?php else: ?>
             <div class="bg-white rounded-3xl p-16 text-center text-slate-400 border border-slate-200 shadow-sm">
                 <i class="fa-solid fa-user-tie text-5xl mb-4 text-slate-300"></i>
                 <p class="font-bold text-slate-500 text-lg mb-2">Daftar Pelatih Belum Tersedia</p>
                 <p class="text-sm text-slate-400">Kami sedang merekrut pelatih terbaik untuk bergabung bersama tim kami.</p>
             </div>
-        @endif
+        <?php endif; ?>
 
         <!-- Coach Details Modal -->
         <div x-show="showModal" 
@@ -206,15 +205,17 @@
             <h2 class="text-3xl sm:text-4xl font-extrabold mb-4 text-[#D3AF37] tracking-tight">Berlatih Bersama Pelatih Terbaik!</h2>
             <p class="text-slate-200 text-base mb-8 leading-relaxed font-medium">Daftarkan diri Anda atau anak Anda sekarang dan mulailah perjalanan renang yang luar biasa bersama Black Diamond.</p>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="{{ route('register') }}"
+                <a href="<?php echo e(route('register')); ?>"
                     class="px-8 py-4 bg-[#D3AF37] hover:bg-[#B89426] text-[#101828] font-extrabold rounded-2xl shadow-xl transition-all hover:-translate-y-1">
                     Daftar Sekarang
                 </a>
-                <a href="{{ route('contact') }}"
+                <a href="<?php echo e(route('contact')); ?>"
                     class="px-8 py-4 bg-[#101828]/80 hover:bg-[#101828] border-2 border-[#D3AF37]/60 text-[#D3AF37] font-extrabold rounded-2xl transition-all hover:-translate-y-1">
                     Hubungi Kami
                 </a>
             </div>
         </div>
     </section>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.company-profile', ['title' => 'Tim Instruktur - Black Diamond Swimming Club'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\klub-renang\resources\views/company-profile/about-coaches.blade.php ENDPATH**/ ?>

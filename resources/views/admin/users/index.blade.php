@@ -270,16 +270,56 @@
                                                         </h4>
 
                                                         {{-- Lisensi --}}
-                                                        <div x-data="{ items: {{ json_encode($user->licenses ?? []) }} }">
+                                                        @php
+                                                            // Backward compatibility: konversi format lama (string[]) ke format baru ({name, file}[])
+                                                            $editLicenses = collect($user->licenses ?? [])->map(function ($lic) {
+                                                                if (is_string($lic)) return ['name' => $lic, 'file' => null];
+                                                                return $lic;
+                                                            })->values()->toArray();
+                                                        @endphp
+                                                        <div x-data="{
+                                                            items: {{ Js::from($editLicenses) }},
+                                                            counter: {{ count($editLicenses) }},
+                                                            addItem() { this.items.push({ name: '', file: null, fileKey: this.counter++ }); },
+                                                            removeFile(index) { this.items[index].file = null; }
+                                                        }">
                                                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Lisensi</label>
                                                             <template x-for="(item, index) in items" :key="index">
-                                                                <div class="flex items-center gap-2 mb-1.5">
-                                                                    <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Lisensi C PRSI">
-                                                                    <button type="button" @click="items.splice(index, 1)" class="text-red-500 hover:text-red-700 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                                                                <div class="mb-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                                                                    <div class="flex items-center gap-2 mb-2">
+                                                                        <input type="text" x-model="items[index].name" class="flex-1 text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Lisensi C PRSI">
+                                                                        <button type="button" @click="items.splice(index, 1)" class="text-red-500 hover:text-red-700 transition text-sm" title="Hapus lisensi"><i class="fa-solid fa-circle-minus"></i></button>
+                                                                    </div>
+
+                                                                    {{-- File yang sudah ada --}}
+                                                                    <template x-if="item.file">
+                                                                        <div class="flex items-center gap-2 mb-2 px-2 py-1.5 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
+                                                                            <i class="fa-solid fa-file-circle-check text-green-600 text-xs"></i>
+                                                                            <a :href="'/storage/' + item.file" target="_blank" class="text-xs text-green-700 dark:text-green-400 font-bold hover:underline truncate flex-1">Lihat Dokumen</a>
+                                                                            <button type="button" @click="removeFile(index)" class="text-red-400 hover:text-red-600 text-xs" title="Hapus file">
+                                                                                <i class="fa-solid fa-xmark"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </template>
+
+                                                                    {{-- Input file baru --}}
+                                                                    <div class="flex items-center gap-2">
+                                                                        <i class="fa-solid fa-paperclip text-slate-400 text-xs"></i>
+                                                                        <input type="file" :name="'license_files[' + index + ']'" accept=".pdf,.jpeg,.jpg,.png,.webp"
+                                                                            class="flex-1 text-xs text-slate-500
+                                                                                file:mr-2 file:py-1 file:px-3
+                                                                                file:rounded-md file:border-0
+                                                                                file:text-[10px] file:font-bold
+                                                                                file:bg-blue-50 file:text-blue-700
+                                                                                hover:file:bg-blue-100
+                                                                                border border-slate-200 dark:border-slate-700 rounded-md cursor-pointer bg-slate-50 dark:bg-slate-900" />
+                                                                    </div>
+                                                                    <p class="text-[10px] text-slate-400 mt-1 ml-5" x-text="item.file ? 'Pilih file baru untuk mengganti' : 'PDF / Gambar, maks. 5MB'"></p>
                                                                 </div>
                                                             </template>
-                                                            <button type="button" @click="items.push('')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-extrabold mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-circle-plus"></i> Tambah Lisensi</button>
-                                                            <input type="hidden" name="licenses" :value="JSON.stringify(items)">
+                                                            <button type="button" @click="addItem()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-extrabold mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-circle-plus"></i> Tambah Lisensi</button>
+                                                            <input type="hidden" name="licenses" :value="JSON.stringify(items.map(i => i.name))">
+                                                            <input type="hidden" name="existing_license_files" :value="JSON.stringify(items.map(i => i.file))">
                                                         </div>
 
                                                         {{-- Sertifikasi --}}
@@ -450,16 +490,30 @@
                     </h4>
 
                     {{-- Lisensi --}}
-                    <div x-data="{ items: [] }">
+                    <div x-data="{ items: [], counter: 0, addItem() { this.items.push({ name: '', fileKey: this.counter++ }); } }">
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Lisensi</label>
-                        <template x-for="(item, index) in items" :key="index">
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <input type="text" x-model="items[index]" class="flex-1 text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Lisensi C PRSI">
-                                <button type="button" @click="items.splice(index, 1)" class="text-red-500 hover:text-red-700 transition text-sm"><i class="fa-solid fa-circle-minus"></i></button>
+                        <template x-for="(item, index) in items" :key="item.fileKey">
+                            <div class="mb-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <input type="text" x-model="items[index].name" class="flex-1 text-sm border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Lisensi C PRSI">
+                                    <button type="button" @click="items.splice(index, 1)" class="text-red-500 hover:text-red-700 transition text-sm" title="Hapus lisensi"><i class="fa-solid fa-circle-minus"></i></button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-paperclip text-slate-400 text-xs"></i>
+                                    <input type="file" :name="'license_files[' + index + ']'" accept=".pdf,.jpeg,.jpg,.png,.webp"
+                                        class="flex-1 text-xs text-slate-500
+                                            file:mr-2 file:py-1 file:px-3
+                                            file:rounded-md file:border-0
+                                            file:text-[10px] file:font-bold
+                                            file:bg-blue-50 file:text-blue-700
+                                            hover:file:bg-blue-100
+                                            border border-slate-200 dark:border-slate-700 rounded-md cursor-pointer bg-slate-50 dark:bg-slate-900" />
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-1 ml-5">PDF / Gambar, maks. 5MB</p>
                             </div>
                         </template>
-                        <button type="button" @click="items.push('')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-extrabold mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-circle-plus"></i> Tambah Lisensi</button>
-                        <input type="hidden" name="licenses" :value="JSON.stringify(items)">
+                        <button type="button" @click="addItem()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-extrabold mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-circle-plus"></i> Tambah Lisensi</button>
+                        <input type="hidden" name="licenses" :value="JSON.stringify(items.map(i => i.name))">
                     </div>
 
                     {{-- Sertifikasi --}}

@@ -135,6 +135,12 @@
                                         class="fa-solid fa-user-tie text-[#D3AF37] w-5 text-center <?php echo e(request()->routeIs('about.coaches') ? 'text-[#101828]' : ''); ?>"></i>
                                     <span>Tim Instruktur</span>
                                 </a>
+                                <a href="<?php echo e(route('about.founders')); ?>"
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors <?php echo e(request()->routeIs('about.founders') ? 'bg-[#D3AF37] text-[#101828]' : 'text-slate-200 hover:bg-[#D3AF37]/20 hover:text-[#D3AF37]'); ?>">
+                                    <i
+                                        class="fa-solid fa-crown text-[#D3AF37] w-5 text-center <?php echo e(request()->routeIs('about.founders') ? 'text-[#101828]' : ''); ?>"></i>
+                                    <span>Founders</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -363,6 +369,10 @@
                         <a @click="mobileMenuOpen = false" href="<?php echo e(route('about.coaches')); ?>"
                             class="block px-4 py-2.5 text-sm font-bold rounded-xl <?php echo e(request()->routeIs('about.coaches') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
                             <i class="fa-solid fa-user-tie mr-2"></i> Tim Instruktur
+                        </a>
+                        <a @click="mobileMenuOpen = false" href="<?php echo e(route('about.founders')); ?>"
+                            class="block px-4 py-2.5 text-sm font-bold rounded-xl <?php echo e(request()->routeIs('about.founders') ? 'bg-[#101828] text-[#D3AF37]' : 'text-[#101828] hover:bg-black/10'); ?>">
+                            <i class="fa-solid fa-crown mr-2"></i> Founders
                         </a>
                     </div>
                 </div>

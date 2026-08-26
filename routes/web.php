@@ -14,6 +14,7 @@ Route::get('/tentang-kami', function () {
 Route::get('/tentang-kami/visi-misi', [CompanyProfileController::class, 'aboutVisionMission'])->name('about.vision-mission');
 Route::get('/tentang-kami/sejarah', [CompanyProfileController::class, 'aboutHistory'])->name('about.history');
 Route::get('/tentang-kami/tim-pelatih', [CompanyProfileController::class, 'aboutCoaches'])->name('about.coaches');
+Route::get('/tentang-kami/founders', [CompanyProfileController::class, 'aboutFounders'])->name('about.founders');
 Route::get('/program-paket', function () {
     return redirect()->route('packages.belajar.level', 'batita');
 })->name('packages');
@@ -93,6 +94,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['create', 'show', 'edit']);
         Route::resource('swimming-classes', \App\Http\Controllers\Admin\SwimmingClassController::class)->except(['create', 'show', 'edit']);
         Route::resource('schedules', \App\Http\Controllers\Admin\ScheduleController::class)->except(['create', 'show', 'edit']);
+        Route::resource('founders', \App\Http\Controllers\Admin\FounderController::class)->except(['create', 'show', 'edit']);
 
         // Kelola Izin Pelatih
         Route::get('/leaves', [\App\Http\Controllers\Admin\LeaveController::class, 'index'])->name('leaves.index');
