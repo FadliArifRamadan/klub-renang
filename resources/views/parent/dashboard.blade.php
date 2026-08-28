@@ -828,10 +828,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     @if ($children->isNotEmpty())
+        <script id="parent-children-data" type="application/json">
+            @json($children)
+        </script>
+        <script id="parent-schedules-data" type="application/json">
+            @json($schedules)
+        </script>
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Data anak & perkembangan dari Laravel dijadikan object JS
-                const childrenArray = @json($children);
+                const childrenArray = JSON.parse(document.getElementById('parent-children-data').textContent || '[]');
+                const allSchedules = JSON.parse(document.getElementById('parent-schedules-data').textContent || '[]');
                 const childrenMap = {};
                 childrenArray.forEach(function(c) {
                     childrenMap[String(c.id)] = c;
@@ -1390,7 +1398,6 @@
                         pendingListDiv.innerHTML = '';
 
                         const newIds = pendingReq.new_schedule_ids || [];
-                        const allSchedules = @json($schedules);
                         const days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
 
                         newIds.forEach(sid => {
@@ -1458,10 +1465,10 @@
                 });
 
                 // Auto-select anak pertama jika ada
-                @if ($children->isNotEmpty())
-                    selectDropdown.value = "{{ $children->first()->id }}";
+                if (childrenArray.length > 0) {
+                    selectDropdown.value = String(childrenArray[0].id);
                     selectDropdown.dispatchEvent(new Event('change'));
-                @endif
+                }
             });
         </script>
     @endif
@@ -1587,15 +1594,19 @@
             </div>
         </div>
 
+        <script id="parent-modal-children-data" type="application/json">
+            @json($children->load('schedules.location', 'location', 'secondaryLocation'))
+        </script>
+
         <script>
-            const allSchedulesData = @json($schedules);
             const daysMap = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
 
             function openScheduleRequestModal() {
                 const childId = window.activeChildId;
                 if (!childId) return;
 
-                const childrenArr = @json($children->load('schedules.location', 'location', 'secondaryLocation'));
+                const allSchedulesData = JSON.parse(document.getElementById('parent-schedules-data').textContent || '[]');
+                const childrenArr = JSON.parse(document.getElementById('parent-modal-children-data').textContent || '[]');
                 const child = childrenArr.find(c => String(c.id) === String(childId));
                 if (!child) return;
 

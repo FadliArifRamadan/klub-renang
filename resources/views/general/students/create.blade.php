@@ -307,13 +307,26 @@
         </div>
     </div>
 
+    <script id="general-create-categories" type="application/json">
+        @json($classCategories)
+    </script>
+    <script id="general-create-packages" type="application/json">
+        @json($packages)
+    </script>
+    <script id="general-create-schedules" type="application/json">
+        @json($schedules)
+    </script>
+    <script id="general-create-old-schedules" type="application/json">
+        @json(old('schedule_ids', []))
+    </script>
+
     <script>
         function registrationForm() {
             return {
                 // Data from server
-                allCategories: @json($classCategories),
-                allPackages: @json($packages),
-                allSchedules: @json($schedules),
+                allCategories: JSON.parse(document.getElementById('general-create-categories').textContent || '[]'),
+                allPackages: JSON.parse(document.getElementById('general-create-packages').textContent || '[]'),
+                allSchedules: JSON.parse(document.getElementById('general-create-schedules').textContent || '[]'),
 
                 // Selected values
                 selectedCategoryId: '{{ old('_category', '') }}',
@@ -323,9 +336,10 @@
                 selectedScheduleIds: [],
 
                 init() {
-                    @if(old('schedule_ids'))
-                        this.selectedScheduleIds = @json(old('schedule_ids')).map(String);
-                    @endif
+                    const oldScheds = JSON.parse(document.getElementById('general-create-old-schedules').textContent || '[]');
+                    if (Array.isArray(oldScheds) && oldScheds.length > 0) {
+                        this.selectedScheduleIds = oldScheds.map(String);
+                    }
                 },
 
                 get isPrestasi() {

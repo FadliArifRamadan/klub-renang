@@ -37,13 +37,13 @@ class PaymentController extends Controller
             $search = $request->search;
             $historyQuery->where(function ($q) use ($search) {
                 $q->where('student_name', 'like', "%{$search}%")
-                  ->orWhere('user_name', 'like', "%{$search}%")
-                  ->orWhereHas('student', function ($sq) use ($search) {
-                      $sq->where('name', 'like', "%{$search}%")
-                        ->orWhereHas('user', function ($uq) use ($search) {
-                            $uq->where('name', 'like', "%{$search}%");
-                        });
-                  });
+                    ->orWhere('user_name', 'like', "%{$search}%")
+                    ->orWhereHas('student', function ($sq) use ($search) {
+                        $sq->where('name', 'like', "%{$search}%")
+                            ->orWhereHas('user', function ($uq) use ($search) {
+                                $uq->where('name', 'like', "%{$search}%");
+                            });
+                    });
             });
         }
 
@@ -92,7 +92,11 @@ class PaymentController extends Controller
             ]);
 
             // Update status di tabel payments milik anak ini menjadi 'approved'
-            $payment = Payment::where('student_id', $student->id)->latest()->first();
+            $payment = Payment::where('student_id', $student->id)
+                ->where('status', 'pending')
+                ->latest()
+                ->first();
+
             if ($payment) {
                 $payment->update(['status' => 'approved']);
             }

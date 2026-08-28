@@ -840,6 +840,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     @if ($myStudent && $myStudent->progressReports->isNotEmpty())
+        <script id="general-reports-data" type="application/json">
+            @json($myStudent->progressReports)
+        </script>
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const yearDropdown = document.getElementById('chart_year_filter');
@@ -855,7 +859,7 @@
                 let barChartInst = null;
                 let lineChartPBTInst = null;
                 
-                const allReports = @json($myStudent->progressReports);
+                const allReports = JSON.parse(document.getElementById('general-reports-data').textContent || '[]');
 
                 // Helper: ubah "01:25.50" jadi detik "85.5"
                 function parseTimeToSeconds(timeStr) {

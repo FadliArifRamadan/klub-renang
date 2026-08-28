@@ -7,7 +7,6 @@ use App\Models\ClassCategory;
 use App\Models\Location;
 use App\Models\Package;
 use App\Models\Schedule;
-use App\Models\SwimmingClass;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Payment;
@@ -118,6 +117,17 @@ class StudentController extends Controller
 
         // Validasi Kapasitas Latihan (Skip untuk Prestasi jika alur khusus)
         if (!$isPrestasi) {
+            // Memastikan bahwa jadwal yang dipilih oleh user benar-benar jadwal untuk kelas yang didaftarkan
+            $invalidSchedules = Schedule::whereIn('id', $request->schedule_ids)
+                ->where('swimming_class_id', '!=', $request->swimming_class_id)
+                ->exists();
+
+            if ($invalidSchedules) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['schedule_ids' => 'Jadwal yang dipilih tidak sesuai dengan kelas yang didaftarkan.']);
+            }
+
             foreach ($request->schedule_ids as $scheduleId) {
                 $schedule = Schedule::findOrFail($scheduleId);
                 $currentEnrolled = $schedule->getCurrentEnrolledCount();
@@ -225,6 +235,16 @@ class StudentController extends Controller
 
         // Validasi Kapasitas Latihan
         if ($request->schedule_ids && !$isPrestasi) {
+            // Memastikan bahwa jadwal yang dipilih oleh user benar-benar jadwal untuk kelas yang didaftarkan
+            $invalidSchedules = Schedule::whereIn('id', $request->schedule_ids)
+                ->where('swimming_class_id', '!=', $request->swimming_class_id)
+                ->exists();
+
+            if ($invalidSchedules) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['schedule_ids' => 'Jadwal yang dipilih tidak sesuai dengan kelas yang didaftarkan.']);
+            }
             foreach ($request->schedule_ids as $scheduleId) {
                 $schedule = Schedule::findOrFail($scheduleId);
                 // Hitung murid lain di jadwal ini

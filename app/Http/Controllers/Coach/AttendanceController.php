@@ -43,12 +43,12 @@ class AttendanceController extends Controller
 
         $coachIds = array_merge([Auth::id()], $substituteCoachIds);
 
-        $students = Student::where(function($query) use ($coachIds) {
-                $query->whereIn('coach_id', $coachIds)
-                    ->orWhereHas('schedules', function($q) use ($coachIds) {
-                        $q->whereIn('coach_id', $coachIds);
-                    });
-            })
+        $students = Student::where(function ($query) use ($coachIds) {
+            $query->whereIn('coach_id', $coachIds)
+                ->orWhereHas('schedules', function ($q) use ($coachIds) {
+                    $q->whereIn('coach_id', $coachIds);
+                });
+        })
             ->where('status', 'active')
             ->whereHas('swimmingClass.category', function ($q) {
                 $q->where('slug', 'belajar');
@@ -96,6 +96,16 @@ class AttendanceController extends Controller
 
                 foreach ($request->student_ids as $studentId) {
                     $student = Student::findOrFail($studentId);
+
+                    // Jika tombol absen ter-klik 2x secara cepat atau ada refresh halaman, sistem tidak akan membuat 2 record absensi dan kuota murid tidak akan terpotong dua kali.
+                    $alreadyAttended = Attendance::where('student_id', $student->id)
+                        ->where('date', $request->date)
+                        ->where('session_type', 'swim')
+                        ->exists();
+
+                    if ($alreadyAttended) {
+                        continue; // Lewati jika sudah diabsen hari ini
+                    }
 
                     // Validasi: Harus memiliki jadwal di hari terpilih yang diajar oleh salah satu pelatih yang diizinkan (utama/pendamping/pengganti)
                     $isAllowed = $student->schedules()
@@ -172,16 +182,16 @@ class AttendanceController extends Controller
             ->orderBy('date')
             ->orderBy('created_at')
             ->paginate(5);
-            
+
         // Hitung sesi ke-n
         foreach ($attendances as $att) {
             $att->session_count = Attendance::where('student_id', $att->student_id)
                 ->where(function ($q) use ($att) {
                     $q->where('date', '<', $att->date)
-                      ->orWhere(function ($q2) use ($att) {
-                          $q2->where('date', $att->date)
-                             ->where('id', '<=', $att->id);
-                      });
+                        ->orWhere(function ($q2) use ($att) {
+                            $q2->where('date', $att->date)
+                                ->where('id', '<=', $att->id);
+                        });
                 })
                 ->count();
         }
@@ -204,12 +214,12 @@ class AttendanceController extends Controller
 
         $coachIds = array_merge([Auth::id()], $substituteCoachIds);
 
-        $students = Student::where(function($query) use ($coachIds) {
-                $query->whereIn('coach_id', $coachIds)
-                    ->orWhereHas('schedules', function($q) use ($coachIds) {
-                        $q->whereIn('coach_id', $coachIds);
-                    });
-            })
+        $students = Student::where(function ($query) use ($coachIds) {
+            $query->whereIn('coach_id', $coachIds)
+                ->orWhereHas('schedules', function ($q) use ($coachIds) {
+                    $q->whereIn('coach_id', $coachIds);
+                });
+        })
             ->where('status', 'active')
             ->whereHas('swimmingClass.category', function ($q) {
                 $q->where('slug', 'prestasi');
@@ -259,6 +269,16 @@ class AttendanceController extends Controller
 
                 foreach ($request->student_ids as $studentId) {
                     $student = Student::findOrFail($studentId);
+
+                    // Jika tombol absen ter-klik 2x secara cepat atau ada refresh halaman, sistem tidak akan membuat 2 record absensi dan kuota murid tidak akan terpotong dua kali.
+                    $alreadyAttended = Attendance::where('student_id', $student->id)
+                        ->where('date', $request->date)
+                        ->where('session_type', $request->session_type)
+                        ->exists();
+
+                    if ($alreadyAttended) {
+                        continue; // Lewati jika sudah diabsen untuk tipe sesi yang sama hari ini
+                    }
 
                     // Validasi: Harus memiliki jadwal di hari terpilih yang diajar oleh salah satu pelatih yang diizinkan (utama/pendamping/pengganti)
                     $isAllowed = $student->schedules()

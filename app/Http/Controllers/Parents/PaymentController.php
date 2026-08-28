@@ -36,6 +36,11 @@ class PaymentController extends Controller
     {
         $student = Student::with(['package.locationPrices'])->findOrFail($student_id);
 
+        // Mencegah user parent lain membayar atau memanipulasi data murid milik orang tua lain.
+        if ($student->user_id !== Auth::id()) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
         // Validasi input file wajib berupa gambar dan maksimal 2MB
         $request->validate([
             'receipt_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',

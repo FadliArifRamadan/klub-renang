@@ -530,15 +530,19 @@
         </div>
     </div>
 
+    <script id="coach-students-map-data" type="application/json">
+        @json($students->keyBy('id')->map(function($s) {
+            return [
+                'id' => $s->id,
+                'name' => $s->name,
+                'progress_reports' => $s->progressReports
+            ];
+        }))
+    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const studentsMap = @json($students->keyBy('id')->map(function($s) {
-                return [
-                    'id' => $s->id,
-                    'name' => $s->name,
-                    'progress_reports' => $s->progressReports
-                ];
-            }));
+            const studentsMap = JSON.parse(document.getElementById('coach-students-map-data').textContent || '{}');
 
             const selectDropdown = document.getElementById('chart_student_id');
             const emptyState = document.getElementById('chart-empty-state');

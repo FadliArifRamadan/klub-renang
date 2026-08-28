@@ -501,6 +501,10 @@
     {{-- Import Chart.js dari CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script id="admin-students-data" type="application/json">
+        @json($students)
+    </script>
+
     <script>
         // ======== Top-level helper functions ========
         function parseTimeToSeconds(timeStr) {
@@ -526,7 +530,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // Data murid & perkembangan dari Laravel yang dijadikan object JS
-            const studentsArray = @json($students);
+            const studentsArray = JSON.parse(document.getElementById('admin-students-data').textContent || '[]');
             const studentsMap = {};
             studentsArray.forEach(function(s) {
                 studentsMap[String(s.id)] = s;

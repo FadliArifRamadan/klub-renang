@@ -249,6 +249,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     @if ($students->isNotEmpty())
+        <script id="coach-dashboard-students-data" type="application/json">
+            @json($students)
+        </script>
+
         <script>
             // Fungsi helper ubah "01:25.50" jadi detik "85.5"
             function parseTimeToSeconds(timeStr) {
@@ -276,7 +280,7 @@
 
             document.addEventListener('DOMContentLoaded', function() {
                 // Data murid & perkembangan dari Laravel dijadikan object JS
-                const studentsArray = @json($students);
+                const studentsArray = JSON.parse(document.getElementById('coach-dashboard-students-data').textContent || '[]');
                 const studentsMap = {};
                 studentsArray.forEach(function(s) {
                     studentsMap[String(s.id)] = s;
@@ -793,10 +797,10 @@
                 });
 
                 // Auto-select murid pertama jika ada
-                @if ($students->isNotEmpty())
-                    selectDropdown.value = "{{ $students->first()->id }}";
+                if (studentsArray.length > 0) {
+                    selectDropdown.value = String(studentsArray[0].id);
                     selectDropdown.dispatchEvent(new Event('change'));
-                @endif
+                }
             });
         </script>
     @endif
