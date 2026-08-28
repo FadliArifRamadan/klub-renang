@@ -50,7 +50,10 @@
                                 if (is_string($lic)) return ['name' => $lic, 'file' => null];
                                 return $lic;
                             })->values()) }},
-                            certificates: {{ Js::from($coach->certifications ?? []) }},
+                            certificates: {{ Js::from(collect($coach->certifications ?? [])->map(function ($cert) {
+                                if (is_string($cert)) return ['name' => $cert, 'file' => null];
+                                return $cert;
+                            })->values()) }},
                             active: {{ Js::from($coach->experience ?? 'Belum ada informasi pengalaman') }}
                         })"
                         class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
@@ -175,7 +178,15 @@
                                     <template x-for="cert in coach.certificates">
                                         <li class="flex items-start gap-2">
                                             <i class="fa-solid fa-check text-[#D3AF37] mt-1 text-xs"></i>
-                                            <span class="text-sm text-slate-600 leading-relaxed" x-text="cert"></span>
+                                            <div class="flex-1">
+                                                <span class="text-sm text-slate-600 leading-relaxed" x-text="cert.name"></span>
+                                                <template x-if="cert.file">
+                                                    <a :href="'/storage/' + cert.file" target="_blank"
+                                                       class="inline-flex items-center gap-1 ml-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#D3AF37]/15 text-[#D3AF37] border border-[#D3AF37]/30 hover:bg-[#D3AF37]/25 transition-colors">
+                                                        <i class="fa-solid fa-file-arrow-down text-[9px]"></i> Lihat Dokumen
+                                                    </a>
+                                                </template>
+                                            </div>
                                         </li>
                                     </template>
                                 </ul>

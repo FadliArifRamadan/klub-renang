@@ -56,7 +56,8 @@ class UserController extends Controller
             'role'           => 'required|string|in:admin_finance,admin_operasional,coach,parent,general',
             'password'       => 'required|string|min:8',
             'image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'license_files.*' => 'nullable|file|mimes:pdf,jpeg,png,jpg,webp|max:5120',
+            'license_files.*'       => 'nullable|file|mimes:pdf,jpeg,png,jpg,webp|max:5120',
+            'certification_files.*' => 'nullable|file|mimes:pdf,jpeg,png,jpg,webp|max:5120',
         ]);
 
         $data = [
@@ -88,7 +89,19 @@ class UserController extends Controller
             }
             $data['licenses'] = $licenses;
 
-            $data['certifications'] = $request->certifications ? json_decode($request->certifications, true) : [];
+            // Proses sertifikasi: nama + file scan
+            $certNames = $request->certifications ? json_decode($request->certifications, true) : [];
+            $certFiles = $request->file('certification_files', []);
+            $certifications = [];
+            foreach ($certNames as $i => $name) {
+                if (empty($name)) continue;
+                $cert = ['name' => $name, 'file' => null];
+                if (isset($certFiles[$i]) && $certFiles[$i]->isValid()) {
+                    $cert['file'] = $certFiles[$i]->store('certifications', 'public');
+                }
+                $certifications[] = $cert;
+            }
+            $data['certifications'] = $certifications;
             $data['experience'] = $request->experience;
         }
 
@@ -110,7 +123,8 @@ class UserController extends Controller
             'role'           => 'required|string|in:admin_finance,admin_operasional,coach,parent,general',
             'password'       => 'nullable|string|min:8',
             'image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'license_files.*' => 'nullable|file|mimes:pdf,jpeg,png,jpg,webp|max:5120',
+            'license_files.*'       => 'nullable|file|mimes:pdf,jpeg,png,jpg,webp|max:5120',
+            'certification_files.*' => 'nullable|file|mimes:pdf,jpeg,png,jpg,webp|max:5120',
         ]);
 
         $data = [
@@ -180,7 +194,44 @@ class UserController extends Controller
 
             $data['licenses'] = $licenses;
 
-            $data['certifications'] = $request->certifications ? json_decode($request->certifications, true) : [];
+            // Proses sertifikasi: nama + file scan
+            $certNames = $request->certifications ? json_decode($request->certifications, true) : [];
+            $certFiles = $request->file('certification_files', []);
+            $existingCertFiles = $request->existing_certification_files ? json_decode($request->existing_certification_files, true) : [];
+            $certifications = [];
+
+            $keepCertFiles = [];
+
+            foreach ($certNames as $i => $name) {
+                if (empty($name)) continue;
+                $cert = ['name' => $name, 'file' => null];
+
+                if (isset($certFiles[$i]) && $certFiles[$i]->isValid()) {
+                    if (isset($existingCertFiles[$i]) && $existingCertFiles[$i]) {
+                        Storage::disk('public')->delete($existingCertFiles[$i]);
+                    }
+                    $cert['file'] = $certFiles[$i]->store('certifications', 'public');
+                } elseif (isset($existingCertFiles[$i]) && $existingCertFiles[$i]) {
+                    $cert['file'] = $existingCertFiles[$i];
+                    $keepCertFiles[] = $existingCertFiles[$i];
+                }
+
+                $certifications[] = $cert;
+            }
+
+            // Hapus file sertifikasi lama yang sudah tidak terpakai
+            $oldCerts = $user->certifications ?? [];
+            foreach ($oldCerts as $oldCert) {
+                $oldFile = is_array($oldCert) ? ($oldCert['file'] ?? null) : null;
+                if ($oldFile && !in_array($oldFile, $keepCertFiles)) {
+                    $newCertFiles = array_column($certifications, 'file');
+                    if (!in_array($oldFile, $newCertFiles)) {
+                        Storage::disk('public')->delete($oldFile);
+                    }
+                }
+            }
+
+            $data['certifications'] = $certifications;
             $data['experience'] = $request->experience;
         } else {
             // Jika role diubah dari Coach ke non-Coach, hapus data coach
@@ -188,8 +239,8 @@ class UserController extends Controller
                 Storage::disk('public')->delete($user->image);
                 $data['image'] = null;
             }
-            // Hapus semua file lisensi
-            $this->deleteLicenseFiles($user);
+            // Hapus semua file lisensi dan sertifikasi
+            $this->deleteCoachFiles($user);
             $data['licenses'] = null;
             $data['certifications'] = null;
             $data['experience'] = null;
@@ -215,8 +266,8 @@ class UserController extends Controller
             Storage::disk('public')->delete($user->image);
         }
 
-        // Hapus semua file lisensi dari storage
-        $this->deleteLicenseFiles($user);
+        // Hapus semua file lisensi dan sertifikasi dari storage
+        $this->deleteCoachFiles($user);
 
         $user->delete();
 
@@ -224,15 +275,17 @@ class UserController extends Controller
     }
 
     /**
-     * Hapus semua file lisensi coach dari storage
+     * Hapus semua file lisensi dan sertifikasi coach dari storage
      */
-    private function deleteLicenseFiles(User $user): void
+    private function deleteCoachFiles(User $user): void
     {
-        $licenses = $user->licenses ?? [];
-        foreach ($licenses as $license) {
-            $file = is_array($license) ? ($license['file'] ?? null) : null;
-            if ($file) {
-                Storage::disk('public')->delete($file);
+        foreach (['licenses', 'certifications'] as $field) {
+            $items = $user->$field ?? [];
+            foreach ($items as $item) {
+                $file = is_array($item) ? ($item['file'] ?? null) : null;
+                if ($file) {
+                    Storage::disk('public')->delete($file);
+                }
             }
         }
     }
